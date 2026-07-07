@@ -1,0 +1,21 @@
+.control:focus{border-color:#9fb5e8;box-shadow:0 0 0 4px rgba(159,181,232,.17)}
+textarea.control{min-height:78px;resize:vertical;line-height:1.45}
+.editor-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:13px;color:#707781;font-size:9px}
+.preview{position:sticky;top:16px}
+.layout-picker{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:0 17px 11px}
+.layout{min-height:43px;border:1px solid var(--line);border-radius:13px;background:#fff;font-size:9px;font-weight:800}
+.layout.active{background:#111;color:#fff}
+.stage{margin:0 17px;border-radius:22px;min-height:390px;padding:14px;background:linear-gradient(#dfe3e9,#d3d8df);overflow:auto}
+.viewport{position:relative;margin:auto;transform-origin:top left}
+.page{position:absolute;left:0;top:0}
+.caption{margin:11px 18px;color:#6d7480;font-size:9px;display:flex;justify-content:space-between}
+.preview-actions{display:grid;grid-template-columns:1fr 1.3fr;gap:7px;padding:0 17px 17px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;padding:22px 8px 16px}
+.page-head p{max-width:600px;color:var(--muted);font-size:11px;line-height:1.5}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:13px}
+.metric{min-height:125px;padding:18px;border-radius:25px;background:#fff;box-shadow:0 13px 34px rgba(23,30,45,.07)}
+.metric.dark{background:#151619;color:#fff}
+.metric.blue{background:#a9bdec}
+.metric.lime{background:#edf5ba}
+.metric span,.metric small{display:block;color:#747b86;font-size:9px}
+.metric.dark span,.metric.dark small{color:rgba(255,255,255,.62)}
