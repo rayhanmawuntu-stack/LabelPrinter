@@ -1,0 +1,6 @@
+.sender-name{font-size:calc(8.2pt * var(--fit));font-weight:800;text-transform:uppercase;margin-top:.8mm;overflow-wrap:anywhere}
+.print-root{position:fixed;left:-300vw;top:0}
+.sync{font-style:normal;font-size:8px;padding:3px 6px;border-radius:999px;background:#edf0f5;color:#727986}
+.sync.synced{background:#e5f6eb;color:#26724a}
+.sync.pending{background:#fff4d7;color:#8a6514}
+.sync.failed{background:#fff0ee;color:#9b443d}
