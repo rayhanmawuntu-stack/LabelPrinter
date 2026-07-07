@@ -10,7 +10,9 @@ button{cursor:pointer}
 .brand{width:58px;height:58px;border-radius:21px;background:#fff;display:grid;place-items:center;box-shadow:0 10px 24px rgba(23,30,45,.11)}
 .brand img{width:42px;filter:grayscale(1) brightness(.25)}
 .nav{display:grid;gap:10px;width:100%;margin-top:25px}
-.nav button,.settings{height:52px;border:0;border-radius:17px;background:transparent;display:grid;place-items:center;color:#707682;position:relative}
+.nav button,.settings{height:52px;border:0;border-radius:17px;background:transparent;display:grid;place-items:center;color:#707682;position:relative;line-height:1}
+.nav button{font-size:24px;font-weight:700}
+.settings{font-size:21px}
 .nav button.active{background:#111216;color:#fff;box-shadow:0 10px 22px rgba(17,18,22,.17)}
 .badge{position:absolute;right:5px;top:4px;min-width:18px;height:18px;padding:0 4px;border-radius:10px;background:var(--lime);color:#111;font-size:9px;font-weight:800;display:grid;place-items:center;border:2px solid #fff}
 .side-bottom{margin-top:auto;width:100%;display:grid;gap:9px}
