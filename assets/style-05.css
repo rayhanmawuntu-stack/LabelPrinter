@@ -12,7 +12,7 @@
   .sidebar{position:fixed!important;z-index:90!important;left:50%!important;right:auto!important;top:auto!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;width:min(360px,calc(100vw - 18px))!important;height:64px!important;min-height:0!important;padding:7px!important;border-radius:22px!important;display:flex!important;flex-direction:row!important;align-items:center!important;gap:7px!important;overflow:visible!important}
   .sidebar .brand{display:none!important}
   .sidebar .nav{width:auto!important;min-width:0!important;flex:1 1 auto!important;margin:0!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
-  .sidebar .nav button{width:100%!important;min-width:0!important;height:50px!important;min-height:0!important;padding:0!important;margin:0!important;border-radius:16px!important;display:grid!important;place-items:center!important;font-size:17px!important;line-height:1!important}
+  .sidebar .nav button{width:100%!important;min-width:0!important;height:50px!important;min-height:0!important;padding:0!important;margin:0!important;border-radius:16px!important;display:grid!important;place-items:center!important;font-size:26px!important;font-weight:700!important;line-height:1!important}
   .sidebar .nav button.active{background:#111216!important;color:#fff!important;box-shadow:0 9px 20px rgba(17,18,22,.18)!important}
   .sidebar .badge{right:2px!important;top:1px!important;min-width:18px!important;height:18px!important;border-width:2px!important;font-size:8px!important}
   .sidebar .side-bottom{width:auto!important;margin:0!important;display:flex!important;align-items:center!important;gap:0!important;flex:0 0 auto!important}
@@ -22,6 +22,6 @@
 
 @media (max-width:280px){
   .sidebar{width:calc(100vw - 14px)!important;height:58px!important;padding:5px!important;border-radius:19px!important}
-  .sidebar .nav button{height:48px!important;border-radius:14px!important;font-size:15px!important}
+  .sidebar .nav button{height:48px!important;border-radius:14px!important;font-size:22px!important}
   .sidebar .side-bottom{display:none!important}
 }
