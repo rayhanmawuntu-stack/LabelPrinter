@@ -12,7 +12,7 @@
 .detail-line{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:9px}
 .detail-line b{font-size:9px}
 .empty{padding:35px;text-align:center;color:var(--muted);font-size:10px}
-.charts{display:grid;grid-template-columns:1.25fr .75fr;gap:13px}
+.charts{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(230px,.85fr) minmax(230px,.85fr);gap:13px}
 .chart{padding-bottom:18px}
 .bars{height:220px;padding:15px 21px 20px;display:flex;align-items:flex-end;gap:9px}
 .bar{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px}
@@ -20,3 +20,5 @@
 .bar span{font-size:8px;color:#747b86}
 .ranking{padding:0 19px 18px}
 .rank{display:grid;grid-template-columns:28px 1fr auto;gap:9px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:9px}
+.rank small{display:block;color:var(--muted);font-size:8px;font-weight:650;margin-top:3px}
+.user-rank strong{min-width:34px;text-align:right}
