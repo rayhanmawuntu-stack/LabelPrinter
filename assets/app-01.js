@@ -1,5 +1,5 @@
 const CONFIG={endpoint:'https://script.google.com/macros/s/AKfycbwVOHKp4BIbj0rbMNV-y543i7L-175E8CbjFlz2f5kA6RYqpt9aj2crriQ-unsW9RO9/exec',logo:'https://file.garden/ad-wGPVIV3ilAD_L/WORK%20PROJECT/LABEL%20MAKER/KSB_SVG.svg.png'};
-const APP_REVISION='2026-07-09-perf-audit-01';
+const APP_REVISION='2026-07-09-perf-audit-02';
 const ENDPOINT_REVISION='2026-07-08-03';
 const LEGACY_ENDPOINTS=['https://script.google.com/macros/s/AKfycbwohEPF9QkHyX7FO2VpnFtzHwbx3kZawul3uZXHNtqk4QbHlMYQkp_J78pV46DjOzFd/exec'];
 const LEGACY_SAMPLE_COMPANIES=new Set(['MANDARA PERMAI','MULTI SARANA MARITIM','SAIPEM INDONESIA']);
@@ -21,7 +21,8 @@ function isLegacySample(r){return LEGACY_SAMPLE_COMPANIES.has(clean(r?.company).
 function hasLabelContent(r){return !![r?.prefix,r?.company,r?.attn,r?.phone,r?.address].some(v=>clean(v))}
 function usableLabels(rows=labels){return(Array.isArray(rows)?rows:[]).map(normalizeLabel).filter(r=>hasLabelContent(r)&&!isLegacySample(r))}
 function startupLabels(){const rows=Array.isArray(load('ksb-labels',[]))?load('ksb-labels',[]):[];const filtered=rows.map(normalizeLabel).filter(r=>!isLegacySample(r));if(filtered.length!==rows.length)save('ksb-labels',filtered);return filtered}
-let users=load('ksb-users',[{name:'Rayhan Ardhana',nickname:'Rayhan'}]),currentUser=null,labels=startupLabels(),selected=0,layout=localStorage.getItem('ksb-layout')||'3x2',history=load('ksb-history',[]),active='create',connected=false,historySelected=null,cb=0,syncInFlight=false;
+function startupHistory(){const rows=Array.isArray(load('ksb-history',[]))?load('ksb-history',[]):[];const filtered=rows.map(b=>({...b,labels:usableLabels(b?.labels||[])})).filter(b=>b?.id&&b.labels.length).slice(0,1000);if(filtered.length!==rows.length)save('ksb-history',filtered);return filtered}
+let users=load('ksb-users',[{name:'Rayhan Ardhana',nickname:'Rayhan'}]),currentUser=null,labels=startupLabels(),selected=0,layout=localStorage.getItem('ksb-layout')||'3x2',history=startupHistory(),active='create',connected=false,historySelected=null,cb=0,syncInFlight=false;
 function initials(n){return clean(n||'U').split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()}
 function full(r){return [r?.prefix,r?.company].filter(Boolean).join(' ').trim()}
 function toast(m){const t=$('toast');if(!t)return;const msg=String(m||'');t.textContent=msg.length>140?msg.slice(0,137)+'…':msg;t.style.opacity=1;t.style.transform='translate(-50%,0)';clearTimeout(window.tt);window.tt=setTimeout(()=>{t.style.opacity=0;t.style.transform='translate(-50%,20px)'},2600)}
