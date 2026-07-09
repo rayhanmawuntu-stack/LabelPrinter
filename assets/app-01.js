@@ -1,5 +1,5 @@
 const CONFIG={endpoint:'https://script.google.com/macros/s/AKfycbwVOHKp4BIbj0rbMNV-y543i7L-175E8CbjFlz2f5kA6RYqpt9aj2crriQ-unsW9RO9/exec',logo:'https://file.garden/ad-wGPVIV3ilAD_L/WORK%20PROJECT/LABEL%20MAKER/KSB_SVG.svg.png'};
-const APP_REVISION='2026-07-09-perf-audit-02';
+const APP_REVISION='2026-07-09-perf-audit-03';
 const ENDPOINT_REVISION='2026-07-08-03';
 const LEGACY_ENDPOINTS=['https://script.google.com/macros/s/AKfycbwohEPF9QkHyX7FO2VpnFtzHwbx3kZawul3uZXHNtqk4QbHlMYQkp_J78pV46DjOzFd/exec'];
 const LEGACY_SAMPLE_COMPANIES=new Set(['MANDARA PERMAI','MULTI SARANA MARITIM','SAIPEM INDONESIA']);
@@ -18,7 +18,7 @@ function debounce(fn,delay=120){let t;return(...args)=>{clearTimeout(t);t=setTim
 function blankLabel(){return{prefix:'',company:'',attn:'',phone:'',address:'',sender:'KSB INDONESIA'}}
 function normalizeLabel(r={}){return{prefix:clean(r.prefix),company:clean(r.company),attn:clean(r.attn),phone:clean(r.phone),address:clean(r.address),sender:clean(r.sender)||'KSB INDONESIA'}}
 function isLegacySample(r){return LEGACY_SAMPLE_COMPANIES.has(clean(r?.company).toUpperCase())}
-function hasLabelContent(r){return !![r?.prefix,r?.company,r?.attn,r?.phone,r?.address].some(v=>clean(v))}
+function hasLabelContent(r){return !![r?.company,r?.attn,r?.phone,r?.address].some(v=>clean(v))}
 function usableLabels(rows=labels){return(Array.isArray(rows)?rows:[]).map(normalizeLabel).filter(r=>hasLabelContent(r)&&!isLegacySample(r))}
 function startupLabels(){const rows=Array.isArray(load('ksb-labels',[]))?load('ksb-labels',[]):[];const filtered=rows.map(normalizeLabel).filter(r=>!isLegacySample(r));if(filtered.length!==rows.length)save('ksb-labels',filtered);return filtered}
 function startupHistory(){const rows=Array.isArray(load('ksb-history',[]))?load('ksb-history',[]):[];const filtered=rows.map(b=>({...b,labels:usableLabels(b?.labels||[])})).filter(b=>b?.id&&b.labels.length).slice(0,1000);if(filtered.length!==rows.length)save('ksb-history',filtered);return filtered}
