@@ -33,6 +33,22 @@ function buildPrintTitle(rows){
   const user=safePrintName(currentUser?.name||currentUser?.nickname||'Local User');
   return `LABEL-${safePrintName(batchId)}-${user}`;
 }
+let pdfLibraryPromise=null;
+function ensurePdfLibrary(){
+  if(window.jspdf?.jsPDF)return Promise.resolve(window.jspdf);
+  if(pdfLibraryPromise)return pdfLibraryPromise;
+  pdfLibraryPromise=new Promise((resolve,reject)=>{
+    const script=document.createElement('script');
+    const timer=setTimeout(()=>{script.remove();reject(new Error('PDF library timed out'))},12000);
+    script.src='https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';
+    script.async=true;
+    script.dataset.labelprintPdf='true';
+    script.onload=()=>{clearTimeout(timer);window.jspdf?.jsPDF?resolve(window.jspdf):reject(new Error('PDF library failed to initialize'))};
+    script.onerror=()=>{clearTimeout(timer);script.remove();reject(new Error('PDF library failed to load'))};
+    document.head.appendChild(script);
+  }).catch(error=>{pdfLibraryPromise=null;throw error});
+  return pdfLibraryPromise;
+}
 async function browserPrintFallback(rows,title){
   const root=$('printRoot');
   root.innerHTML=pagesHTML(rows);
@@ -54,6 +70,7 @@ async function printNow(){
   const controls=[$('print'),$('printDirect')].filter(Boolean);
   controls.forEach(button=>{button.disabled=true;button.dataset.originalText=button.textContent;button.textContent='Generating PDF…'});
   try{
+    await ensurePdfLibrary();
     if(typeof window.generateLabelPdf!=='function')throw new Error('PDF generator did not load');
     const result=await window.generateLabelPdf({rows,layoutKey:layout,layoutDef:LAYOUTS[layout],filename:title,logoUrl:CONFIG.logo});
     toast(`${result.fileName} downloaded · ${result.pageCount} page${result.pageCount===1?'':'s'}`);
@@ -105,6 +122,11 @@ $('review').onclick=review;
 $('generate').onclick=()=>{const b=saveBatch();if(!b)return;review();toast(`${b.id} generated`)};
 $('print').onclick=printNow;
 $('printDirect').onclick=printNow;
+[$('print'),$('printDirect')].filter(Boolean).forEach(button=>{
+  const warm=()=>ensurePdfLibrary().catch(()=>{});
+  button.addEventListener('pointerenter',warm,{once:true,passive:true});
+  button.addEventListener('focus',warm,{once:true,passive:true});
+});
 $('remove').onclick=removeLabel;
 $('duplicate').onclick=duplicate;
 $('newBatch').onclick=()=>switchView('create');
@@ -122,7 +144,7 @@ window.onkeydown=e=>{if(e.key==='Escape')closeModals()};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!connected)sync()});
 renderUsers();
 renderAll();
-renderHistory();
-renderAnalytics();
+refreshDataSurfaces();
 $('entry').classList.add('show');
-sync();
+const scheduleSync=()=>sync();
+if('requestIdleCallback'in window)requestIdleCallback(scheduleSync,{timeout:1200});else setTimeout(scheduleSync,120);
