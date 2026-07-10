@@ -1,5 +1,5 @@
 function saveBatch(){
-  const printable=usableLabels(labels);
+  const printable=usableLabels(labels).slice(0,MAX_LABELS);
   if(!printable.length){toast('Add at least one recipient before generating');return null}
   const now=new Date(),batch={id:'KSB-'+now.getTime().toString(36).toUpperCase(),timestamp:now.toISOString(),user:currentUser?.name||'Local User',nickname:currentUser?.nickname||'User',layout,labels:clone(printable),syncState:'pending'};
   history=[batch,...history.filter(x=>x.id!==batch.id)].slice(0,1000);
@@ -34,6 +34,6 @@ function renderDetail(){
   if(!b)return $('historyDetail').innerHTML='<div class="empty">Select a batch to inspect it.</div>';
   const when=new Date(b.timestamp);
   $('historyDetail').innerHTML=`<div class="detail-top"><div><span class="detail-kicker">Batch details</span><h2>${esc(b.id)}</h2><p>${isNaN(when)?'Unknown date':when.toLocaleString()} · ${esc(b.user||'Unknown user')}</p></div><span class="detail-count">${(b.labels||[]).length} label${(b.labels||[]).length===1?'':'s'}</span></div><div class="detail-list">${(b.labels||[]).map((r,i)=>`<div class="detail-line"><span><b>${String(i+1).padStart(2,'0')} · ${esc(full(r)||'Blank recipient')}</b><br>${esc(r.attn||r.address||'')}</span><span>${esc(r.phone||'')}</span></div>`).join('')}</div><div class="modal-actions"><button class="btn light" id="deleteBatch">Delete</button><button class="btn dark" id="loadBatch">Load batch</button></div>`;
-  $('loadBatch').onclick=()=>{labels=clone(b.labels||[]);layout=b.layout||layout;selected=0;save('ksb-labels',labels);renderAll();switchView('create')};
+  $('loadBatch').onclick=()=>{labels=clone(b.labels||[]).slice(0,MAX_LABELS);layout=b.layout||layout;selected=0;save('ksb-labels',labels);renderAll();switchView('create')};
   $('deleteBatch').onclick=async()=>{history=history.filter(x=>x.id!==b.id);save('ksb-history',history);if(connected)post('deleteBatch',{id:b.id}).catch(()=>{});historySelected=null;renderHistory();renderAnalytics()};
 }
