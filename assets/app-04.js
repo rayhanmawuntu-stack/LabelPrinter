@@ -10,6 +10,14 @@ function saveBatch(){
   renderAnalytics();
   return batch;
 }
+function renderDashboardHistory(){
+  const root=$('dashboardHistory');
+  if(!root)return;
+  const recent=history.slice(0,4);
+  root.className='recent-list';
+  root.innerHTML=recent.length?recent.map(b=>{const when=new Date(b.timestamp),state=b.syncState||'synced';return `<button class="recent-row" data-open-batch="${esc(b.id)}"><span class="recent-icon">▤</span><span><b>${esc(b.id)}</b><small>${isNaN(when)?'Unknown date':when.toLocaleDateString()} · ${b.labels.length} label${b.labels.length===1?'':'s'}</small></span><span><em class="sync ${state}" title="${esc(state)}" aria-label="${esc(state)}"></em></span></button>`}).join(''):'<div class="empty-mini">No generated batches yet.</div>';
+  root.querySelectorAll('[data-open-batch]').forEach(btn=>btn.onclick=()=>{historySelected=btn.dataset.openBatch;switchView('history');renderHistory()});
+}
 function renderHistory(){
   history=(Array.isArray(history)?history:[]).filter(b=>b?.id).map(b=>({...b,labels:Array.isArray(b.labels)?b.labels:[]}));
   const total=history.reduce((s,b)=>s+b.labels.length,0),unique=new Set(history.flatMap(b=>b.labels.map(full).filter(Boolean))).size;
@@ -19,12 +27,13 @@ function renderHistory(){
   $('historyList').innerHTML=history.length?history.map(b=>{const state=b.syncState||'synced';return `<button class="history-row ${b.id===historySelected?'active':''}" data-batch="${b.id}"><span class="batch-icon">${LAYOUTS[b.layout]?.label||b.layout}</span><span><b>${esc(b.id)} <em class="sync ${state}" title="${esc(state)}" aria-label="${esc(state)}"></em></b><small>${b.labels.slice(0,2).map(full).filter(Boolean).map(esc).join(' · ')||'No recipient preview'}</small></span><b>${b.labels.length}</b></button>`}).join(''):`<div class="empty">No generated batches yet.</div>`;
   document.querySelectorAll('[data-batch]').forEach(b=>b.onclick=()=>{historySelected=b.dataset.batch;renderHistory()});
   renderDetail();
+  renderDashboardHistory();
 }
 function renderDetail(){
   const b=history.find(x=>x.id===historySelected)||history[0];
   if(!b)return $('historyDetail').innerHTML='<div class="empty">Select a batch to inspect it.</div>';
   const when=new Date(b.timestamp);
-  $('historyDetail').innerHTML=`<h2>${esc(b.id)}</h2><p>${isNaN(when)?'Unknown date':when.toLocaleString()} · ${esc(b.user||'Unknown user')}</p><div class="detail-list">${(b.labels||[]).map((r,i)=>`<div class="detail-line"><span><b>${String(i+1).padStart(2,'0')} · ${esc(full(r)||'Blank recipient')}</b><br>${esc(r.attn||'')}</span><span>${esc(r.phone||'')}</span></div>`).join('')}</div><div class="modal-actions"><button class="btn light" id="deleteBatch">Delete</button><button class="btn dark" id="loadBatch">Load batch</button></div>`;
+  $('historyDetail').innerHTML=`<div class="detail-top"><div><span class="detail-kicker">Batch details</span><h2>${esc(b.id)}</h2><p>${isNaN(when)?'Unknown date':when.toLocaleString()} · ${esc(b.user||'Unknown user')}</p></div><span class="detail-count">${(b.labels||[]).length} label${(b.labels||[]).length===1?'':'s'}</span></div><div class="detail-list">${(b.labels||[]).map((r,i)=>`<div class="detail-line"><span><b>${String(i+1).padStart(2,'0')} · ${esc(full(r)||'Blank recipient')}</b><br>${esc(r.attn||r.address||'')}</span><span>${esc(r.phone||'')}</span></div>`).join('')}</div><div class="modal-actions"><button class="btn light" id="deleteBatch">Delete</button><button class="btn dark" id="loadBatch">Load batch</button></div>`;
   $('loadBatch').onclick=()=>{labels=clone(b.labels||[]);layout=b.layout||layout;selected=0;save('ksb-labels',labels);renderAll();switchView('create')};
   $('deleteBatch').onclick=async()=>{history=history.filter(x=>x.id!==b.id);save('ksb-history',history);if(connected)post('deleteBatch',{id:b.id}).catch(()=>{});historySelected=null;renderHistory();renderAnalytics()};
 }
