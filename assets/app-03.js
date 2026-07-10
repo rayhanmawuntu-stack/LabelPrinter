@@ -1,12 +1,15 @@
 const MAX_LABELS=20;
 if(labels.length>MAX_LABELS){labels=labels.slice(0,MAX_LABELS);save('ksb-labels',labels)}
 function renderCards(){
-  const q=$('search').value.trim().toLowerCase();
+  const searchInput=$('search');
+  const q=clean(searchInput?.value).toLowerCase();
   const shown=labels.map((r,i)=>({r,i})).filter(x=>!q||[full(x.r),x.r.attn,x.r.address,x.r.phone].join(' ').toLowerCase().includes(q));
   const atLimit=labels.length>=MAX_LABELS;
-  $('cards').innerHTML=shown.map(x=>`<button class="recipient ${x.i===selected?'active':''}" data-label="${x.i}"><span class="num">${String(x.i+1).padStart(2,'0')}</span><b>${esc(full(x.r)||'Blank recipient')}</b><span>${esc(x.r.attn||x.r.address||'Ready to edit')}</span></button>`).join('')+`<button class="recipient add" id="addCard" ${atLimit?'disabled':''}><b>${atLimit?`${MAX_LABELS} label limit reached`:'＋ Add recipient'}</b></button>`;
-  document.querySelectorAll('[data-label]').forEach(b=>b.onclick=()=>{selected=+b.dataset.label;renderAll()});
-  $('addCard').onclick=addLabel;
+  const cards=$('cards');
+  cards.innerHTML=shown.map(x=>`<button type="button" class="recipient ${x.i===selected?'active':''}" data-label="${x.i}"><span class="num">${String(x.i+1).padStart(2,'0')}</span><b>${esc(full(x.r)||'Blank recipient')}</b><span>${esc(x.r.attn||x.r.address||'Ready to edit')}</span></button>`).join('')+`<button type="button" class="recipient add" id="addCard" ${atLimit?'disabled':''}><b>${atLimit?`${MAX_LABELS} label limit reached`:'＋ Add recipient'}</b></button>`;
+  cards.querySelectorAll('[data-label]').forEach(button=>button.onclick=()=>{selected=Number(button.dataset.label);renderAll()});
+  const addCard=cards.querySelector('#addCard');
+  if(addCard)addCard.onclick=addLabel;
   $('batchCount').textContent=`${labels.length} / ${MAX_LABELS}`;
   $('statCount').textContent=labels.length;
   const addTop=$('addRecipient'),clearButton=$('clearAll');
@@ -48,12 +51,19 @@ function update(id,val){
   renderCards();
   renderPreviewSoon();
 }
-function addLabel(){
+function addLabel(event){
+  event?.preventDefault?.();
+  labels=Array.isArray(labels)?labels:[];
   if(labels.length>=MAX_LABELS)return toast(`Maximum ${MAX_LABELS} labels per batch`);
+  const searchInput=$('search');
+  if(searchInput)searchInput.value='';
   labels.push(blankLabel());
   selected=labels.length-1;
+  historySelected=null;
   save('ksb-labels',labels);
+  if(active!=='create')switchView('create');
   renderAll();
+  requestAnimationFrame(()=>$('company')?.focus());
 }
 function removeLabel(){
   if(!labels.length)return;
