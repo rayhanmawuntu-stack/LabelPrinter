@@ -1,0 +1,26 @@
+/* Keep navigation hidden until a user profile has been selected. */
+html:not(.profile-selected) .sidebar{
+  display:none!important;
+}
+html:not(.profile-selected) .app{
+  grid-template-columns:minmax(0,1fr)!important;
+}
+html:not(.profile-selected) .main{
+  width:100%!important;
+  min-width:0!important;
+}
+html.profile-selected .sidebar{
+  animation:profileNavReveal .2s ease both;
+}
+@keyframes profileNavReveal{
+  from{opacity:0}
+  to{opacity:1}
+}
+@media(max-width:900px){
+  html:not(.profile-selected) .app{
+    padding-bottom:12px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html.profile-selected .sidebar{animation:none}
+}
