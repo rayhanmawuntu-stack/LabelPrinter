@@ -16,7 +16,7 @@ const saveTimers={};
 function saveSoon(k,v,delay=180){clearTimeout(saveTimers[k]);saveTimers[k]=setTimeout(()=>save(k,v),delay)}
 function debounce(fn,delay=120){let t;return(...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),delay)}}
 function blankLabel(){return{prefix:'',company:'',attn:'',phone:'',address:'',sender:'KSB INDONESIA'}}
-function normalizeLabel(r={}){return{prefix:clean(r.prefix).toUpperCase(),company:clean(r.company),attn:clean(r.attn),phone:clean(r.phone),address:clean(r.address),sender:clean(r.sender)||'KSB INDONESIA'}}
+function normalizeLabel(r={}){let prefix=clean(r.prefix).toUpperCase(),company=clean(r.company);const combined=company.match(/^(PT|CV|YAYASAN)\.?\s+(.+)$/i);if(combined){if(!prefix)prefix=combined[1].toUpperCase();company=clean(combined[2])}return{prefix,company,attn:clean(r.attn),phone:clean(r.phone),address:clean(r.address),sender:clean(r.sender)||'KSB INDONESIA'}}
 function isLegacySample(r){return LEGACY_SAMPLE_COMPANIES.has(clean(r?.company).toUpperCase())}
 function hasLabelContent(r){return !![r?.company,r?.attn,r?.phone,r?.address].some(v=>clean(v))}
 function usableLabels(rows=labels){return(Array.isArray(rows)?rows:[]).map(normalizeLabel).filter(r=>hasLabelContent(r)&&!isLegacySample(r))}
