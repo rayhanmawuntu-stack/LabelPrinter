@@ -1,5 +1,5 @@
 const CONFIG={endpoint:'https://script.google.com/macros/s/AKfycbwVOHKp4BIbj0rbMNV-y543i7L-175E8CbjFlz2f5kA6RYqpt9aj2crriQ-unsW9RO9/exec',logo:'https://file.garden/ad-wGPVIV3ilAD_L/WORK%20PROJECT/LABEL%20MAKER/KSB_SVG.svg.png'};
-const APP_REVISION='2026-07-10-add-recipient-fix';
+const APP_REVISION='2026-07-10-performance-fix';
 const ENDPOINT_REVISION='2026-07-08-03';
 const LEGACY_ENDPOINTS=['https://script.google.com/macros/s/AKfycbwohEPF9QkHyX7FO2VpnFtzHwbx3kZawul3uZXHNtqk4QbHlMYQkp_J78pV46DjOzFd/exec'];
 const LEGACY_SAMPLE_COMPANIES=new Set(['MANDARA PERMAI','MULTI SARANA MARITIM','SAIPEM INDONESIA']);
@@ -31,6 +31,12 @@ function prefixFromHistory(company){const key=companyKey(company);if(!key)return
 function applyRememberedPrefix(row){const r=normalizeLabel(row);if(!r.prefix&&r.company)r.prefix=prefixFromHistory(r.company);return r}
 let users=load('ksb-users',[{name:'Rayhan Ardhana',nickname:'Rayhan'}]),currentUser=null,labels=startupLabels(),selected=0,layout=localStorage.getItem('ksb-layout')||'3x2',history=startupHistory(),active='create',connected=false,historySelected=null,cb=0,syncInFlight=false;
 rebuildCompanyPrefixes();
+function refreshDataSurfaces(){
+  const badge=$('historyBadge');
+  if(badge)badge.textContent=history.length;
+  if(active==='history')renderHistory();else renderDashboardHistory();
+  if(active==='analytics')renderAnalytics();else renderDashboardAnalytics();
+}
 function initials(n){return clean(n||'U').split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()}
 function full(r){return [r?.prefix,r?.company].filter(Boolean).join(' ').trim()}
 function toast(m){const t=$('toast');if(!t)return;const msg=String(m||'');t.textContent=msg.length>140?msg.slice(0,137)+'…':msg;t.style.opacity=1;t.style.transform='translate(-50%,0)';clearTimeout(window.tt);window.tt=setTimeout(()=>{t.style.opacity=0;t.style.transform='translate(-50%,20px)'},2600)}
