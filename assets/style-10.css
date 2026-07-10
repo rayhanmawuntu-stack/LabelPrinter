@@ -1,0 +1,41 @@
+/* Full A4 live-preview fit. This affects only the dashboard preview, not print output. */
+.preview-panel .stage{
+  display:grid!important;
+  place-items:center!important;
+  overflow:hidden!important;
+  min-height:360px!important;
+  background:
+    linear-gradient(45deg,rgba(20,24,30,.025) 25%,transparent 25%),
+    linear-gradient(-45deg,rgba(20,24,30,.025) 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,rgba(20,24,30,.025) 75%),
+    linear-gradient(-45deg,transparent 75%,rgba(20,24,30,.025) 75%),
+    #eef0f3!important;
+  background-size:18px 18px!important;
+  background-position:0 0,0 9px,9px -9px,-9px 0!important;
+}
+.preview-panel .viewport{
+  position:relative!important;
+  display:block!important;
+  flex:0 0 auto!important;
+  margin:auto!important;
+  overflow:visible!important;
+}
+.preview-panel .page{
+  position:absolute!important;
+  left:0!important;
+  top:0!important;
+  transform-origin:top left!important;
+}
+.preview-panel .sheet{
+  box-shadow:0 16px 42px rgba(18,22,28,.18)!important;
+  outline:1px solid rgba(18,22,28,.08)!important;
+}
+@media(max-width:1250px){
+  .preview-panel .stage{min-height:430px!important}
+}
+@media(max-width:850px){
+  .preview-panel .stage{min-height:420px!important}
+}
+@media(max-width:760px){
+  .preview-panel .stage{min-height:330px!important;padding:10px!important}
+}
