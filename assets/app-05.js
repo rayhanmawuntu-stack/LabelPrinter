@@ -49,6 +49,47 @@ function ensurePdfLibrary(){
   }).catch(error=>{pdfLibraryPromise=null;throw error});
   return pdfLibraryPromise;
 }
+let activePrintFrame=null,activePrintUrl='';
+function disposePrintFrame(){
+  if(activePrintFrame){activePrintFrame.remove();activePrintFrame=null}
+  if(activePrintUrl){URL.revokeObjectURL(activePrintUrl);activePrintUrl=''}
+}
+function openPdfPrintPrompt(blob){
+  if(!(blob instanceof Blob))return Promise.reject(new Error('Printable PDF was not created'));
+  disposePrintFrame();
+  return new Promise((resolve,reject)=>{
+    const frame=document.createElement('iframe');
+    const url=URL.createObjectURL(blob);
+    activePrintFrame=frame;
+    activePrintUrl=url;
+    frame.title='Label print document';
+    frame.setAttribute('aria-hidden','true');
+    frame.style.cssText='position:fixed;right:0;bottom:0;width:1px;height:1px;border:0;opacity:0;pointer-events:none;z-index:-1';
+    let started=false;
+    const fail=error=>{if(started)return;started=true;clearTimeout(loadTimer);disposePrintFrame();reject(error)};
+    const startPrint=()=>{
+      if(started)return;
+      started=true;
+      clearTimeout(loadTimer);
+      setTimeout(()=>{
+        try{
+          const target=frame.contentWindow;
+          if(!target)throw new Error('Print frame is unavailable');
+          try{target.addEventListener('afterprint',disposePrintFrame,{once:true})}catch{}
+          target.focus();
+          target.print();
+          resolve();
+          setTimeout(disposePrintFrame,60000);
+        }catch(error){disposePrintFrame();reject(error)}
+      },500);
+    };
+    const loadTimer=setTimeout(startPrint,1800);
+    frame.onload=startPrint;
+    frame.onerror=()=>fail(new Error('Print document failed to load'));
+    frame.src=url;
+    document.body.appendChild(frame);
+  });
+}
 async function browserPrintFallback(rows,title){
   const root=$('printRoot');
   root.innerHTML=pagesHTML(rows);
@@ -68,18 +109,19 @@ async function printNow(){
   if(!rows.length)return toast('Add at least one recipient before printing');
   const title=buildPrintTitle(rows);
   const controls=[$('print'),$('printDirect')].filter(Boolean);
-  controls.forEach(button=>{button.disabled=true;button.dataset.originalText=button.textContent;button.textContent='Generating PDF…'});
+  controls.forEach(button=>{button.disabled=true;button.dataset.originalText=button.textContent;button.textContent='Preparing print…'});
   try{
     await ensurePdfLibrary();
     if(typeof window.generateLabelPdf!=='function')throw new Error('PDF generator did not load');
-    const result=await window.generateLabelPdf({rows,layoutKey:layout,layoutDef:LAYOUTS[layout],filename:title,logoUrl:CONFIG.logo});
-    toast(`${result.fileName} downloaded · ${result.pageCount} page${result.pageCount===1?'':'s'}`);
+    const result=await window.generateLabelPdf({rows,layoutKey:layout,layoutDef:LAYOUTS[layout],filename:title,logoUrl:CONFIG.logo,output:'blob'});
+    await openPdfPrintPrompt(result.blob);
+    toast(`Print dialog opened · ${result.pageCount} page${result.pageCount===1?'':'s'}`);
   }catch(error){
-    console.error('Vector PDF generation failed:',error);
-    toast('PDF generator unavailable; opening browser print fallback');
+    console.error('PDF print prompt failed:',error);
+    toast('Opening browser print dialog');
     await browserPrintFallback(rows,title);
   }finally{
-    controls.forEach(button=>{button.disabled=false;button.textContent=button.dataset.originalText||'Print A4';delete button.dataset.originalText});
+    controls.forEach(button=>{button.disabled=false;button.textContent=button.dataset.originalText||'Print';delete button.dataset.originalText});
   }
 }
 function bulkDuplicateKey(row){
