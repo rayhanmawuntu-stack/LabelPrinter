@@ -26,21 +26,37 @@ function fitText(root=document){
 }
 function renderPreview(){
   const rows=labels.length?labels:[blankLabel()];
-  $('page').innerHTML=sheetHTML(rows);
+  const page=$('page');
+  page.style.transform='none';
+  page.innerHTML=sheetHTML(rows);
   const l=LAYOUTS[layout];
   $('statLayout').textContent=l.label;
   $('statSize').textContent=`${l.w} × ${l.h} mm`;
   $('layoutCaption').textContent=`${l.label} layout`;
   $('pageCount').textContent=`${Math.max(1,Math.ceil(rows.length/l.n))} page${rows.length>l.n?'s':''}`;
-  requestAnimationFrame(()=>{fitText($('page'));fitPreview()});
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{fitText(page);fitPreview()}));
 }
 function fitPreview(){
-  const sheet=$('page')?.querySelector('.sheet'),stage=$('stage');
-  if(!sheet||!stage)return;
-  const scale=Math.min(.68,Math.max(.2,(stage.clientWidth-28)/sheet.offsetWidth));
-  $('page').style.transform=`scale(${scale})`;
-  $('viewport').style.width=sheet.offsetWidth*scale+'px';
-  $('viewport').style.height=sheet.offsetHeight*scale+'px';
+  const page=$('page'),viewport=$('viewport'),stage=$('stage'),sheet=page?.querySelector('.sheet');
+  if(!sheet||!stage||!viewport)return;
+  const naturalWidth=sheet.offsetWidth,naturalHeight=sheet.offsetHeight;
+  if(!naturalWidth||!naturalHeight)return;
+  const styles=getComputedStyle(stage);
+  const horizontalPadding=(parseFloat(styles.paddingLeft)||0)+(parseFloat(styles.paddingRight)||0);
+  const verticalPadding=(parseFloat(styles.paddingTop)||0)+(parseFloat(styles.paddingBottom)||0);
+  const availableWidth=Math.max(1,stage.clientWidth-horizontalPadding-10);
+  const availableHeight=Math.max(1,stage.clientHeight-verticalPadding-10);
+  const widthScale=availableWidth/naturalWidth;
+  const heightScale=availableHeight/naturalHeight;
+  const scale=Math.max(.12,Math.min(.72,widthScale,heightScale));
+  page.style.transformOrigin='top left';
+  page.style.transform=`scale(${scale})`;
+  viewport.style.width=`${Math.ceil(naturalWidth*scale)}px`;
+  viewport.style.height=`${Math.ceil(naturalHeight*scale)}px`;
+  viewport.style.margin='auto';
+  stage.scrollTop=0;
+  stage.scrollLeft=0;
+  stage.dataset.previewScale=scale.toFixed(3);
 }
 function renderLayouts(){
   $('layouts').innerHTML=Object.entries(LAYOUTS).map(([k,v])=>`<button class="layout ${k===layout?'active':''}" data-layout="${k}">${v.label}</button>`).join('');
