@@ -1,0 +1,52 @@
+/* Final print pagination fix: keep every A4 sheet on one physical page. */
+@page{size:297mm 210mm;margin:0}
+@media print{
+  html,body{
+    width:297mm!important;
+    height:auto!important;
+    min-width:0!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+    background:#fff!important;
+  }
+  .print-root{
+    display:block!important;
+    position:static!important;
+    width:297mm!important;
+    height:auto!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+  }
+  .print-root .sheet{
+    width:296mm!important;
+    height:208mm!important;
+    min-width:0!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:6mm!important;
+    gap:4mm!important;
+    box-sizing:border-box!important;
+    overflow:hidden!important;
+    break-inside:avoid-page!important;
+    page-break-inside:avoid!important;
+    break-before:auto!important;
+    page-break-before:auto!important;
+    break-after:auto!important;
+    page-break-after:auto!important;
+  }
+  .print-root .sheet.layout-2x3{
+    column-gap:2mm!important;
+    row-gap:4mm!important;
+  }
+  .print-root .sheet + .sheet{
+    break-before:page!important;
+    page-break-before:always!important;
+  }
+  .print-root .slot{
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+}
