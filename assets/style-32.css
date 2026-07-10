@@ -1,0 +1,117 @@
+/* Light/dark verification layer for every selectable color scheme. */
+html[data-palette]:not([data-palette="ksb"]){
+  --palette-dark-base:#171b21;
+  --palette-dark-raised:#1d232a;
+  --palette-dark-line:#303842;
+  --palette-dark-text:#eef2f5;
+  --palette-dark-muted:#9fa8b2;
+}
+
+/* Keep palette accents consistent across controls, status elements, and charts. */
+html[data-palette]:not([data-palette="ksb"]) .panel-chip,
+html[data-palette]:not([data-palette="ksb"]) .detail-count,
+html[data-palette]:not([data-palette="ksb"]) .badge{
+  background:var(--scheme-primary)!important;
+  color:var(--scheme-on-primary)!important;
+}
+html[data-palette]:not([data-palette="ksb"]) .line-area{fill:color-mix(in srgb,var(--scheme-primary) 24%,transparent)!important}
+html[data-palette]:not([data-palette="ksb"]) .interactive-line-chart stop:first-child{stop-color:var(--scheme-primary)!important}
+html[data-palette]:not([data-palette="ksb"]) .interactive-line-chart .line-point-halo{fill:color-mix(in srgb,var(--scheme-primary) 30%,transparent)!important}
+html[data-palette]:not([data-palette="ksb"]) .interactive-line-chart .line-hit:focus-visible{stroke:var(--scheme-primary)!important}
+html[data-palette]:not([data-palette="ksb"]) .palette-option[aria-pressed="true"]::after{
+  content:'✓';
+  position:absolute;
+  right:8px;
+  top:7px;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:var(--scheme-primary);
+  color:var(--scheme-on-primary);
+  font-size:10px;
+  font-weight:900;
+}
+html[data-palette]:not([data-palette="ksb"]) .palette-option[aria-pressed="true"] .palette-swatches{margin-right:22px}
+
+/* Dark-mode repair: palette accents remain, while surfaces and typography stay dark and readable. */
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) body{
+  background:radial-gradient(circle at 78% 4%,color-mix(in srgb,var(--scheme-primary) 12%,transparent),transparent 32rem),#0d1014!important;
+  color:var(--palette-dark-text)!important;
+}
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .hero,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .panel,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .modal-card,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .entry-card,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .metric:not(.dark):not(.blue):not(.lime){
+  background:var(--palette-dark-base)!important;
+  border-color:#2a313a!important;
+  color:var(--palette-dark-text)!important;
+}
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .page-head,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .editor,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .editor-panel .panel-head{
+  background:var(--palette-dark-base)!important;
+  border-color:#2a313a!important;
+  color:var(--palette-dark-text)!important;
+}
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .dash-metric,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .mini-rankings>div,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .recipient.active,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .history-row.active{
+  background:color-mix(in srgb,var(--scheme-primary) 16%,var(--palette-dark-base))!important;
+  border-color:color-mix(in srgb,var(--scheme-primary) 48%,var(--palette-dark-line))!important;
+  color:var(--palette-dark-text)!important;
+}
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .dash-metric span,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .dash-metric small,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .mini-rank em,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .recipient.active span,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .history-row.active small{
+  color:var(--palette-dark-muted)!important;
+}
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .dash-metric strong,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .mini-rank b,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .mini-rank strong,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .recipient.active b,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .history-row.active span>b{
+  color:var(--palette-dark-text)!important;
+}
+
+/* Accent KPI cards deliberately remain light, with guaranteed dark text. */
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .metric.blue,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .metric.lime{
+  color:#111315!important;
+}
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .metric.blue strong,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .metric.blue span,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .metric.blue small,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .metric.lime strong,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .metric.lime span,
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .metric.lime small{
+  color:#111315!important;
+}
+
+/* Settings chooser must remain legible for every palette in both themes. */
+html[data-theme="dark"] .palette-option:hover{background:#252c34!important}
+html[data-theme="dark"] .palette-copy small{color:#a4adb7!important}
+html[data-theme="dark"] .palette-swatches i{border-color:rgba(255,255,255,.18)!important}
+html[data-theme="dark"] .palette-option[aria-pressed="true"]{
+  background:color-mix(in srgb,var(--scheme-primary) 12%,#1d232a)!important;
+  border-color:var(--scheme-primary)!important;
+}
+
+/* Physical print surfaces are never affected by interface palettes. */
+html[data-palette] .sheet,
+html[data-palette] .physical,
+html[data-palette] .print-page,
+html[data-palette] .print-root{
+  background:#fff!important;
+  color:#000!important;
+  color-scheme:light!important;
+}
+
+@media(prefers-reduced-motion:reduce){
+  .palette-option{transition:none!important}
+}
