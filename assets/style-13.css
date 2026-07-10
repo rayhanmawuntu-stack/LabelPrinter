@@ -1,8 +1,8 @@
-/* Direct print action in the live preview footer. */
+/* Balanced actions in the live preview footer. */
 .preview-panel .preview-actions{
   display:grid!important;
-  grid-template-columns:minmax(0,.9fr) minmax(0,.9fr) minmax(0,1.35fr)!important;
-  gap:8px!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:10px!important;
   padding:0 14px 14px!important;
   position:relative!important;
   z-index:6!important;
@@ -11,7 +11,16 @@
 .preview-panel .preview-actions .btn{
   width:100%!important;
   min-width:0!important;
+  height:48px!important;
+  min-height:48px!important;
   margin:0!important;
+  padding:0 12px!important;
+  border-radius:14px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  line-height:1.15!important;
 }
 #printDirect{
   background:#111316!important;
@@ -20,10 +29,12 @@
 }
 @media(max-width:760px){
   .preview-panel .preview-actions{
-    grid-template-columns:1fr 1fr!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
     padding:0 10px 10px!important;
   }
-  .preview-panel .preview-actions #generate{
-    grid-column:1/-1!important;
+  .preview-panel .preview-actions .btn{
+    height:46px!important;
+    min-height:46px!important;
   }
 }
