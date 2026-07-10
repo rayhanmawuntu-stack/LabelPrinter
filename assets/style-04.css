@@ -20,14 +20,20 @@
 .modal-card p{font-size:10px;line-height:1.55;color:var(--muted)}
 .modal-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:12px}
 .sheet{--cols:3;--rows:2;--cw:91mm;--ch:62mm;--scale:1;--scale-x:var(--scale);--scale-y:var(--scale);position:relative;width:297mm;height:210mm;background:#fff;padding:8mm;display:grid;grid-template-columns:repeat(var(--cols),var(--cw));grid-template-rows:repeat(var(--rows),var(--ch));gap:4mm;align-content:start;overflow:hidden;box-shadow:0 20px 55px rgba(0,0,0,.18)}
+.sheet.layout-2x3{column-gap:2mm}
 .slot{position:relative;width:var(--cw);height:var(--ch);overflow:hidden}
 .physical{position:absolute;left:0;top:0;width:91mm;height:62mm;transform:scale(var(--scale-x),var(--scale-y));transform-origin:top left;border:.65mm solid #000;background:#fff;color:#000;font-family:Arial,sans-serif;overflow:hidden;--fit:1}
+.sheet.layout-2x3 .physical{width:100%;height:100%;transform:none}
 .physical:after{content:"";position:absolute;inset:1.3mm;border:.35mm solid #000}
 .label-logo{position:absolute;right:5mm;top:4.5mm;width:23mm;height:7.4mm;object-fit:contain;filter:grayscale(1) brightness(.62) contrast(1.15)}
 .copy{position:absolute;z-index:2;left:6.6mm;right:6.6mm;top:6.3mm;height:39mm;overflow:hidden}
+.sheet.layout-2x3 .copy{left:7.5mm;right:7.5mm}
 .field-label{font-size:calc(7.5pt * var(--fit));margin:0}
 .recipient-name{font-size:calc(9.7pt * var(--fit));font-weight:800;line-height:1.08;text-transform:uppercase;margin:1mm 23mm 0 0;overflow-wrap:anywhere}
+.sheet.layout-2x3 .recipient-name{margin-right:28mm;letter-spacing:0}
 .attn{font-size:calc(8.2pt * var(--fit));font-weight:800;font-style:italic;text-transform:uppercase;margin-top:2.8mm;overflow-wrap:anywhere}
 .address{font-size:calc(8.2pt * var(--fit));font-weight:800;line-height:1.34;text-transform:uppercase;margin-top:2.8mm;overflow-wrap:anywhere}
 .divider{position:absolute;left:6.6mm;right:6.6mm;top:46.2mm;height:.4mm;background:#000}
+.sheet.layout-2x3 .divider{left:7.5mm;right:7.5mm}
 .sender{position:absolute;left:6.6mm;right:6.6mm;top:48.1mm;overflow:hidden}
+.sheet.layout-2x3 .sender{left:7.5mm;right:7.5mm}
