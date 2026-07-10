@@ -30,9 +30,11 @@ async function printNow(){
   window.print();
 }
 function importRows(){
-  const parsed=$('paste').value.split(/\r?\n/).filter(Boolean).map(line=>{const c=line.split('\t'),raw=(c[1]||'').trim(),m=raw.match(/^(PT|CV|YAYASAN)\.?\s+(.+)$/i),f=(c[5]||'').trim(),p=f.match(/\(([^()]*)\)\s*$/);return{prefix:m?m[1].toUpperCase():'',company:m?m[2]:raw,attn:(c[6]||'').trim(),phone:p?p[1].trim():'',address:p?f.slice(0,p.index).trim():f,sender:'KSB INDONESIA'}}).map(normalizeLabel).filter(r=>r.company&&!/^(penerima|recipient|company)$/i.test(r.company));
+  const parsed=$('paste').value.split(/\r?\n/).filter(Boolean).map(line=>{const c=line.split('\t'),raw=(c[1]||'').trim(),m=raw.match(/^(PT|CV|YAYASAN)\.?\s+(.+)$/i),f=(c[5]||'').trim(),p=f.match(/\(([^()]*)\)\s*$/);return{prefix:m?m[1].toUpperCase():'',company:m?m[2]:raw,attn:(c[6]||'').trim(),phone:p?p[1].trim():'',address:p?f.slice(0,p.index).trim():f,sender:'KSB INDONESIA'}}).map(normalizeLabel).map(applyRememberedPrefix).filter(r=>r.company&&!/^(penerima|recipient|company)$/i.test(r.company));
   if(!parsed.length)return toast('No valid rows detected');
   const rows=parsed.slice(0,MAX_LABELS);
+  rows.forEach(row=>rememberCompanyPrefix(row,false));
+  save(COMPANY_PREFIX_KEY,companyPrefixes);
   labels=rows;
   selected=0;
   save('ksb-labels',labels);
