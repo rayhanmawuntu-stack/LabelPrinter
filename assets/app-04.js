@@ -57,5 +57,15 @@ function renderDetail(){
   const loadButton=detail.querySelector('#loadBatch');
   const deleteButton=detail.querySelector('#deleteBatch');
   loadButton.onclick=()=>loadHistoryBatch(b);
-  deleteButton.onclick=async()=>{history=history.filter(x=>x.id!==b.id);save('ksb-history',history);if(connected)post('deleteBatch',{id:b.id}).catch(()=>{});historySelected=null;refreshDataSurfaces()};
+  deleteButton.onclick=async()=>{
+    const deleted=deletedBatchIds();
+    deleted.add(b.id);
+    save(DELETED_BATCHES_KEY,[...deleted]);
+    history=history.filter(x=>x.id!==b.id);
+    save('ksb-history',history);
+    historySelected=null;
+    refreshDataSurfaces();
+    if(connected)await flushDeletedBatches();
+    toast('Batch deleted');
+  };
 }
