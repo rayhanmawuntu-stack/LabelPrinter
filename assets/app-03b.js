@@ -10,11 +10,11 @@ function previewEmptySlotHTML(index){
   return `<div class="slot preview-empty-slot" aria-hidden="true"><span>${String(index+1).padStart(2,'0')}</span></div>`;
 }
 function sheetHTML(rows=labels,previewMode=false){
-  const l=LAYOUTS[layout],chunk=(rows.length?rows:[blankLabel()]).slice(0,l.n),slots=chunk.map(labelHTML);
+  const l=LAYOUTS[layout],chunk=(rows.length?rows:[blankLabel()]).slice(0,l.n),slots=chunk.map(labelHTML),scale=l.s||1,scaleX=l.sx||scale,scaleY=l.sy||scale;
   if(previewMode){
     while(slots.length<l.n)slots.push(previewEmptySlotHTML(slots.length));
   }
-  return `<div class="sheet ${previewMode?'preview-sheet':''}" style="--cols:${l.c};--rows:${l.r};--cw:${l.w}mm;--ch:${l.h}mm;--scale:${l.s}">${slots.join('')}</div>`;
+  return `<div class="sheet ${previewMode?'preview-sheet':''}" style="--cols:${l.c};--rows:${l.r};--cw:${l.w}mm;--ch:${l.h}mm;--scale:${scale};--scale-x:${scaleX};--scale-y:${scaleY}">${slots.join('')}</div>`;
 }
 function pagesHTML(rows=labels){
   const l=LAYOUTS[layout],printRows=rows.length?rows:[blankLabel()];
