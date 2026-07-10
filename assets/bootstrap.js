@@ -1,6 +1,6 @@
 (async()=>{
   try{
-    const version='20260710-preview-panel-fix-11';
+    const version='20260710-direct-print-12';
     let initialTheme='light';
     try{
       const savedTheme=localStorage.getItem('ksb-theme');
