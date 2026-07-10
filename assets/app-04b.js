@@ -17,7 +17,7 @@ function lineChartHTML(buckets,key='chart'){
   const area=points.length?`${path} L ${points[points.length-1].x.toFixed(1)} ${(top+innerH).toFixed(1)} L ${points[0].x.toFixed(1)} ${(top+innerH).toFixed(1)} Z`:'';
   const gradient=`lineFill-${key.replace(/[^a-z0-9]/gi,'')}`;
   const grids=[0,.25,.5,.75,1].map(v=>{const y=top+innerH*v,label=Math.round(max*(1-v));return `<line class="line-grid" x1="${left}" y1="${y}" x2="${width-right}" y2="${y}"/><text class="line-label y-label" x="${left-8}" y="${y+4}" text-anchor="end">${label}</text>`}).join('');
-  const labels=points.map((p,i)=>`<text class="line-label" x="${p.x}" y="${height-12}" text-anchor="middle">${esc(p.label)}</text><circle class="line-point" cx="${p.x}" cy="${p.y}" r="4"><title>${esc(p.label)}: ${p.value}</title></circle>`).join('');
+  const labels=points.map(p=>`<text class="line-label" x="${p.x}" y="${height-12}" text-anchor="middle">${esc(p.label)}</text><circle class="line-point" cx="${p.x}" cy="${p.y}" r="4"><title>${esc(p.label)}: ${p.value}</title></circle>`).join('');
   return `<div class="line-chart"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Labels generated over time"><defs><linearGradient id="${gradient}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#dfff3f" stop-opacity=".65"/><stop offset="100%" stop-color="#dfff3f" stop-opacity="0"/></linearGradient></defs>${grids}<path class="line-area" d="${area}" fill="url(#${gradient})"/><path class="line-path" d="${path}"/>${labels}</svg></div>`;
 }
 function rankingHTML(entries,type='simple',limit=7){
@@ -31,6 +31,55 @@ function collectAnalytics(data){
   data.forEach(b=>{const count=(b.labels||[]).length,user=String(b.user||b.nickname||'Unknown user').trim()||'Unknown user';if(!users[user])users[user]={labels:0,batches:0};users[user].labels+=count;users[user].batches+=1;(b.labels||[]).forEach(r=>{const name=full(r);if(name)companies[name]=(companies[name]||0)+1})});
   return{companies,users,companyEntries:Object.entries(companies).sort((a,b)=>b[1]-a[1]),userEntries:Object.entries(users).sort((a,b)=>b[1].labels-a[1].labels||b[1].batches-a[1].batches)};
 }
+function monthlyReportYears(){
+  const currentYear=new Date().getFullYear(),years=new Set([currentYear]);
+  history.forEach(batch=>{const date=new Date(batch.timestamp);if(!Number.isNaN(date.getTime()))years.add(date.getFullYear())});
+  return[...years].sort((a,b)=>b-a);
+}
+function ensureMonthlyYear(){
+  const select=$('monthlyYear');
+  if(!select)return new Date().getFullYear();
+  const years=monthlyReportYears(),previous=Number(select.value)||new Date().getFullYear(),signature=years.join('|');
+  if(select.dataset.years!==signature){
+    select.innerHTML=years.map(year=>`<option value="${year}">${year}</option>`).join('');
+    select.dataset.years=signature;
+    select.value=String(years.includes(previous)?previous:years[0]);
+  }
+  select.onchange=renderMonthlyReport;
+  return Number(select.value)||years[0];
+}
+function monthlyReportData(year){
+  const months=Array.from({length:12},(_,month)=>({month,labels:0,batches:0,sheets:0,recipients:new Set(),users:new Map()}));
+  const recipients=new Set();
+  history.forEach(batch=>{
+    const date=new Date(batch.timestamp);
+    if(Number.isNaN(date.getTime())||date.getFullYear()!==year)return;
+    const item=months[date.getMonth()],rows=Array.isArray(batch.labels)?batch.labels:[],count=rows.length,capacity=LAYOUTS[batch.layout]?.n||6,user=clean(batch.user||batch.nickname)||'Unknown user';
+    item.labels+=count;
+    item.batches+=1;
+    item.sheets+=count?Math.ceil(count/capacity):0;
+    item.users.set(user,(item.users.get(user)||0)+count);
+    rows.forEach(row=>{const recipient=full(row);if(recipient){item.recipients.add(recipient);recipients.add(recipient)}});
+  });
+  const rows=months.map(item=>{
+    const top=[...item.users.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
+    return{...item,recipientCount:item.recipients.size,topUser:top?.[0]||'—',topUserLabels:top?.[1]||0};
+  });
+  return{rows,totals:{labels:rows.reduce((sum,row)=>sum+row.labels,0),batches:rows.reduce((sum,row)=>sum+row.batches,0),sheets:rows.reduce((sum,row)=>sum+row.sheets,0),recipients:recipients.size}};
+}
+function renderMonthlyReport(){
+  const body=$('monthlyReportBody'),foot=$('monthlyReportFoot'),summary=$('monthlyReportSummary');
+  if(!body||!foot||!summary)return;
+  const year=ensureMonthlyYear(),report=monthlyReportData(year),now=new Date();
+  summary.innerHTML=[['Labels',report.totals.labels],['Batches',report.totals.batches],['A4 sheets',report.totals.sheets],['Unique recipients',report.totals.recipients]].map(([label,value])=>`<article class="monthly-summary-card"><span>${label}</span><strong>${Number(value).toLocaleString('en-GB')}</strong><small>${year} total</small></article>`).join('');
+  body.innerHTML=report.rows.map(row=>{
+    const current=year===now.getFullYear()&&row.month===now.getMonth();
+    const month=new Date(year,row.month,1).toLocaleDateString('en-GB',{month:'long'});
+    const topUser=row.topUserLabels?`${esc(row.topUser)}<small>${row.topUserLabels} label${row.topUserLabels===1?'':'s'}</small>`:'—';
+    return `<tr class="${current?'current-month':''}"><td><b>${month}</b><small>${year}</small></td><td>${row.labels.toLocaleString('en-GB')}</td><td>${row.batches.toLocaleString('en-GB')}</td><td>${row.sheets.toLocaleString('en-GB')}</td><td>${row.recipientCount.toLocaleString('en-GB')}</td><td class="monthly-top-user">${topUser}</td></tr>`;
+  }).join('');
+  foot.innerHTML=`<tr><th>Total</th><th>${report.totals.labels.toLocaleString('en-GB')}</th><th>${report.totals.batches.toLocaleString('en-GB')}</th><th>${report.totals.sheets.toLocaleString('en-GB')}</th><th>${report.totals.recipients.toLocaleString('en-GB')}</th><th>—</th></tr>`;
+}
 function renderDashboardAnalytics(){
   const root=$('dashboardAnalytics');if(!root)return;
   const cut=Date.now()-7*86400000,data=history.filter(b=>new Date(b.timestamp).getTime()>=cut),total=data.reduce((s,b)=>s+(b.labels?.length||0),0),sheets=data.reduce((s,b)=>s+Math.max(1,Math.ceil((b.labels?.length||0)/(LAYOUTS[b.layout]?.n||6))),0),collected=collectAnalytics(data);
@@ -40,10 +89,11 @@ function renderDashboardAnalytics(){
   $('dashboardTopRecipients').innerHTML=miniRankingHTML(collected.companyEntries);
 }
 function renderAnalytics(){
-  const days=+$('range').value,cut=days?Date.now()-days*86400000:0,data=history.filter(b=>new Date(b.timestamp).getTime()>=cut),total=data.reduce((s,b)=>s+(b.labels?.length||0),0),avg=data.length?(total/data.length).toFixed(1):0,collected=collectAnalytics(data);
+  const range=$('range'),days=Number(range?.value||30),cut=days?Date.now()-days*86400000:0,data=history.filter(b=>new Date(b.timestamp).getTime()>=cut),total=data.reduce((s,b)=>s+(b.labels?.length||0),0),avg=data.length?(total/data.length).toFixed(1):0,collected=collectAnalytics(data);
   $('analyticsKpis').innerHTML=[['Generated labels',total,'dark'],['Batches',data.length,'blue'],['Average / batch',avg,'lime'],['Unique recipients',Object.keys(collected.companies).length,'']].map(x=>`<article class="metric ${x[2]}"><span>${x[0]}</span><strong>${x[1]}</strong><small>Selected period</small></article>`).join('');
   $('bars').innerHTML=lineChartHTML(analyticsBuckets(data,days),'analytics');
   $('ranking').innerHTML=rankingHTML(collected.companyEntries)||'<div class="empty">No recipient data yet.</div>';
   $('userRanking').innerHTML=rankingHTML(collected.userEntries,'users')||'<div class="empty">No user data yet.</div>';
+  renderMonthlyReport();
   renderDashboardAnalytics();
 }
