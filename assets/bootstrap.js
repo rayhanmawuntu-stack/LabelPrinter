@@ -1,6 +1,6 @@
 (async()=>{
   try{
-    const version='20260710-real-ksb-yellow-favicon-20';
+    const version='20260710-black-real-ksb-yellow-favicon-21';
     let initialTheme='light';
     try{
       const savedTheme=localStorage.getItem('ksb-theme');
