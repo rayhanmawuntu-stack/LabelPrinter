@@ -1,0 +1,26 @@
+/* Final validation layer for settings, palettes, and accessibility. */
+.appearance-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.appearance-option{min-height:54px;padding:9px 12px;border:1px solid var(--mock-line,var(--line,#e5e7eb));border-radius:15px;background:#fff;display:flex;align-items:center;justify-content:center;gap:8px;font-size:10px;font-weight:850;transition:border-color .16s ease,background .16s ease,box-shadow .16s ease,transform .16s ease}
+.appearance-option span{font-size:17px;line-height:1}
+.appearance-option:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(20,28,40,.08)}
+.appearance-option[aria-pressed="true"]{border-color:var(--scheme-primary);background:color-mix(in srgb,var(--scheme-primary) 14%,white);box-shadow:0 0 0 3px color-mix(in srgb,var(--scheme-primary) 14%,transparent)}
+.appearance-option:focus-visible,.palette-option:focus-visible{outline:3px solid color-mix(in srgb,var(--scheme-primary) 45%,transparent);outline-offset:2px}
+
+/* Selected state is visible for KSB and every custom palette. */
+.palette-option[aria-pressed="true"]::after{content:'✓';position:absolute;right:8px;top:7px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:var(--scheme-primary);color:var(--scheme-on-primary);font-size:10px;font-weight:900}
+.palette-option[aria-pressed="true"] .palette-swatches{margin-right:22px}
+
+html[data-theme="dark"] .appearance-option{background:#1d232a;border-color:#303842;color:#eef2f5}
+html[data-theme="dark"] .appearance-option:hover{background:#252c34}
+html[data-theme="dark"] .appearance-option[aria-pressed="true"]{background:color-mix(in srgb,var(--scheme-primary) 15%,#1d232a);border-color:var(--scheme-primary);color:#eef2f5}
+
+/* Sensible fallback for browsers without color-mix support. */
+@supports not (color:color-mix(in srgb,#000 50%,#fff)){
+  .appearance-option[aria-pressed="true"],.palette-option[aria-pressed="true"]{border-color:var(--scheme-primary);box-shadow:0 0 0 3px rgba(127,127,127,.16)}
+  html[data-theme="dark"] .appearance-option[aria-pressed="true"],html[data-theme="dark"] .palette-option[aria-pressed="true"]{background:#252c34}
+  html[data-palette]:not([data-palette="ksb"]) .recipient.active,
+  html[data-palette]:not([data-palette="ksb"]) .history-row.active{border-color:var(--scheme-primary)!important}
+}
+
+@media(max-width:560px){.appearance-option{min-height:50px}}
+@media(prefers-reduced-motion:reduce){.appearance-option{transition:none!important}}
