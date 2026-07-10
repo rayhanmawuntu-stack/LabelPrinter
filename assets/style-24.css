@@ -1,0 +1,15 @@
+/* Theme-aware KSB application logos. Printed label logos remain unchanged. */
+.sidebar .brand img,
+.entry .entry-logo img{
+  filter:grayscale(1) brightness(.14) contrast(1.2)!important;
+  transition:filter .2s ease,opacity .2s ease!important;
+  opacity:1!important;
+}
+html[data-theme="dark"] .sidebar .brand img,
+html[data-theme="dark"] .entry .entry-logo img{
+  filter:grayscale(1) brightness(0) invert(1) contrast(1.1)!important;
+}
+@media (prefers-reduced-motion:reduce){
+  .sidebar .brand img,
+  .entry .entry-logo img{transition:none!important}
+}
