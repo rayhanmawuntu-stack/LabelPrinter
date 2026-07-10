@@ -65,10 +65,17 @@ async function printNow(){
     controls.forEach(button=>{button.disabled=false;button.textContent=button.dataset.originalText||'Print A4';delete button.dataset.originalText});
   }
 }
+function bulkDuplicateKey(row){
+  const n=normalizeLabel(row);
+  return[n.prefix,n.company,n.attn,n.phone,n.address,n.sender].map(value=>clean(value).toUpperCase().replace(/\s+/g,' ')).join('|');
+}
 function importRows(){
   const parsed=$('paste').value.split(/\r?\n/).filter(Boolean).map(line=>{const c=line.split('\t'),raw=(c[1]||'').trim(),m=raw.match(/^(PT|CV|YAYASAN)\.?\s+(.+)$/i),f=(c[5]||'').trim(),p=f.match(/\(([^()]*)\)\s*$/);return{prefix:m?m[1].toUpperCase():'',company:m?m[2]:raw,attn:(c[6]||'').trim(),phone:p?p[1].trim():'',address:p?f.slice(0,p.index).trim():f,sender:'KSB INDONESIA'}}).map(normalizeLabel).map(applyRememberedPrefix).filter(r=>r.company&&!/^(penerima|recipient|company)$/i.test(r.company));
   if(!parsed.length)return toast('No valid rows detected');
-  const rows=parsed.slice(0,MAX_LABELS);
+  const seen=new Set();
+  const unique=parsed.filter(row=>{const key=bulkDuplicateKey(row);if(seen.has(key))return false;seen.add(key);return true});
+  const duplicateCount=parsed.length-unique.length;
+  const rows=unique.slice(0,MAX_LABELS);
   rows.forEach(row=>rememberCompanyPrefix(row,false));
   save(COMPANY_PREFIX_KEY,companyPrefixes);
   labels=rows;
@@ -76,7 +83,10 @@ function importRows(){
   save('ksb-labels',labels);
   closeModals();
   renderAll();
-  toast(parsed.length>MAX_LABELS?`Imported first ${MAX_LABELS} of ${parsed.length} labels`:`${rows.length} labels imported`);
+  const limited=unique.length>MAX_LABELS;
+  let message=limited?`Imported first ${MAX_LABELS} of ${unique.length} unique labels`:`${rows.length} labels imported`;
+  if(duplicateCount)message+=` · ${duplicateCount} duplicate${duplicateCount===1?'':'s'} removed`;
+  toast(message);
 }
 function settings(){const e=$('endpoint');e.value=endpoint();$('connectionResult').textContent=connected?'Connected to Google Sheets.':(window.__lastSheetsError?`Last error: ${window.__lastSheetsError}`:'Connection not tested.');openModal('settingsModal')}
 async function testConnection(){
@@ -88,6 +98,7 @@ document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>switchView(b.d
 $('avatar').onclick=()=>{$('entry').classList.remove('hidden');renderUsers()};
 $('settings').onclick=$('status').onclick=settings;
 $('addRecipient').onclick=addLabel;
+$('clearAll').onclick=clearAllLabels;
 $('fastInput').onclick=()=>openModal('inputModal');
 $('importRows').onclick=importRows;
 $('review').onclick=review;
