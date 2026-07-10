@@ -1,0 +1,49 @@
+/* Prevent the live-preview card from overflowing into the dashboard sections below. */
+.dashboard-grid{
+  align-items:start!important;
+  grid-auto-rows:auto!important;
+}
+.dashboard-grid>.panel{
+  height:auto!important;
+  min-height:590px!important;
+}
+.preview-panel{
+  min-height:660px!important;
+  overflow:hidden!important;
+  isolation:isolate;
+}
+.preview-panel .panel-head,
+.preview-panel .layout-picker,
+.preview-panel .stage,
+.preview-panel .caption,
+.preview-panel .preview-actions{
+  position:relative!important;
+  flex-shrink:0!important;
+}
+.preview-panel .stage{
+  height:clamp(350px,30vw,430px)!important;
+}
+.preview-panel .preview-actions{
+  margin-top:0!important;
+  background:#fff!important;
+}
+.dashboard-lower{
+  position:relative!important;
+  z-index:1!important;
+  clear:both!important;
+  margin-top:16px!important;
+}
+@media(max-width:1250px){
+  .preview-panel{min-height:650px!important}
+  .preview-panel .stage{height:430px!important}
+}
+@media(max-width:850px){
+  .dashboard-grid>.panel{min-height:0!important}
+  .preview-panel{min-height:620px!important}
+  .preview-panel .stage{height:410px!important}
+}
+@media(max-width:760px){
+  .preview-panel{min-height:500px!important}
+  .preview-panel .stage{height:310px!important}
+  .dashboard-lower{margin-top:12px!important}
+}
