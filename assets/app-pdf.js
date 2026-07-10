@@ -1,26 +1,32 @@
 (function(){
   const PAGE_W=297,PAGE_H=210,PT_TO_MM=25.4/72;
+  const imageCache=new Map();
   const clean=v=>String(v??'').trim();
   const upper=v=>clean(v).toUpperCase();
   const fullName=r=>[clean(r?.prefix),clean(r?.company)].filter(Boolean).join(' ').trim().toUpperCase();
   const lineHeight=(fontSize,factor=1.12)=>fontSize*PT_TO_MM*factor;
 
-  async function loadImageData(url){
-    if(!url)return null;
-    try{
-      const response=await fetch(url,{cache:'force-cache',mode:'cors'});
-      if(!response.ok)throw new Error('Logo request failed');
-      const blob=await response.blob();
-      return await new Promise((resolve,reject)=>{
-        const reader=new FileReader();
-        reader.onload=()=>resolve(reader.result);
-        reader.onerror=reject;
-        reader.readAsDataURL(blob);
-      });
-    }catch(error){
-      console.warn('PDF logo fallback used:',error);
-      return null;
-    }
+  function loadImageData(url){
+    if(!url)return Promise.resolve(null);
+    if(imageCache.has(url))return imageCache.get(url);
+    const request=(async()=>{
+      try{
+        const response=await fetch(url,{cache:'force-cache',mode:'cors'});
+        if(!response.ok)throw new Error('Logo request failed');
+        const blob=await response.blob();
+        return await new Promise((resolve,reject)=>{
+          const reader=new FileReader();
+          reader.onload=()=>resolve(reader.result);
+          reader.onerror=reject;
+          reader.readAsDataURL(blob);
+        });
+      }catch(error){
+        console.warn('PDF logo fallback used:',error);
+        return null;
+      }
+    })();
+    imageCache.set(url,request);
+    return request;
   }
 
   function measureBlock(doc,row,w,h,scale,leftPad,rightPad){
