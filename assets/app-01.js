@@ -1,5 +1,5 @@
 const CONFIG={endpoint:'https://script.google.com/macros/s/AKfycbwVOHKp4BIbj0rbMNV-y543i7L-175E8CbjFlz2f5kA6RYqpt9aj2crriQ-unsW9RO9/exec',logo:'https://file.garden/ad-wGPVIV3ilAD_L/WORK%20PROJECT/LABEL%20MAKER/KSB_SVG.svg.png'};
-const APP_REVISION='2026-07-10-2x3-wide-text-fix';
+const APP_REVISION='2026-07-10-company-prefix-memory';
 const ENDPOINT_REVISION='2026-07-08-03';
 const LEGACY_ENDPOINTS=['https://script.google.com/macros/s/AKfycbwohEPF9QkHyX7FO2VpnFtzHwbx3kZawul3uZXHNtqk4QbHlMYQkp_J78pV46DjOzFd/exec'];
 const LEGACY_SAMPLE_COMPANIES=new Set(['MANDARA PERMAI','MULTI SARANA MARITIM','SAIPEM INDONESIA']);
@@ -16,13 +16,21 @@ const saveTimers={};
 function saveSoon(k,v,delay=180){clearTimeout(saveTimers[k]);saveTimers[k]=setTimeout(()=>save(k,v),delay)}
 function debounce(fn,delay=120){let t;return(...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),delay)}}
 function blankLabel(){return{prefix:'',company:'',attn:'',phone:'',address:'',sender:'KSB INDONESIA'}}
-function normalizeLabel(r={}){return{prefix:clean(r.prefix),company:clean(r.company),attn:clean(r.attn),phone:clean(r.phone),address:clean(r.address),sender:clean(r.sender)||'KSB INDONESIA'}}
+function normalizeLabel(r={}){return{prefix:clean(r.prefix).toUpperCase(),company:clean(r.company),attn:clean(r.attn),phone:clean(r.phone),address:clean(r.address),sender:clean(r.sender)||'KSB INDONESIA'}}
 function isLegacySample(r){return LEGACY_SAMPLE_COMPANIES.has(clean(r?.company).toUpperCase())}
 function hasLabelContent(r){return !![r?.company,r?.attn,r?.phone,r?.address].some(v=>clean(v))}
 function usableLabels(rows=labels){return(Array.isArray(rows)?rows:[]).map(normalizeLabel).filter(r=>hasLabelContent(r)&&!isLegacySample(r))}
 function startupLabels(){const rows=Array.isArray(load('ksb-labels',[]))?load('ksb-labels',[]):[];const filtered=rows.map(normalizeLabel).filter(r=>!isLegacySample(r));if(filtered.length!==rows.length)save('ksb-labels',filtered);return filtered}
 function startupHistory(){const rows=Array.isArray(load('ksb-history',[]))?load('ksb-history',[]):[];const filtered=rows.map(b=>({...b,labels:usableLabels(b?.labels||[])})).filter(b=>b?.id&&b.labels.length).slice(0,1000);if(filtered.length!==rows.length)save('ksb-history',filtered);return filtered}
+const COMPANY_PREFIX_KEY='ksb-company-prefixes';
+let companyPrefixes=load(COMPANY_PREFIX_KEY,{});
+function companyKey(value){return clean(value).replace(/^(PT|CV|YAYASAN)\.?\s+/i,'').toUpperCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9]+/g,' ').trim()}
+function rememberCompanyPrefix(row,persist=true){const r=normalizeLabel(row||{}),key=companyKey(r.company);if(!key||!r.prefix)return false;if(companyPrefixes[key]===r.prefix)return false;companyPrefixes[key]=r.prefix;if(persist)save(COMPANY_PREFIX_KEY,companyPrefixes);return true}
+function rebuildCompanyPrefixes(){const next={...companyPrefixes};[...history].reverse().forEach(batch=>(batch?.labels||[]).forEach(row=>{const r=normalizeLabel(row),key=companyKey(r.company);if(key&&r.prefix)next[key]=r.prefix}));labels.forEach(row=>{const r=normalizeLabel(row),key=companyKey(r.company);if(key&&r.prefix)next[key]=r.prefix});companyPrefixes=next;save(COMPANY_PREFIX_KEY,companyPrefixes)}
+function prefixFromHistory(company){const key=companyKey(company);if(!key)return'';if(companyPrefixes[key])return companyPrefixes[key];for(const batch of history){for(const row of batch?.labels||[]){const r=normalizeLabel(row);if(companyKey(r.company)===key&&r.prefix){companyPrefixes[key]=r.prefix;save(COMPANY_PREFIX_KEY,companyPrefixes);return r.prefix}}}return''}
+function applyRememberedPrefix(row){const r=normalizeLabel(row);if(!r.prefix&&r.company)r.prefix=prefixFromHistory(r.company);return r}
 let users=load('ksb-users',[{name:'Rayhan Ardhana',nickname:'Rayhan'}]),currentUser=null,labels=startupLabels(),selected=0,layout=localStorage.getItem('ksb-layout')||'3x2',history=startupHistory(),active='create',connected=false,historySelected=null,cb=0,syncInFlight=false;
+rebuildCompanyPrefixes();
 function initials(n){return clean(n||'U').split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase()}
 function full(r){return [r?.prefix,r?.company].filter(Boolean).join(' ').trim()}
 function toast(m){const t=$('toast');if(!t)return;const msg=String(m||'');t.textContent=msg.length>140?msg.slice(0,137)+'…':msg;t.style.opacity=1;t.style.transform='translate(-50%,0)';clearTimeout(window.tt);window.tt=setTimeout(()=>{t.style.opacity=0;t.style.transform='translate(-50%,20px)'},2600)}
