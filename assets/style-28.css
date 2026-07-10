@@ -1,0 +1,25 @@
+/* Interactive hover and keyboard details for Analytics line charts. */
+.interactive-line-chart{position:relative}
+.interactive-line-chart svg{display:block;width:100%;height:auto;overflow:visible}
+.interactive-line-chart .line-hit{fill:transparent;cursor:crosshair;outline:none;touch-action:manipulation}
+.interactive-line-chart .line-guide{stroke:rgba(17,19,21,.34);stroke-width:1;stroke-dasharray:4 5;opacity:0;pointer-events:none;transition:opacity .14s ease}
+.interactive-line-chart .line-point-halo{fill:rgba(223,255,63,.32);opacity:0;pointer-events:none;transition:opacity .14s ease}
+.interactive-line-chart .line-point-interactive{pointer-events:none;transition:r .14s ease,stroke-width .14s ease}
+.interactive-line-chart .line-tooltip{opacity:0;pointer-events:none;transition:opacity .14s ease}
+.interactive-line-chart .line-tooltip-bg{fill:#111315;stroke:rgba(255,255,255,.13);stroke-width:1;filter:drop-shadow(0 8px 14px rgba(0,0,0,.22))}
+.interactive-line-chart .line-tooltip-label{fill:#aeb6bf;font:700 10px Arial,sans-serif}
+.interactive-line-chart .line-tooltip-value{fill:#dfff3f;font:900 14px Arial,sans-serif}
+.interactive-line-chart .line-hover:hover .line-guide,
+.interactive-line-chart .line-hover:hover .line-point-halo,
+.interactive-line-chart .line-hover:hover .line-tooltip,
+.interactive-line-chart .line-hover:focus-within .line-guide,
+.interactive-line-chart .line-hover:focus-within .line-point-halo,
+.interactive-line-chart .line-hover:focus-within .line-tooltip{opacity:1}
+.interactive-line-chart .line-hover:hover .line-point-interactive,
+.interactive-line-chart .line-hover:focus-within .line-point-interactive{r:5.5;stroke:#111315;stroke-width:2}
+.interactive-line-chart .line-hit:focus-visible{stroke:#dfff3f;stroke-width:1;stroke-dasharray:3 4}
+html[data-theme="dark"] .interactive-line-chart .line-guide{stroke:rgba(238,242,245,.4)}
+html[data-theme="dark"] .interactive-line-chart .line-point-interactive{stroke:#171b21}
+html[data-theme="dark"] .interactive-line-chart .line-tooltip-bg{fill:#080a0d;stroke:#343c46}
+@media(hover:none){.interactive-line-chart .line-hit{cursor:pointer}}
+@media(prefers-reduced-motion:reduce){.interactive-line-chart .line-guide,.interactive-line-chart .line-point-halo,.interactive-line-chart .line-point-interactive,.interactive-line-chart .line-tooltip{transition:none}}
