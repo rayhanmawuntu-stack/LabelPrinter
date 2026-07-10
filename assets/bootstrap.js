@@ -1,6 +1,6 @@
 (async()=>{
   try{
-    const version='20260710-clear-batch-dedupe-06';
+    const version='20260710-add-recipient-fix-07';
     for(const href of ['assets/style-03b.css','assets/style-05b.css','assets/style-06.css','assets/style-07.css','assets/style-08.css','assets/style-09.css','assets/style-10.css','assets/style-11.css','assets/style-12.css','assets/style-13.css','assets/style-14.css','assets/style-15.css','assets/style-16.css','assets/style-17.css','assets/style-18.css']){const link=document.createElement('link');link.rel='stylesheet';link.href=`${href}?v=${version}`;document.head.appendChild(link)}
     const files=['partials/body-01.html','partials/body-02.html','partials/body-03.html','partials/body-04.html'];
     const html=(await Promise.all(files.map(async path=>{const r=await fetch(`${path}?v=${version}`,{cache:'no-store'});if(!r.ok)throw new Error(`Failed to load ${path}`);return r.text()}))).join('');
