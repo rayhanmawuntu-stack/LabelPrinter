@@ -152,6 +152,7 @@
     }
 
     const fileName=`${normalizedFileName(options.filename)}.pdf`;
+    if(options.output==='blob')return{fileName,pageCount,blob:doc.output('blob')};
     doc.save(fileName);
     return{fileName,pageCount};
   }
