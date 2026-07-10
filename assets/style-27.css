@@ -1,0 +1,102 @@
+/* Compact generated-batch history view. */
+#historyView .history-grid{
+  grid-template-columns:minmax(420px,1.08fr) minmax(360px,.92fr)!important;
+  gap:12px!important;
+}
+#historyView .history-grid>.panel>.panel-head{
+  padding:15px 16px 10px!important;
+}
+#historyView .history-list{
+  gap:6px!important;
+  padding:0 10px 12px!important;
+  max-height:610px!important;
+}
+#historyView .history-row{
+  grid-template-columns:38px minmax(0,1fr) 28px!important;
+  gap:9px!important;
+  min-height:58px!important;
+  padding:8px 10px!important;
+  border-radius:14px!important;
+}
+#historyView .batch-icon{
+  width:36px!important;
+  height:36px!important;
+  border-radius:11px!important;
+  font-size:7px!important;
+}
+#historyView .history-row span>b{
+  display:block!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  font-size:8.5px!important;
+  line-height:1.2!important;
+}
+#historyView .history-row small{
+  display:block!important;
+  margin-top:3px!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  font-size:7px!important;
+  line-height:1.2!important;
+}
+#historyView .history-row>b:last-child{
+  font-size:9px!important;
+  line-height:1!important;
+}
+#historyView .history-row .sync{
+  width:8px!important;
+  height:8px!important;
+  margin-left:4px!important;
+  box-shadow:0 0 0 2px rgba(174,180,191,.16)!important;
+}
+#historyView #historyDetail{
+  padding:16px!important;
+}
+#historyView .detail-top{
+  gap:10px!important;
+  padding-bottom:11px!important;
+}
+#historyView .detail-top h2{
+  font-size:17px!important;
+  line-height:1.15!important;
+}
+#historyView .detail-top p{
+  margin-top:4px!important;
+  font-size:7px!important;
+}
+#historyView .detail-count{
+  padding:6px 9px!important;
+  font-size:7px!important;
+}
+#historyView .detail-list{
+  max-height:390px!important;
+  margin-top:7px!important;
+}
+#historyView .detail-line{
+  padding:8px 2px!important;
+  font-size:7px!important;
+  line-height:1.35!important;
+}
+#historyView .detail-line b{
+  font-size:7.5px!important;
+}
+#historyView #historyDetail .modal-actions{
+  margin-top:12px!important;
+}
+#historyView #historyDetail .modal-actions .btn{
+  height:38px!important;
+  padding:0 14px!important;
+  border-radius:12px!important;
+  font-size:8px!important;
+}
+@media(max-width:850px){
+  #historyView .history-grid{grid-template-columns:1fr!important}
+  #historyView .history-list{max-height:520px!important}
+}
+@media(max-width:560px){
+  #historyView .history-row{grid-template-columns:34px minmax(0,1fr) 24px!important;min-height:54px!important;padding:7px 8px!important}
+  #historyView .batch-icon{width:32px!important;height:32px!important}
+}
