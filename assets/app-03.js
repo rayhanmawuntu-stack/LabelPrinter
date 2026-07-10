@@ -15,7 +15,7 @@ function renderCards(){
 function renderForm(){
   if(!labels.length)labels=[blankLabel()];
   selected=Math.max(0,Math.min(selected,labels.length-1));
-  labels[selected]=normalizeLabel(labels[selected]);
+  labels[selected]=applyRememberedPrefix(labels[selected]);
   const r=labels[selected];
   $('editIndex').textContent=String(selected+1).padStart(2,'0');
   ['prefix','company','attn','phone','address'].forEach(id=>$(id).value=r[id]||'');
@@ -23,6 +23,7 @@ function renderForm(){
   $('sender').value=custom?'__CUSTOM__':r.sender||'KSB INDONESIA';
   $('customField').classList.toggle('hidden',!custom);
   $('customSender').value=custom?r.sender:'';
+  rememberCompanyPrefix(r);
   saveSoon('ksb-labels',labels);
 }
 const renderPreviewSoon=debounce(()=>renderPreview(),80);
@@ -30,6 +31,15 @@ function update(id,val){
   if(!labels[selected])labels[selected]=blankLabel();
   labels[selected][id]=val;
   labels[selected]=normalizeLabel(labels[selected]);
+  if(id==='company'){
+    const remembered=prefixFromHistory(labels[selected].company);
+    if(remembered&&labels[selected].prefix!==remembered){
+      labels[selected].prefix=remembered;
+      const prefixControl=$('prefix');
+      if(prefixControl)prefixControl.value=remembered;
+    }
+  }
+  if(id==='prefix'||id==='company')rememberCompanyPrefix(labels[selected]);
   saveSoon('ksb-labels',labels);
   renderCards();
   renderPreviewSoon();
