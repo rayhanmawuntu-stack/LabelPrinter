@@ -49,12 +49,39 @@ async function syncBatch(batch,announce=true){
     if(announce)toast(`Saved locally; sync failed: ${e?.message||e}`);
   }
 }
+function updateProfilePreview(index){
+  const avatar=$('pickerAvatar');
+  if(!avatar)return;
+  const user=Number.isInteger(index)&&users[index]?users[index]:null;
+  avatar.textContent=user?initials(user.name):'?';
+  avatar.classList.toggle('selected',!!user);
+}
 function renderUsers(){
-  $('users').innerHTML=users.map((u,i)=>`<button class="user" data-user="${i}"><div class="user-avatar">${initials(u.name)}</div><b>${esc(u.name)}</b><span>Continue as ${esc(u.nickname||u.name.split(' ')[0])}</span></button>`).join('')+`<button class="user" id="addUser"><div class="user-avatar">＋</div><b>Add profile</b><span>Save to Google Sheets</span></button>`;
-  document.querySelectorAll('[data-user]').forEach(b=>b.onclick=()=>selectUser(+b.dataset.user));
-  $('addUser').onclick=async()=>{const name=clean(prompt('Full name'));if(!name)return;const nickname=clean(prompt('Nickname'))||name.split(/\s+/)[0];if(!users.some(u=>u.name.toLowerCase()===name.toLowerCase()))users.push({name,nickname});save('ksb-users',users);renderUsers();if(connected)await post('addUser',{name,nickname})};
+  const select=$('userSelect'),continueButton=$('continueUser'),addButton=$('addUser');
+  if(!select||!continueButton||!addButton)return;
+  const activeName=currentUser?.name||'';
+  select.innerHTML='<option value="">Select a profile</option>'+users.map((u,i)=>`<option value="${i}">${esc(u.name)}${u.nickname&&u.nickname!==u.name?` — ${esc(u.nickname)}`:''}</option>`).join('');
+  const activeIndex=activeName?users.findIndex(u=>u.name===activeName):-1;
+  if(activeIndex>=0){currentUser=users[activeIndex];select.value=String(activeIndex);updateProfilePreview(activeIndex)}else{select.value='';updateProfilePreview(-1)}
+  select.onchange=()=>updateProfilePreview(select.value===''?-1:Number(select.value));
+  continueButton.onclick=()=>{
+    if(select.value==='')return toast('Select a profile to continue');
+    selectUser(Number(select.value));
+  };
+  select.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();continueButton.click()}};
+  addButton.onclick=async()=>{
+    const name=clean(prompt('Full name'));
+    if(!name)return;
+    const nickname=clean(prompt('Nickname'))||name.split(/\s+/)[0];
+    let index=users.findIndex(u=>u.name.toLowerCase()===name.toLowerCase());
+    if(index<0){users.push({name,nickname});index=users.length-1;save('ksb-users',users);if(connected)await post('addUser',{name,nickname})}
+    renderUsers();
+    $('userSelect').value=String(index);
+    updateProfilePreview(index);
+  };
 }
 function selectUser(i){
+  if(!Number.isInteger(i)||!users[i])return toast('Select a valid profile');
   currentUser=users[i];
   const nick=currentUser.nickname||currentUser.name.split(' ')[0];
   $('greeting').textContent=`Hi, ${nick}!`;
