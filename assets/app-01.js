@@ -45,4 +45,23 @@ function setStatus(state,text){connected=state==='connected';const s=$('status')
 function buildApiUrl(action,params={}){const u=new URL(endpoint());u.searchParams.set('action',action);u.searchParams.set('_',Date.now());Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,String(v)));return u}
 function jsonp(action,params={}){return new Promise((resolve,reject)=>{const name='__ksb'+Date.now().toString(36)+(++cb),s=document.createElement('script'),timer=setTimeout(()=>done(new Error('Apps Script API timed out. Check web-app deployment access.')),15000);function done(e,v){clearTimeout(timer);s.remove();delete window[name];e?reject(e):resolve(v)}window[name]=v=>v?.success===false?done(new Error(v.message||'Backend error')):done(null,v);try{const u=buildApiUrl(action,params);u.searchParams.set('callback',name);s.src=u;s.onerror=()=>done(new Error('Apps Script endpoint could not be loaded. Check deployment access.'));document.head.appendChild(s)}catch(e){done(e)}})}
 async function apiGet(action,params={}){try{const r=await fetch(buildApiUrl(action,params),{cache:'no-store',redirect:'follow'});const text=await r.text();if(/^\s*</.test(text))throw new Error('Apps Script returned HTML instead of JSON. Redeploy the API Code.gs as a web app.');const data=JSON.parse(text);if(data?.success===false)throw new Error(data.message||'Backend error');return data}catch(e){if(/returned HTML|Unknown GET action|Unexpected token/.test(String(e.message||e)))throw e;return jsonp(action,params)}}
-async function post(action,payload){const b=new URLSearchParams({action,payload:JSON.stringify(payload)});try{const r=await fetch(endpoint(),{method:'POST',body:b});const t=await r.text();if(/^\s*</.test(t))throw new Error('Apps Script returned HTML for POST.');try{const data=JSON.parse(t);if(data?.success===false)throw new Error(data.message||'Backend error');return data}catch{return{success:true}}}catch{await fetch(endpoint(),{method:'POST',body:b,mode:'no-cors'});return{success:true,queued:true}}}
+async function post(action,payload){
+  const body=new URLSearchParams({action,payload:JSON.stringify(payload)});
+  let primaryError=null;
+  try{
+    const response=await fetch(endpoint(),{method:'POST',body,redirect:'follow'});
+    if(!response.ok)throw new Error(`Backend request failed (${response.status})`);
+    const text=await response.text();
+    if(/^\s*</.test(text))throw new Error('Apps Script returned HTML for POST.');
+    if(!text.trim())throw new Error('Apps Script returned an empty POST response.');
+    const data=JSON.parse(text);
+    if(data?.success===false)throw new Error(data.message||'Backend error');
+    return data;
+  }catch(error){primaryError=error}
+  try{
+    await fetch(endpoint(),{method:'POST',body,mode:'no-cors',keepalive:true});
+    return{success:false,queued:true,message:'Request sent without confirmation'};
+  }catch(fallbackError){
+    throw primaryError||fallbackError;
+  }
+}
