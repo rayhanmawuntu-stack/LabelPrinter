@@ -1,6 +1,6 @@
 (async()=>{
   try{
-    const version='20260710-validation-hardening-28';
+    const version='20260710-company-sender-memory-29';
     let initialTheme='light',initialPalette='ksb';
     try{
       const savedTheme=localStorage.getItem('ksb-theme');
