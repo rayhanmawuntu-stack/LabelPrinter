@@ -1,9 +1,9 @@
 const CONFIG={endpoint:'https://script.google.com/macros/s/AKfycbwVOHKp4BIbj0rbMNV-y543i7L-175E8CbjFlz2f5kA6RYqpt9aj2crriQ-unsW9RO9/exec',logo:'https://file.garden/ad-wGPVIV3ilAD_L/WORK%20PROJECT/LABEL%20MAKER/KSB_SVG.svg.png'};
-const APP_REVISION='2026-07-10-2x3-layout-fix';
+const APP_REVISION='2026-07-10-2x3-wide-text-fix';
 const ENDPOINT_REVISION='2026-07-08-03';
 const LEGACY_ENDPOINTS=['https://script.google.com/macros/s/AKfycbwohEPF9QkHyX7FO2VpnFtzHwbx3kZawul3uZXHNtqk4QbHlMYQkp_J78pV46DjOzFd/exec'];
 const LEGACY_SAMPLE_COMPANIES=new Set(['MANDARA PERMAI','MULTI SARANA MARITIM','SAIPEM INDONESIA']);
-const LAYOUTS={'3x3':{c:3,r:3,n:9,w:91,h:62,s:1,label:'3 × 3'},'3x2':{c:3,r:2,n:6,w:91,h:62,s:1,label:'3 × 2'},'2x3':{c:2,r:3,n:6,w:138.5,h:62,s:1,adaptive:true,label:'2 × 3'},'2x2':{c:2,r:2,n:4,w:138.5,h:95,s:138.5/91,label:'2 × 2'},'2x1':{c:2,r:1,n:2,w:138.5,h:95,s:138.5/91,label:'2 × 1'},'1x1':{c:1,r:1,n:1,w:281,h:194,s:281/91,label:'1 × 1'}};
+const LAYOUTS={'3x3':{c:3,r:3,n:9,w:91,h:62,s:1,label:'3 × 3'},'3x2':{c:3,r:2,n:6,w:91,h:62,s:1,label:'3 × 2'},'2x3':{c:2,r:3,n:6,w:139.5,h:62,s:1,adaptive:true,label:'2 × 3'},'2x2':{c:2,r:2,n:4,w:138.5,h:95,s:138.5/91,label:'2 × 2'},'2x1':{c:2,r:1,n:2,w:138.5,h:95,s:138.5/91,label:'2 × 1'},'1x1':{c:1,r:1,n:1,w:281,h:194,s:281/91,label:'1 × 1'}};
 const SAMPLE=[];
 const domCache=new Map();
 const $=id=>domCache.get(id)||(domCache.set(id,document.getElementById(id)),domCache.get(id));
