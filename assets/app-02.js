@@ -1,3 +1,18 @@
+const DELETED_BATCHES_KEY='ksb-deleted-batches';
+function deletedBatchIds(){return new Set((Array.isArray(load(DELETED_BATCHES_KEY,[]))?load(DELETED_BATCHES_KEY,[]):[]).map(clean).filter(Boolean))}
+async function flushDeletedBatches(){
+  if(!connected)return;
+  const ids=deletedBatchIds();
+  if(!ids.size)return;
+  for(const id of [...ids]){
+    try{
+      const result=await post('deleteBatch',{id});
+      if(!result?.queued)ids.delete(id);
+    }catch{}
+  }
+  save(DELETED_BATCHES_KEY,[...ids]);
+}
+
 document.documentElement.classList.toggle('profile-selected',!!currentUser);
 async function sync(){
   if(syncInFlight)return;
@@ -14,13 +29,15 @@ async function sync(){
       renderUsers();
     }
     if(h?.history){
-      const merged=new Map(history.map(x=>[x.id,x]));
-      h.history.forEach(x=>merged.set(x.id,{...x,labels:usableLabels(x.labels||[]),syncState:'synced'}));
+      const deleted=deletedBatchIds();
+      const merged=new Map(history.filter(x=>!deleted.has(clean(x?.id))).map(x=>[x.id,x]));
+      h.history.forEach(x=>{if(!deleted.has(clean(x?.id)))merged.set(x.id,{...x,labels:usableLabels(x.labels||[]),syncState:'synced'})});
       history=[...merged.values()].filter(x=>x?.id).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,1000);
       save('ksb-history',history);
       rebuildCompanyPrefixes();
       refreshDataSurfaces();
     }
+    await flushDeletedBatches();
     for(const batch of history.filter(x=>x.syncState==='pending'||x.syncState==='failed'))await syncBatch(batch,false);
     window.__lastSheetsError='';
   }catch(e){
