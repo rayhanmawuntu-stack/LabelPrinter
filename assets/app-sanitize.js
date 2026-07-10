@@ -29,6 +29,12 @@
     repaired=true;
   }
 
+  if(!companyDefaults||typeof companyDefaults!=='object'||Array.isArray(companyDefaults)){
+    companyDefaults={};
+    save(COMPANY_DEFAULTS_KEY,companyDefaults);
+    repaired=true;
+  }
+
   if(!Array.isArray(labels)){
     labels=[];
     save('ksb-labels',labels);
@@ -41,5 +47,16 @@
     repaired=true;
   }
 
-  if(repaired)console.info('LabelPrint repaired invalid local state.');
+  companyDefaultsFromHistory=function(company){
+    const key=companyKey(company);
+    if(!key)return{prefix:'',sender:''};
+    const remembered=normalizeCompanyDefault(companyDefaults[key]);
+    if(!remembered.prefix&&companyPrefixes[key])remembered.prefix=clean(companyPrefixes[key]).toUpperCase();
+    return remembered;
+  };
+
+  if(repaired){
+    rebuildCompanyPrefixes();
+    console.info('LabelPrint repaired invalid local state.');
+  }
 })();
