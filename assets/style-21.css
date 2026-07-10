@@ -1,0 +1,94 @@
+/* Live preview containment and dark-mode polish. */
+.preview-panel{
+  overflow:hidden!important;
+  isolation:isolate!important;
+}
+.preview-panel .panel-head{
+  flex:0 0 auto!important;
+  background:transparent!important;
+}
+.preview-panel .layout-picker{
+  flex:0 0 auto!important;
+  margin:0!important;
+  padding:0 14px 12px!important;
+  border-bottom:1px solid var(--mock-line)!important;
+  background:transparent!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  scrollbar-width:none;
+}
+.preview-panel .layout-picker::-webkit-scrollbar{display:none}
+.preview-panel .stage{
+  flex:1 1 auto!important;
+  width:auto!important;
+  height:clamp(340px,30vw,430px)!important;
+  min-height:340px!important;
+  margin:12px 14px 0!important;
+  padding:14px!important;
+  border-radius:20px!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+}
+.preview-panel .caption{
+  flex:0 0 auto!important;
+  margin:10px 18px 8px!important;
+  background:transparent!important;
+}
+.preview-panel .preview-actions{
+  flex:0 0 auto!important;
+  margin:0!important;
+  padding:0 14px 14px!important;
+  background:transparent!important;
+  box-sizing:border-box!important;
+}
+.preview-panel .preview-actions .btn{
+  overflow:hidden!important;
+  white-space:normal!important;
+}
+
+html[data-theme="dark"] .preview-panel .layout-picker,
+html[data-theme="dark"] .preview-panel .preview-actions,
+html[data-theme="dark"] .preview-panel .caption{
+  background:#171b21!important;
+}
+html[data-theme="dark"] .preview-panel .layout-picker{
+  border-color:#2a313a!important;
+}
+html[data-theme="dark"] .preview-panel .stage{
+  border-color:#2a313a!important;
+  background:
+    linear-gradient(45deg,rgba(255,255,255,.025) 25%,transparent 25%),
+    linear-gradient(-45deg,rgba(255,255,255,.025) 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,rgba(255,255,255,.025) 75%),
+    linear-gradient(-45deg,transparent 75%,rgba(255,255,255,.025) 75%),
+    #0f1318!important;
+  background-size:18px 18px!important;
+  background-position:0 0,0 9px,9px -9px,-9px 0!important;
+}
+html[data-theme="dark"] .preview-panel .sheet{
+  box-shadow:0 18px 45px rgba(0,0,0,.42)!important;
+  outline-color:rgba(255,255,255,.08)!important;
+}
+
+@media(max-width:850px){
+  .dashboard-grid>.preview-panel{
+    height:auto!important;
+    min-height:0!important;
+  }
+  .preview-panel .stage{
+    height:clamp(320px,48vw,390px)!important;
+    min-height:320px!important;
+  }
+}
+@media(max-width:760px){
+  .preview-panel .layout-picker{padding:0 10px 10px!important}
+  .preview-panel .stage{
+    height:clamp(270px,68vw,330px)!important;
+    min-height:270px!important;
+    margin:10px 10px 0!important;
+    padding:10px!important;
+    border-radius:16px!important;
+  }
+  .preview-panel .caption{margin:9px 12px 7px!important}
+  .preview-panel .preview-actions{padding:0 10px 10px!important}
+}
