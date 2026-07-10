@@ -1,0 +1,15 @@
+/* Monthly report download controls. */
+.monthly-report-controls{display:flex;align-items:flex-end;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.monthly-report-controls .monthly-year-field{min-width:118px}
+.monthly-download{white-space:nowrap;min-width:148px}
+.monthly-download:disabled{opacity:.62;cursor:wait;transform:none!important}
+html[data-theme="dark"] .monthly-download{box-shadow:0 12px 28px rgba(0,0,0,.24)}
+@media(max-width:720px){
+  .monthly-report-head{align-items:flex-start!important;gap:14px!important}
+  .monthly-report-controls{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end}
+  .monthly-report-controls .monthly-year-field{min-width:0}
+}
+@media(max-width:480px){
+  .monthly-report-controls{grid-template-columns:1fr}
+  .monthly-download{width:100%;min-width:0}
+}
