@@ -1,5 +1,5 @@
-/* Final print pagination fix: keep every A4 sheet on one physical page. */
-@page{size:297mm 210mm;margin:0}
+/* Final print pagination fix: reserve browser header/footer space and keep each sheet together. */
+@page{size:297mm 210mm;margin:10mm 0}
 @media print{
   html,body{
     width:297mm!important;
@@ -21,13 +21,14 @@
     overflow:visible!important;
   }
   .print-root .sheet{
-    width:296mm!important;
-    height:208mm!important;
+    width:297mm!important;
+    height:190mm!important;
     min-width:0!important;
     min-height:0!important;
     margin:0!important;
-    padding:6mm!important;
-    gap:4mm!important;
+    padding:0 6mm!important;
+    column-gap:4mm!important;
+    row-gap:2mm!important;
     box-sizing:border-box!important;
     overflow:hidden!important;
     break-inside:avoid-page!important;
@@ -39,7 +40,14 @@
   }
   .print-root .sheet.layout-2x3{
     column-gap:2mm!important;
-    row-gap:4mm!important;
+    row-gap:2mm!important;
+  }
+  .print-root .sheet.layout-2x2{row-gap:0!important}
+  .print-root .sheet.layout-1x1{
+    --ch:190mm!important;
+    --scale:3.064516!important;
+    --scale-x:3.064516!important;
+    --scale-y:3.064516!important;
   }
   .print-root .sheet + .sheet{
     break-before:page!important;
