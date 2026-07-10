@@ -1,6 +1,6 @@
 (async()=>{
   try{
-    for(const href of ['assets/style-03b.css','assets/style-05b.css','assets/style-06.css','assets/style-07.css','assets/style-08.css','assets/style-09.css','assets/style-10.css','assets/style-11.css','assets/style-12.css']){const link=document.createElement('link');link.rel='stylesheet';link.href=href;document.head.appendChild(link)}
+    for(const href of ['assets/style-03b.css','assets/style-05b.css','assets/style-06.css','assets/style-07.css','assets/style-08.css','assets/style-09.css','assets/style-10.css','assets/style-11.css','assets/style-12.css','assets/style-13.css']){const link=document.createElement('link');link.rel='stylesheet';link.href=href;document.head.appendChild(link)}
     const files=['partials/body-01.html','partials/body-02.html','partials/body-03.html','partials/body-04.html'];
     const html=(await Promise.all(files.map(async path=>{const r=await fetch(path);if(!r.ok)throw new Error(`Failed to load ${path}`);return r.text()}))).join('');
     document.body.innerHTML=html;
