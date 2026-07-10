@@ -34,22 +34,36 @@ async function sync(){
   }
 }
 async function syncBatch(batch,announce=true){
-  if(!connected){batch.syncState='pending';save('ksb-history',history);return}
+  if(!connected){
+    batch.syncState='pending';
+    save('ksb-history',history);
+    if(announce)toast('Saved locally · sync pending');
+    return false;
+  }
   try{
     batch.labels=usableLabels(batch.labels||[]);
     if(!batch.labels.length)throw new Error('Batch has no printable labels');
     batch.labels.forEach(row=>rememberCompanyPrefix(row,false));
     save(COMPANY_PREFIX_KEY,companyPrefixes);
-    await post('saveBatch',batch);
+    const result=await post('saveBatch',batch);
+    if(result?.queued){
+      batch.syncState='pending';
+      save('ksb-history',history);
+      refreshDataSurfaces();
+      if(announce)toast('Saved locally · backend confirmation pending');
+      return false;
+    }
     batch.syncState='synced';
     save('ksb-history',history);
     refreshDataSurfaces();
     if(announce)toast('Saved to Google Sheets');
+    return true;
   }catch(e){
     batch.syncState='failed';
     save('ksb-history',history);
     refreshDataSurfaces();
     if(announce)toast(`Saved locally; sync failed: ${e?.message||e}`);
+    return false;
   }
 }
 function updateProfilePreview(index){
@@ -79,7 +93,7 @@ function renderUsers(){
     if(!name)return;
     const nickname=clean(prompt('Nickname'))||name.split(/\s+/)[0];
     let index=users.findIndex(u=>u.name.toLowerCase()===name.toLowerCase());
-    if(index<0){users.push({name,nickname});index=users.length-1;save('ksb-users',users);if(connected)await post('addUser',{name,nickname})}
+    if(index<0){users.push({name,nickname});index=users.length-1;save('ksb-users',users);if(connected)await post('addUser',{name,nickname}).catch(()=>{})}
     renderUsers();
     $('userSelect').value=String(index);
     updateProfilePreview(index);
