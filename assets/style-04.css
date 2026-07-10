@@ -19,9 +19,9 @@
 .close{width:36px;height:36px;border:0;border-radius:12px;background:#fff;font-size:18px}
 .modal-card p{font-size:10px;line-height:1.55;color:var(--muted)}
 .modal-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:12px}
-.sheet{--cols:3;--rows:2;--cw:91mm;--ch:62mm;--scale:1;position:relative;width:297mm;height:210mm;background:#fff;padding:8mm;display:grid;grid-template-columns:repeat(var(--cols),var(--cw));grid-template-rows:repeat(var(--rows),var(--ch));gap:4mm;align-content:start;overflow:hidden;box-shadow:0 20px 55px rgba(0,0,0,.18)}
+.sheet{--cols:3;--rows:2;--cw:91mm;--ch:62mm;--scale:1;--scale-x:var(--scale);--scale-y:var(--scale);position:relative;width:297mm;height:210mm;background:#fff;padding:8mm;display:grid;grid-template-columns:repeat(var(--cols),var(--cw));grid-template-rows:repeat(var(--rows),var(--ch));gap:4mm;align-content:start;overflow:hidden;box-shadow:0 20px 55px rgba(0,0,0,.18)}
 .slot{position:relative;width:var(--cw);height:var(--ch);overflow:hidden}
-.physical{position:absolute;left:0;top:0;width:91mm;height:62mm;transform:scale(var(--scale));transform-origin:top left;border:.65mm solid #000;background:#fff;color:#000;font-family:Arial,sans-serif;overflow:hidden;--fit:1}
+.physical{position:absolute;left:0;top:0;width:91mm;height:62mm;transform:scale(var(--scale-x),var(--scale-y));transform-origin:top left;border:.65mm solid #000;background:#fff;color:#000;font-family:Arial,sans-serif;overflow:hidden;--fit:1}
 .physical:after{content:"";position:absolute;inset:1.3mm;border:.35mm solid #000}
 .label-logo{position:absolute;right:5mm;top:4.5mm;width:23mm;height:7.4mm;object-fit:contain;filter:grayscale(1) brightness(.62) contrast(1.15)}
 .copy{position:absolute;z-index:2;left:6.6mm;right:6.6mm;top:6.3mm;height:39mm;overflow:hidden}
