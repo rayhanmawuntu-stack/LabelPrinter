@@ -4,6 +4,7 @@
   const button=document.getElementById('themeToggle');
   const label=document.getElementById('themeLabel');
   const icon=button?.querySelector('.theme-icon');
+  const optionButtons=[...document.querySelectorAll('[data-theme-option]')];
 
   function preferredTheme(){
     try{
@@ -13,11 +14,8 @@
     return window.matchMedia?.('(prefers-color-scheme: dark)').matches?'dark':'light';
   }
 
-  function applyTheme(value,persist=false){
-    const theme=value==='dark'?'dark':'light';
+  function syncControls(theme){
     const dark=theme==='dark';
-    root.dataset.theme=theme;
-    root.style.colorScheme=theme;
     if(button){
       button.setAttribute('aria-pressed',String(dark));
       button.setAttribute('aria-label',dark?'Switch to light mode':'Switch to dark mode');
@@ -25,6 +23,18 @@
     }
     if(label)label.textContent=dark?'Light mode':'Dark mode';
     if(icon)icon.textContent=dark?'☀':'☾';
+    optionButtons.forEach(option=>{
+      const active=option.dataset.themeOption===theme;
+      option.setAttribute('aria-pressed',String(active));
+      option.classList.toggle('active',active);
+    });
+  }
+
+  function applyTheme(value,persist=false){
+    const theme=value==='dark'?'dark':'light';
+    root.dataset.theme=theme;
+    root.style.colorScheme=theme;
+    syncControls(theme);
     if(persist){
       try{localStorage.setItem(THEME_KEY,theme)}catch{}
     }
@@ -34,4 +44,6 @@
 
   let theme=applyTheme(root.dataset.theme||preferredTheme());
   button?.addEventListener('click',()=>{theme=applyTheme(theme==='dark'?'light':'dark',true)});
+  optionButtons.forEach(option=>option.addEventListener('click',()=>{theme=applyTheme(option.dataset.themeOption,true)}));
+  window.LabelPrintTheme={apply:applyTheme,get:()=>theme};
 })();
