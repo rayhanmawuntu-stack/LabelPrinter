@@ -20,7 +20,9 @@ function sheetHTML(rows=labels,previewMode=false){
 function pagesHTML(rows=labels){
   const l=LAYOUTS[layout],printRows=rows.length?rows:[blankLabel()];
   let out='';
-  for(let i=0;i<Math.max(1,printRows.length);i+=l.n)out+=sheetHTML(printRows.slice(i,i+l.n),false);
+  for(let i=0;i<Math.max(1,printRows.length);i+=l.n){
+    out+=`<section class="print-page">${sheetHTML(printRows.slice(i,i+l.n),false)}</section>`;
+  }
   return out;
 }
 function fitText(root=document){
