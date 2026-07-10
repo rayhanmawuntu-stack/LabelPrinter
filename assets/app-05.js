@@ -33,21 +33,37 @@ function buildPrintTitle(rows){
   const user=safePrintName(currentUser?.name||currentUser?.nickname||'Local User');
   return `LABEL-${safePrintName(batchId)}-${user}`;
 }
-async function printNow(){
-  const rows=usableLabels(labels).slice(0,MAX_LABELS);
-  if(!rows.length)return toast('Add at least one recipient before printing');
+async function browserPrintFallback(rows,title){
   const root=$('printRoot');
   root.innerHTML=pagesHTML(rows);
   await waitForPrintAssets(root);
   fitText(root);
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   const previousTitle=document.title;
-  document.title=buildPrintTitle(rows);
+  document.title=title;
   let restored=false;
   const restoreTitle=()=>{if(restored)return;restored=true;document.title=previousTitle};
   window.addEventListener('afterprint',restoreTitle,{once:true});
   setTimeout(restoreTitle,30000);
   window.print();
+}
+async function printNow(){
+  const rows=usableLabels(labels).slice(0,MAX_LABELS).map(applyRememberedPrefix);
+  if(!rows.length)return toast('Add at least one recipient before printing');
+  const title=buildPrintTitle(rows);
+  const controls=[$('print'),$('printDirect')].filter(Boolean);
+  controls.forEach(button=>{button.disabled=true;button.dataset.originalText=button.textContent;button.textContent='Generating PDF…'});
+  try{
+    if(typeof window.generateLabelPdf!=='function')throw new Error('PDF generator did not load');
+    const result=await window.generateLabelPdf({rows,layoutKey:layout,layoutDef:LAYOUTS[layout],filename:title,logoUrl:CONFIG.logo});
+    toast(`${result.fileName} downloaded · ${result.pageCount} page${result.pageCount===1?'':'s'}`);
+  }catch(error){
+    console.error('Vector PDF generation failed:',error);
+    toast('PDF generator unavailable; opening browser print fallback');
+    await browserPrintFallback(rows,title);
+  }finally{
+    controls.forEach(button=>{button.disabled=false;button.textContent=button.dataset.originalText||'Print A4';delete button.dataset.originalText});
+  }
 }
 function importRows(){
   const parsed=$('paste').value.split(/\r?\n/).filter(Boolean).map(line=>{const c=line.split('\t'),raw=(c[1]||'').trim(),m=raw.match(/^(PT|CV|YAYASAN)\.?\s+(.+)$/i),f=(c[5]||'').trim(),p=f.match(/\(([^()]*)\)\s*$/);return{prefix:m?m[1].toUpperCase():'',company:m?m[2]:raw,attn:(c[6]||'').trim(),phone:p?p[1].trim():'',address:p?f.slice(0,p.index).trim():f,sender:'KSB INDONESIA'}}).map(normalizeLabel).map(applyRememberedPrefix).filter(r=>r.company&&!/^(penerima|recipient|company)$/i.test(r.company));
