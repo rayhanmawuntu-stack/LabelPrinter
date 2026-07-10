@@ -1,3 +1,4 @@
+document.documentElement.classList.toggle('profile-selected',!!currentUser);
 async function sync(){
   if(syncInFlight)return;
   syncInFlight=true;
@@ -87,6 +88,7 @@ function renderUsers(){
 function selectUser(i){
   if(!Number.isInteger(i)||!users[i])return toast('Select a valid profile');
   currentUser=users[i];
+  document.documentElement.classList.add('profile-selected');
   const nick=currentUser.nickname||currentUser.name.split(' ')[0];
   const greeting=$('greeting'),heroName=$('heroName'),avatar=$('avatar'),entry=$('entry');
   if(greeting)greeting.textContent=`Hi, ${nick}!`;
