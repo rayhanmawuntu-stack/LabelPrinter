@@ -30,7 +30,7 @@ async function testConnection(){
   try{const u=$('endpoint').value.trim();new URL(u);localStorage.setItem('ksb-endpoint',u);localStorage.setItem('ksb-endpoint-revision',ENDPOINT_REVISION);result.textContent='Testing connection…';const r=await apiGet('ping');result.textContent=`Connected to ${r.spreadsheetName||'Google Sheets'} · API ${r.apiVersion||'unknown'}.`;window.__lastSheetsError=''}catch(e){window.__lastSheetsError=String(e?.message||e);result.textContent='Connection failed: '+window.__lastSheetsError}
 }
 async function saveConnection(){localStorage.setItem('ksb-endpoint',$('endpoint').value.trim());localStorage.setItem('ksb-endpoint-revision',ENDPOINT_REVISION);closeModals();await sync()}
-document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>switchView(b.dataset.view));
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>switchView(b.dataset.view));
 $('avatar').onclick=()=>{$('entry').classList.remove('hidden');renderUsers()};
 $('settings').onclick=$('status').onclick=settings;
 $('addRecipient').onclick=addLabel;
