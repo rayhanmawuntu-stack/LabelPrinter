@@ -8,6 +8,17 @@
       <div class="page-head"><div><p class="kicker">Usage overview</p><h1 class="page-title">Analytics</h1><p>Calculated from generated batch history in Google Sheets and the local cache.</p></div><select class="control range-control" id="range"><option value="7">7 days</option><option selected value="30">30 days</option><option value="0">All time</option></select></div>
       <div class="kpis" id="analyticsKpis"></div>
       <div class="charts"><section class="panel chart main-chart"><div class="panel-head"><div><h2>Labels generated</h2><p>Daily output trend</p></div></div><div class="bars" id="bars"></div></section><section class="panel chart"><div class="panel-head"><div><h3>Top users</h3><p>Most labels printed</p></div></div><div class="ranking" id="userRanking"></div></section><section class="panel chart"><div class="panel-head"><div><h3>Top recipients</h3><p>Most frequently printed</p></div></div><div class="ranking" id="ranking"></div></section></div>
+      <section class="panel monthly-report-panel">
+        <div class="panel-head monthly-report-head"><div><h2>Monthly report</h2><p>Labels, batches, A4 sheets, recipients, and top user by month.</p></div><label class="monthly-year-field"><span>Report year</span><select class="control" id="monthlyYear" aria-label="Monthly report year"></select></label></div>
+        <div class="monthly-report-summary" id="monthlyReportSummary"></div>
+        <div class="monthly-table-wrap">
+          <table class="monthly-report-table">
+            <thead><tr><th>Month</th><th>Labels</th><th>Batches</th><th>A4 sheets</th><th>Recipients</th><th>Top user</th></tr></thead>
+            <tbody id="monthlyReportBody"></tbody>
+            <tfoot id="monthlyReportFoot"></tfoot>
+          </table>
+        </div>
+      </section>
     </section>
   </main>
 </div>
