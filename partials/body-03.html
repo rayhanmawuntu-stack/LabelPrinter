@@ -1,5 +1,5 @@
     <section class="view hidden" id="historyView">
-      <div class="page-head"><div><p class="kicker">Generation log</p><h1 class="page-title">Label history</h1><p>Review previous batches, load recipients back into the editor, or delete a batch from Google Sheets.</p></div><div class="actions"><button class="btn dark" id="newBatch">＋ New batch</button></div></div>
+      <div class="page-head"><div><p class="kicker">Generation log</p><h1 class="page-title">Label history</h1><p>Review previous batches, import an existing Excel history, load recipients back into the editor, or delete a batch from Google Sheets.</p></div><div class="actions"><button class="btn light" id="importHistory" type="button">⇧ Import history</button><button class="btn dark" id="newBatch" type="button">＋ New batch</button><input id="historyFile" type="file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" hidden></div></div>
       <div class="kpis" id="historyKpis"></div>
       <div class="history-grid"><section class="panel"><div class="panel-head"><div><h2>Generated batches</h2><p id="historyCount">0 batches</p></div></div><div class="history-list" id="historyList"></div></section><aside class="panel detail" id="historyDetail"></aside></div>
     </section>
