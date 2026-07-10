@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="KSB LabelPrint">
+  <rect width="64" height="64" rx="14" fill="#DFFF3F"/>
+  <g fill="#111315">
+    <circle cx="15" cy="32" r="9"/>
+    <circle cx="15" cy="32" r="3.2" fill="#DFFF3F"/>
+    <rect x="13.5" y="19" width="3" height="7" rx="1.5"/>
+    <rect x="13.5" y="38" width="3" height="7" rx="1.5"/>
+    <rect x="2" y="30.5" width="7" height="3" rx="1.5"/>
+    <rect x="21" y="30.5" width="7" height="3" rx="1.5"/>
+  </g>
+  <text x="26" y="40" fill="#111315" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="20" font-weight="900" letter-spacing="-1.5">KSB</text>
+</svg>
