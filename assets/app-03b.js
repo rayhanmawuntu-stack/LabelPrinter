@@ -6,14 +6,20 @@ function labelHTML(r){
   const phone=clean(r.phone);
   return `<div class="slot"><article class="physical"><img class="label-logo" src="${CONFIG.logo}" alt="KSB"><div class="copy"><p class="field-label">Penerima :</p><div class="recipient-name">${name?esc(name):'&nbsp;'}</div><div class="attn">${attn?`Attn: ${esc(attn)}`:'&nbsp;'}</div><div class="address">${address?esc(address):'&nbsp;'} ${phone?`<i>(${esc(phone)})</i>`:''}</div></div><div class="divider"></div><div class="sender"><p class="field-label">Pengirim :</p><div class="sender-name">${esc(r.sender||'KSB INDONESIA')}</div></div></article></div>`;
 }
-function sheetHTML(rows=labels){
-  const l=LAYOUTS[layout],chunk=(rows.length?rows:[blankLabel()]).slice(0,l.n);
-  return `<div class="sheet" style="--cols:${l.c};--rows:${l.r};--cw:${l.w}mm;--ch:${l.h}mm;--scale:${l.s}">${chunk.map(labelHTML).join('')}</div>`;
+function previewEmptySlotHTML(index){
+  return `<div class="slot preview-empty-slot" aria-hidden="true"><span>${String(index+1).padStart(2,'0')}</span></div>`;
+}
+function sheetHTML(rows=labels,previewMode=false){
+  const l=LAYOUTS[layout],chunk=(rows.length?rows:[blankLabel()]).slice(0,l.n),slots=chunk.map(labelHTML);
+  if(previewMode){
+    while(slots.length<l.n)slots.push(previewEmptySlotHTML(slots.length));
+  }
+  return `<div class="sheet ${previewMode?'preview-sheet':''}" style="--cols:${l.c};--rows:${l.r};--cw:${l.w}mm;--ch:${l.h}mm;--scale:${l.s}">${slots.join('')}</div>`;
 }
 function pagesHTML(rows=labels){
   const l=LAYOUTS[layout],printRows=rows.length?rows:[blankLabel()];
   let out='';
-  for(let i=0;i<Math.max(1,printRows.length);i+=l.n)out+=sheetHTML(printRows.slice(i,i+l.n));
+  for(let i=0;i<Math.max(1,printRows.length);i+=l.n)out+=sheetHTML(printRows.slice(i,i+l.n),false);
   return out;
 }
 function fitText(root=document){
@@ -28,7 +34,7 @@ function renderPreview(){
   const rows=labels.length?labels:[blankLabel()];
   const page=$('page');
   page.style.transform='none';
-  page.innerHTML=sheetHTML(rows);
+  page.innerHTML=sheetHTML(rows,true);
   const l=LAYOUTS[layout];
   $('statLayout').textContent=l.label;
   $('statSize').textContent=`${l.w} × ${l.h} mm`;
@@ -44,11 +50,9 @@ function fitPreview(){
   const styles=getComputedStyle(stage);
   const horizontalPadding=(parseFloat(styles.paddingLeft)||0)+(parseFloat(styles.paddingRight)||0);
   const verticalPadding=(parseFloat(styles.paddingTop)||0)+(parseFloat(styles.paddingBottom)||0);
-  const availableWidth=Math.max(1,stage.clientWidth-horizontalPadding-10);
-  const availableHeight=Math.max(1,stage.clientHeight-verticalPadding-10);
-  const widthScale=availableWidth/naturalWidth;
-  const heightScale=availableHeight/naturalHeight;
-  const scale=Math.max(.12,Math.min(.72,widthScale,heightScale));
+  const availableWidth=Math.max(1,stage.clientWidth-horizontalPadding-18);
+  const availableHeight=Math.max(1,stage.clientHeight-verticalPadding-18);
+  const scale=Math.max(.12,Math.min(.72,availableWidth/naturalWidth,availableHeight/naturalHeight));
   page.style.transformOrigin='top left';
   page.style.transform=`scale(${scale})`;
   viewport.style.width=`${Math.ceil(naturalWidth*scale)}px`;
