@@ -18,8 +18,7 @@ async function sync(){
       history=[...merged.values()].filter(x=>x?.id).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,1000);
       save('ksb-history',history);
       rebuildCompanyPrefixes();
-      renderHistory();
-      renderAnalytics();
+      refreshDataSurfaces();
     }
     for(const batch of history.filter(x=>x.syncState==='pending'||x.syncState==='failed'))await syncBatch(batch,false);
     window.__lastSheetsError='';
@@ -43,12 +42,12 @@ async function syncBatch(batch,announce=true){
     await post('saveBatch',batch);
     batch.syncState='synced';
     save('ksb-history',history);
-    renderHistory();
+    refreshDataSurfaces();
     if(announce)toast('Saved to Google Sheets');
   }catch(e){
     batch.syncState='failed';
     save('ksb-history',history);
-    renderHistory();
+    refreshDataSurfaces();
     if(announce)toast(`Saved locally; sync failed: ${e?.message||e}`);
   }
 }
