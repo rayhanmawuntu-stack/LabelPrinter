@@ -1,0 +1,63 @@
+/* Final mockup alignment and secondary-view polish. */
+.brand{gap:8px}
+.brand-label{font-size:9px;font-weight:800;color:#24272b;letter-spacing:-.1px;white-space:nowrap}
+.brand b{display:none!important}
+.recent-row{width:100%;border:1px solid var(--mock-line);background:#fff;color:inherit;text-align:left;cursor:pointer;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+.recent-row:hover{transform:translateY(-1px);border-color:#dfe5c3;box-shadow:0 10px 24px rgba(26,30,36,.05)}
+.recent-row .sync{margin:0}
+
+/* History tab */
+#historyView .page-head,#analyticsView .page-head{min-height:112px;margin-bottom:14px;padding:22px 24px;border:1px solid var(--mock-line);border-radius:28px;background:#fff;box-shadow:var(--mock-shadow)}
+#historyView .page-head>div,#analyticsView .page-head>div{max-width:700px}
+#historyView .page-title,#analyticsView .page-title{font-size:34px;line-height:1;letter-spacing:-1.4px}
+#historyView .page-head p,#analyticsView .page-head p{margin:8px 0 0}
+#historyView .kpis,#analyticsView .kpis{margin-bottom:16px}
+#historyView .metric,#analyticsView .metric{padding:17px 18px}
+#historyView .history-grid{grid-template-columns:minmax(0,1.15fr) minmax(350px,.85fr);gap:16px}
+#historyView .history-list{padding:0 15px 16px;gap:8px;max-height:620px;overflow:auto}
+#historyView .history-row{grid-template-columns:46px minmax(0,1fr) auto;min-height:72px;padding:11px 13px;border:1px solid var(--mock-line);border-radius:17px;background:#fff}
+#historyView .history-row:hover{border-color:#dde5b8;box-shadow:0 9px 24px rgba(26,30,36,.045)}
+#historyView .history-row.active{background:linear-gradient(135deg,#fbfff0,#f0ffc2);border-color:#d8eb88}
+#historyView .batch-icon{width:42px;height:42px;border-radius:13px;background:#f2f3f4;color:#25282c;box-shadow:none}
+#historyView .detail{padding:20px;min-height:430px}
+.detail-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding-bottom:15px;border-bottom:1px solid var(--mock-line)}
+.detail-top h2{font-size:20px;letter-spacing:-.55px}
+.detail-top p{margin:6px 0 0;color:var(--mock-muted);font-size:8px}
+.detail-kicker{display:block;margin-bottom:6px;color:#989da3;font-size:7px;font-weight:850;text-transform:uppercase;letter-spacing:.12em}
+.detail-count{padding:7px 10px;border-radius:999px;background:#efffc3;font-size:8px;font-weight:850;white-space:nowrap}
+#historyView .detail-list{max-height:430px;overflow:auto;margin-top:10px}
+#historyView .detail-line{padding:11px 2px;font-size:8px}
+#historyView .modal-actions{margin-top:16px}
+
+/* Analytics tab */
+#analyticsView .charts{grid-template-columns:minmax(0,1.45fr) minmax(220px,.55fr) minmax(220px,.55fr);gap:16px}
+#analyticsView .chart{min-height:370px}
+#analyticsView .main-chart{min-height:420px}
+#analyticsView .bars{display:block!important;height:330px!important;padding:6px 18px 18px!important;align-items:initial!important;gap:0!important}
+#analyticsView .bars .line-chart{height:300px}
+#analyticsView .ranking{padding:0 17px 18px}
+#analyticsView .rank{min-height:47px;padding:10px 0}
+#analyticsView .rank em{width:25px;height:25px;background:#f1f2f3;display:grid;place-items:center;font-style:normal}
+#analyticsView .rank:first-child em{background:var(--mock-lime);color:#111;font-weight:900}
+#analyticsView .rank b{font-size:8px}
+#analyticsView .rank strong{font-size:10px}
+#analyticsView .metric strong{font-size:27px}
+.line-chart{min-width:0}
+.line-chart svg{display:block;width:100%;height:100%;overflow:visible}
+.line-grid{stroke:#eceff1;stroke-width:1}
+.line-area{opacity:.9}
+.line-path{fill:none;stroke:#afcd1f;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+.line-point{fill:#fff;stroke:#a8c51b;stroke-width:2.2}
+.line-label{fill:#90959b;font-size:10px;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.y-label{font-size:9px}
+
+/* Dashboard analytics */
+.dashboard-line .line-chart{height:205px}
+.dashboard-line .line-label{font-size:9px}
+.analytics-summary{align-items:stretch}
+.dash-metric{border:1px solid #f0f1f2;background:#fafbfb}
+.mini-rankings>div{border:1px solid #f0f1f2;background:#fafbfb}
+
+@media(max-width:1250px){#analyticsView .charts{grid-template-columns:1fr 1fr}#analyticsView .main-chart{grid-column:1/-1}}
+@media(max-width:850px){#historyView .history-grid{grid-template-columns:1fr}#analyticsView .charts{grid-template-columns:1fr}#analyticsView .main-chart{grid-column:auto}}
+@media(max-width:760px){.brand-label{display:none}#historyView .page-head,#analyticsView .page-head{padding:18px;border-radius:23px}#historyView .kpis,#analyticsView .kpis{grid-template-columns:1fr 1fr}#analyticsView .bars{height:270px!important;padding:0 10px 12px!important}#analyticsView .bars .line-chart{height:250px}.line-label{font-size:8px}.y-label{display:none}}
