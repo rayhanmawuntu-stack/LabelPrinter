@@ -59,10 +59,37 @@
     }
   }
 
+  function importRowsWithCompanyDefaults(){
+    const paste=document.getElementById('paste');
+    if(!paste)return;
+    const parsed=paste.value.split(/\r?\n/).filter(Boolean).map(line=>{
+      const columns=line.split('\t'),raw=(columns[1]||'').trim(),match=raw.match(/^(PT|CV|YAYASAN)\.?\s+(.+)$/i),addressPhone=(columns[5]||'').trim(),phoneMatch=addressPhone.match(/\(([^()]*)\)\s*$/);
+      return{prefix:match?match[1].toUpperCase():'',company:match?match[2]:raw,attn:(columns[6]||'').trim(),phone:phoneMatch?phoneMatch[1].trim():'',address:phoneMatch?addressPhone.slice(0,phoneMatch.index).trim():addressPhone,sender:''};
+    }).map(normalizeLabel).map(row=>applyRememberedCompanyDefaults(row,true)).filter(row=>row.company&&!/^(penerima|recipient|company)$/i.test(row.company));
+    if(!parsed.length)return toast('No valid rows detected');
+    const seen=new Set();
+    const unique=parsed.filter(row=>{const key=bulkDuplicateKey(row);if(seen.has(key))return false;seen.add(key);return true});
+    const duplicateCount=parsed.length-unique.length;
+    const rows=unique.slice(0,MAX_LABELS);
+    rows.forEach(row=>rememberCompanyDefaults(row,false));
+    persistCompanyMemory();
+    labels=rows;
+    selected=0;
+    save('ksb-labels',labels);
+    closeModals();
+    renderAll();
+    const limited=unique.length>MAX_LABELS;
+    let message=limited?`Imported first ${MAX_LABELS} of ${unique.length} unique labels`:`${rows.length} labels imported`;
+    if(duplicateCount)message+=` · ${duplicateCount} duplicate${duplicateCount===1?'':'s'} removed`;
+    toast(message);
+  }
+
   const testButton=document.getElementById('testConnection');
   const saveButton=document.getElementById('saveConnection');
+  const importButton=document.getElementById('importRows');
   if(testButton)testButton.onclick=testEndpointSafely;
   if(saveButton)saveButton.onclick=saveEndpointSafely;
+  if(importButton)importButton.onclick=importRowsWithCompanyDefaults;
 
   window.addEventListener('unhandledrejection',event=>{
     const message=String(event.reason?.message||event.reason||'Unexpected error');
