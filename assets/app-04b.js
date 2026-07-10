@@ -48,37 +48,50 @@ function ensureMonthlyYear(){
   select.onchange=renderMonthlyReport;
   return Number(select.value)||years[0];
 }
+function topMapEntry(map){
+  return[...map.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0]||null;
+}
 function monthlyReportData(year){
-  const months=Array.from({length:12},(_,month)=>({month,labels:0,batches:0,sheets:0,recipients:new Set(),users:new Map()}));
-  const recipients=new Set();
+  const months=Array.from({length:12},(_,month)=>({month,labels:0,batches:0,recipients:new Set(),customers:new Map(),users:new Map()}));
+  const recipients=new Set(),customers=new Map(),users=new Map();
   history.forEach(batch=>{
     const date=new Date(batch.timestamp);
     if(Number.isNaN(date.getTime())||date.getFullYear()!==year)return;
-    const item=months[date.getMonth()],rows=Array.isArray(batch.labels)?batch.labels:[],count=rows.length,capacity=LAYOUTS[batch.layout]?.n||6,user=clean(batch.user||batch.nickname)||'Unknown user';
+    const item=months[date.getMonth()],rows=Array.isArray(batch.labels)?batch.labels:[],count=rows.length,user=clean(batch.user||batch.nickname)||'Unknown user';
     item.labels+=count;
     item.batches+=1;
-    item.sheets+=count?Math.ceil(count/capacity):0;
     item.users.set(user,(item.users.get(user)||0)+count);
-    rows.forEach(row=>{const recipient=full(row);if(recipient){item.recipients.add(recipient);recipients.add(recipient)}});
+    users.set(user,(users.get(user)||0)+count);
+    rows.forEach(row=>{
+      const customer=full(row);
+      if(!customer)return;
+      item.recipients.add(customer);
+      recipients.add(customer);
+      item.customers.set(customer,(item.customers.get(customer)||0)+1);
+      customers.set(customer,(customers.get(customer)||0)+1);
+    });
   });
   const rows=months.map(item=>{
-    const top=[...item.users.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]))[0];
-    return{...item,recipientCount:item.recipients.size,topUser:top?.[0]||'—',topUserLabels:top?.[1]||0};
+    const topCustomer=topMapEntry(item.customers),topUser=topMapEntry(item.users);
+    return{...item,recipientCount:item.recipients.size,topCustomer:topCustomer?.[0]||'—',topCustomerLabels:topCustomer?.[1]||0,topUser:topUser?.[0]||'—',topUserLabels:topUser?.[1]||0};
   });
-  return{rows,totals:{labels:rows.reduce((sum,row)=>sum+row.labels,0),batches:rows.reduce((sum,row)=>sum+row.batches,0),sheets:rows.reduce((sum,row)=>sum+row.sheets,0),recipients:recipients.size}};
+  const annualCustomer=topMapEntry(customers),annualUser=topMapEntry(users);
+  return{rows,totals:{labels:rows.reduce((sum,row)=>sum+row.labels,0),batches:rows.reduce((sum,row)=>sum+row.batches,0),recipients:recipients.size,topCustomer:annualCustomer?.[0]||'—',topCustomerLabels:annualCustomer?.[1]||0,topUser:annualUser?.[0]||'—',topUserLabels:annualUser?.[1]||0}};
+}
+function reportLeader(name,count){
+  return count?`${esc(name)}<small>${count} label${count===1?'':'s'}</small>`:'—';
 }
 function renderMonthlyReport(){
   const body=$('monthlyReportBody'),foot=$('monthlyReportFoot'),summary=$('monthlyReportSummary');
   if(!body||!foot||!summary)return;
   const year=ensureMonthlyYear(),report=monthlyReportData(year),now=new Date();
-  summary.innerHTML=[['Labels',report.totals.labels],['Batches',report.totals.batches],['A4 sheets',report.totals.sheets],['Unique recipients',report.totals.recipients]].map(([label,value])=>`<article class="monthly-summary-card"><span>${label}</span><strong>${Number(value).toLocaleString('en-GB')}</strong><small>${year} total</small></article>`).join('');
+  summary.innerHTML=`<article class="monthly-summary-card"><span>Labels</span><strong>${report.totals.labels.toLocaleString('en-GB')}</strong><small>${year} total</small></article><article class="monthly-summary-card"><span>Batches</span><strong>${report.totals.batches.toLocaleString('en-GB')}</strong><small>${year} total</small></article><article class="monthly-summary-card monthly-customer-card"><span>Top customer</span><strong title="${esc(report.totals.topCustomer)}">${esc(report.totals.topCustomer)}</strong><small>${report.totals.topCustomerLabels?`${report.totals.topCustomerLabels} label${report.totals.topCustomerLabels===1?'':'s'} in ${year}`:`No customer data in ${year}`}</small></article><article class="monthly-summary-card"><span>Unique recipients</span><strong>${report.totals.recipients.toLocaleString('en-GB')}</strong><small>${year} total</small></article>`;
   body.innerHTML=report.rows.map(row=>{
     const current=year===now.getFullYear()&&row.month===now.getMonth();
     const month=new Date(year,row.month,1).toLocaleDateString('en-GB',{month:'long'});
-    const topUser=row.topUserLabels?`${esc(row.topUser)}<small>${row.topUserLabels} label${row.topUserLabels===1?'':'s'}</small>`:'—';
-    return `<tr class="${current?'current-month':''}"><td><b>${month}</b><small>${year}</small></td><td>${row.labels.toLocaleString('en-GB')}</td><td>${row.batches.toLocaleString('en-GB')}</td><td>${row.sheets.toLocaleString('en-GB')}</td><td>${row.recipientCount.toLocaleString('en-GB')}</td><td class="monthly-top-user">${topUser}</td></tr>`;
+    return `<tr class="${current?'current-month':''}"><td><b>${month}</b><small>${year}</small></td><td>${row.labels.toLocaleString('en-GB')}</td><td>${row.batches.toLocaleString('en-GB')}</td><td class="monthly-top-user">${reportLeader(row.topCustomer,row.topCustomerLabels)}</td><td>${row.recipientCount.toLocaleString('en-GB')}</td><td class="monthly-top-user">${reportLeader(row.topUser,row.topUserLabels)}</td></tr>`;
   }).join('');
-  foot.innerHTML=`<tr><th>Total</th><th>${report.totals.labels.toLocaleString('en-GB')}</th><th>${report.totals.batches.toLocaleString('en-GB')}</th><th>${report.totals.sheets.toLocaleString('en-GB')}</th><th>${report.totals.recipients.toLocaleString('en-GB')}</th><th>—</th></tr>`;
+  foot.innerHTML=`<tr><th>Total</th><th>${report.totals.labels.toLocaleString('en-GB')}</th><th>${report.totals.batches.toLocaleString('en-GB')}</th><th>${reportLeader(report.totals.topCustomer,report.totals.topCustomerLabels)}</th><th>${report.totals.recipients.toLocaleString('en-GB')}</th><th>${reportLeader(report.totals.topUser,report.totals.topUserLabels)}</th></tr>`;
 }
 function renderDashboardAnalytics(){
   const root=$('dashboardAnalytics');if(!root)return;
