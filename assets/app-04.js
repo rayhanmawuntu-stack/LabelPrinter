@@ -1,6 +1,8 @@
 function saveBatch(){
-  const printable=usableLabels(labels).slice(0,MAX_LABELS);
+  const printable=usableLabels(labels).slice(0,MAX_LABELS).map(applyRememberedPrefix);
   if(!printable.length){toast('Add at least one recipient before generating');return null}
+  printable.forEach(row=>rememberCompanyPrefix(row,false));
+  save(COMPANY_PREFIX_KEY,companyPrefixes);
   const now=new Date(),batch={id:'KSB-'+now.getTime().toString(36).toUpperCase(),timestamp:now.toISOString(),user:currentUser?.name||'Local User',nickname:currentUser?.nickname||'User',layout,labels:clone(printable),syncState:'pending'};
   history=[batch,...history.filter(x=>x.id!==batch.id)].slice(0,1000);
   historySelected=batch.id;
@@ -30,8 +32,10 @@ function renderHistory(){
   renderDashboardHistory();
 }
 function loadHistoryBatch(batch){
-  const restored=usableLabels(clone(batch?.labels||[])).slice(0,MAX_LABELS);
+  const restored=usableLabels(clone(batch?.labels||[])).slice(0,MAX_LABELS).map(applyRememberedPrefix);
   if(!restored.length)return toast('This batch has no usable labels to load');
+  restored.forEach(row=>rememberCompanyPrefix(row,false));
+  save(COMPANY_PREFIX_KEY,companyPrefixes);
   labels=restored;
   selected=0;
   if(batch.layout&&LAYOUTS[batch.layout]){
