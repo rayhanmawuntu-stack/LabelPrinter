@@ -8,8 +8,7 @@ function saveBatch(){
   historySelected=batch.id;
   save('ksb-history',history);
   syncBatch(batch);
-  renderHistory();
-  renderAnalytics();
+  refreshDataSurfaces();
   return batch;
 }
 function renderDashboardHistory(){
@@ -26,8 +25,9 @@ function renderHistory(){
   $('historyBadge').textContent=history.length;
   $('historyCount').textContent=`${history.length} batches`;
   $('historyKpis').innerHTML=[['Saved batches',history.length,'dark'],['Total labels',total,'blue'],['Recipients',unique,'lime'],['Latest layout',history[0]?LAYOUTS[history[0].layout]?.label||history[0].layout:'—','']].map(x=>`<article class="metric ${x[2]}"><span>${x[0]}</span><strong>${x[1]}</strong><small>${connected?'Google Sheets + cache':'Local cache'}</small></article>`).join('');
-  $('historyList').innerHTML=history.length?history.map(b=>{const state=b.syncState||'synced';return `<button class="history-row ${b.id===historySelected?'active':''}" data-batch="${b.id}"><span class="batch-icon">${LAYOUTS[b.layout]?.label||b.layout}</span><span><b>${esc(b.id)} <em class="sync ${state}" title="${esc(state)}" aria-label="${esc(state)}"></em></b><small>${b.labels.slice(0,2).map(full).filter(Boolean).map(esc).join(' · ')||'No recipient preview'}</small></span><b>${b.labels.length}</b></button>`}).join(''):`<div class="empty">No generated batches yet.</div>`;
-  document.querySelectorAll('[data-batch]').forEach(b=>b.onclick=()=>{historySelected=b.dataset.batch;renderHistory()});
+  const list=$('historyList');
+  list.innerHTML=history.length?history.map(b=>{const state=b.syncState||'synced';return `<button class="history-row ${b.id===historySelected?'active':''}" data-batch="${b.id}"><span class="batch-icon">${LAYOUTS[b.layout]?.label||b.layout}</span><span><b>${esc(b.id)} <em class="sync ${state}" title="${esc(state)}" aria-label="${esc(state)}"></em></b><small>${b.labels.slice(0,2).map(full).filter(Boolean).map(esc).join(' · ')||'No recipient preview'}</small></span><b>${b.labels.length}</b></button>`}).join(''):`<div class="empty">No generated batches yet.</div>`;
+  list.querySelectorAll('[data-batch]').forEach(b=>b.onclick=()=>{historySelected=b.dataset.batch;renderHistory()});
   renderDetail();
   renderDashboardHistory();
 }
@@ -57,5 +57,5 @@ function renderDetail(){
   const loadButton=detail.querySelector('#loadBatch');
   const deleteButton=detail.querySelector('#deleteBatch');
   loadButton.onclick=()=>loadHistoryBatch(b);
-  deleteButton.onclick=async()=>{history=history.filter(x=>x.id!==b.id);save('ksb-history',history);if(connected)post('deleteBatch',{id:b.id}).catch(()=>{});historySelected=null;renderHistory();renderAnalytics()};
+  deleteButton.onclick=async()=>{history=history.filter(x=>x.id!==b.id);save('ksb-history',history);if(connected)post('deleteBatch',{id:b.id}).catch(()=>{});historySelected=null;refreshDataSurfaces()};
 }
