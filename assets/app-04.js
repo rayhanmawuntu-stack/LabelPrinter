@@ -29,11 +29,29 @@ function renderHistory(){
   renderDetail();
   renderDashboardHistory();
 }
+function loadHistoryBatch(batch){
+  const restored=usableLabels(clone(batch?.labels||[])).slice(0,MAX_LABELS);
+  if(!restored.length)return toast('This batch has no usable labels to load');
+  labels=restored;
+  selected=0;
+  if(batch.layout&&LAYOUTS[batch.layout]){
+    layout=batch.layout;
+    localStorage.setItem('ksb-layout',layout);
+  }
+  save('ksb-labels',labels);
+  switchView('create');
+  renderAll();
+  requestAnimationFrame(()=>requestAnimationFrame(fitPreview));
+  toast(`Loaded ${labels.length} label${labels.length===1?'':'s'} from ${batch.id}`);
+}
 function renderDetail(){
+  const detail=$('historyDetail');
   const b=history.find(x=>x.id===historySelected)||history[0];
-  if(!b)return $('historyDetail').innerHTML='<div class="empty">Select a batch to inspect it.</div>';
+  if(!b){detail.innerHTML='<div class="empty">Select a batch to inspect it.</div>';return}
   const when=new Date(b.timestamp);
-  $('historyDetail').innerHTML=`<div class="detail-top"><div><span class="detail-kicker">Batch details</span><h2>${esc(b.id)}</h2><p>${isNaN(when)?'Unknown date':when.toLocaleString()} · ${esc(b.user||'Unknown user')}</p></div><span class="detail-count">${(b.labels||[]).length} label${(b.labels||[]).length===1?'':'s'}</span></div><div class="detail-list">${(b.labels||[]).map((r,i)=>`<div class="detail-line"><span><b>${String(i+1).padStart(2,'0')} · ${esc(full(r)||'Blank recipient')}</b><br>${esc(r.attn||r.address||'')}</span><span>${esc(r.phone||'')}</span></div>`).join('')}</div><div class="modal-actions"><button class="btn light" id="deleteBatch">Delete</button><button class="btn dark" id="loadBatch">Load batch</button></div>`;
-  $('loadBatch').onclick=()=>{labels=clone(b.labels||[]).slice(0,MAX_LABELS);layout=b.layout||layout;selected=0;save('ksb-labels',labels);renderAll();switchView('create')};
-  $('deleteBatch').onclick=async()=>{history=history.filter(x=>x.id!==b.id);save('ksb-history',history);if(connected)post('deleteBatch',{id:b.id}).catch(()=>{});historySelected=null;renderHistory();renderAnalytics()};
+  detail.innerHTML=`<div class="detail-top"><div><span class="detail-kicker">Batch details</span><h2>${esc(b.id)}</h2><p>${isNaN(when)?'Unknown date':when.toLocaleString()} · ${esc(b.user||'Unknown user')}</p></div><span class="detail-count">${(b.labels||[]).length} label${(b.labels||[]).length===1?'':'s'}</span></div><div class="detail-list">${(b.labels||[]).map((r,i)=>`<div class="detail-line"><span><b>${String(i+1).padStart(2,'0')} · ${esc(full(r)||'Blank recipient')}</b><br>${esc(r.attn||r.address||'')}</span><span>${esc(r.phone||'')}</span></div>`).join('')}</div><div class="modal-actions"><button class="btn light" id="deleteBatch" type="button">Delete</button><button class="btn dark" id="loadBatch" type="button">Load batch</button></div>`;
+  const loadButton=detail.querySelector('#loadBatch');
+  const deleteButton=detail.querySelector('#deleteBatch');
+  loadButton.onclick=()=>loadHistoryBatch(b);
+  deleteButton.onclick=async()=>{history=history.filter(x=>x.id!==b.id);save('ksb-history',history);if(connected)post('deleteBatch',{id:b.id}).catch(()=>{});historySelected=null;renderHistory();renderAnalytics()};
 }
