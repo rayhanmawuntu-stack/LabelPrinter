@@ -1,0 +1,35 @@
+/* Dark-mode repair for History and Analytics page headers. */
+html[data-theme="dark"] #historyView .page-head,
+html[data-theme="dark"] #analyticsView .page-head{
+  background:linear-gradient(145deg,#181d24,#12161b)!important;
+  border-color:#2a313a!important;
+  box-shadow:0 18px 55px rgba(0,0,0,.24)!important;
+  color:#f4f6f8!important;
+}
+html[data-theme="dark"] #historyView .page-title,
+html[data-theme="dark"] #analyticsView .page-title{
+  color:#f7f8fa!important;
+  text-shadow:none!important;
+}
+html[data-theme="dark"] #historyView .page-head .kicker,
+html[data-theme="dark"] #analyticsView .page-head .kicker{
+  color:#dfff3f!important;
+}
+html[data-theme="dark"] #historyView .page-head p,
+html[data-theme="dark"] #analyticsView .page-head p{
+  color:#9ea7b1!important;
+}
+html[data-theme="dark"] #historyView .page-head .btn.dark{
+  background:#dfff3f!important;
+  border-color:#dfff3f!important;
+  color:#111315!important;
+  box-shadow:0 10px 26px rgba(223,255,63,.14)!important;
+}
+html[data-theme="dark"] #historyView .page-head .btn.dark:hover{
+  background:#e7ff72!important;
+}
+html[data-theme="dark"] #analyticsView .page-head .range-control{
+  border-color:#303842!important;
+  background:#101419!important;
+  color:#f2f4f7!important;
+}
