@@ -64,12 +64,14 @@ function renderUsers(){
   const activeIndex=activeName?users.findIndex(u=>u.name===activeName):-1;
   if(activeIndex>=0){currentUser=users[activeIndex];select.value=String(activeIndex);updateProfilePreview(activeIndex)}else{select.value='';updateProfilePreview(-1)}
   select.onchange=()=>updateProfilePreview(select.value===''?-1:Number(select.value));
-  continueButton.onclick=()=>{
+  continueButton.onclick=e=>{
+    e.preventDefault();
     if(select.value==='')return toast('Select a profile to continue');
     selectUser(Number(select.value));
   };
   select.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();continueButton.click()}};
-  addButton.onclick=async()=>{
+  addButton.onclick=async e=>{
+    e.preventDefault();
     const name=clean(prompt('Full name'));
     if(!name)return;
     const nickname=clean(prompt('Nickname'))||name.split(/\s+/)[0];
@@ -84,10 +86,11 @@ function selectUser(i){
   if(!Number.isInteger(i)||!users[i])return toast('Select a valid profile');
   currentUser=users[i];
   const nick=currentUser.nickname||currentUser.name.split(' ')[0];
-  $('greeting').textContent=`Hi, ${nick}!`;
-  $('heroName').textContent=nick;
-  $('avatar').textContent=initials(currentUser.name);
-  $('entry').classList.add('hidden');
+  const greeting=$('greeting'),heroName=$('heroName'),avatar=$('avatar'),entry=$('entry');
+  if(greeting)greeting.textContent=`Hi, ${nick}!`;
+  if(heroName)heroName.textContent=nick;
+  if(avatar)avatar.textContent=initials(currentUser.name);
+  if(entry){entry.classList.add('hidden');entry.classList.remove('show')}
   if(connected)post('logLogin',{name:currentUser.name,nickname:nick,source:'github-pages',userAgent:navigator.userAgent}).catch(()=>{});
 }
 function switchView(v){
