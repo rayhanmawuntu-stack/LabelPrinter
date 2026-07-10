@@ -6,16 +6,17 @@
     const raw=clean(value);
     if(!raw)throw new Error('Enter an Apps Script web-app URL');
     const url=new URL(raw);
-    if(!/^https?:$/.test(url.protocol))throw new Error('The backend URL must use HTTPS');
+    if(url.protocol!=='https:')throw new Error('The backend URL must use HTTPS');
     if(!/\/exec\/?$/i.test(url.pathname))throw new Error('Use the deployed Apps Script URL ending in /exec');
     return url.toString();
   }
 
   async function testEndpointSafely(){
-    const field=endpointField(),result=connectionResult();
+    const field=endpointField(),result=connectionResult(),testButton=document.getElementById('testConnection');
     if(!field||!result)return;
     const previousUrl=localStorage.getItem('ksb-endpoint');
     const previousRevision=localStorage.getItem('ksb-endpoint-revision');
+    if(testButton)testButton.disabled=true;
     try{
       const url=validateEndpoint(field.value);
       result.textContent='Testing connection…';
@@ -32,12 +33,15 @@
       window.__lastSheetsError=String(error?.message||error);
       result.textContent='Connection failed: '+window.__lastSheetsError;
       field.focus();
+    }finally{
+      if(testButton)testButton.disabled=false;
     }
   }
 
   async function saveEndpointSafely(){
-    const field=endpointField(),result=connectionResult();
+    const field=endpointField(),result=connectionResult(),saveButton=document.getElementById('saveConnection');
     if(!field)return;
+    if(saveButton)saveButton.disabled=true;
     try{
       const url=validateEndpoint(field.value);
       localStorage.setItem('ksb-endpoint',url);
@@ -50,6 +54,8 @@
       if(result)result.textContent='Connection failed: '+message;
       toast(message);
       field.focus();
+    }finally{
+      if(saveButton)saveButton.disabled=false;
     }
   }
 
