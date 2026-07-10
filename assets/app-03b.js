@@ -14,7 +14,8 @@ function sheetHTML(rows=labels,previewMode=false){
   if(previewMode){
     while(slots.length<l.n)slots.push(previewEmptySlotHTML(slots.length));
   }
-  return `<div class="sheet ${previewMode?'preview-sheet':''}" style="--cols:${l.c};--rows:${l.r};--cw:${l.w}mm;--ch:${l.h}mm;--scale:${scale};--scale-x:${scaleX};--scale-y:${scaleY}">${slots.join('')}</div>`;
+  const classes=['sheet',`layout-${layout}`,previewMode?'preview-sheet':'',l.adaptive?'adaptive-labels':''].filter(Boolean).join(' ');
+  return `<div class="${classes}" style="--cols:${l.c};--rows:${l.r};--cw:${l.w}mm;--ch:${l.h}mm;--scale:${scale};--scale-x:${scaleX};--scale-y:${scaleY}">${slots.join('')}</div>`;
 }
 function pagesHTML(rows=labels){
   const l=LAYOUTS[layout],printRows=rows.length?rows:[blankLabel()];
