@@ -8,11 +8,26 @@ function review(){
   requestAnimationFrame(()=>fitText(wrap));
   openModal('reviewModal');
 }
-function printNow(){
+async function waitForPrintAssets(root){
+  const images=[...root.querySelectorAll('img')];
+  await Promise.all(images.map(img=>img.complete?Promise.resolve():new Promise(resolve=>{
+    const done=()=>resolve();
+    img.addEventListener('load',done,{once:true});
+    img.addEventListener('error',done,{once:true});
+    setTimeout(done,1500);
+  })));
+  if(document.fonts?.ready)await Promise.race([document.fonts.ready,new Promise(resolve=>setTimeout(resolve,800))]);
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+}
+async function printNow(){
   const rows=usableLabels(labels).slice(0,MAX_LABELS);
   if(!rows.length)return toast('Add at least one recipient before printing');
-  $('printRoot').innerHTML=pagesHTML(rows);
-  requestAnimationFrame(()=>{fitText($('printRoot'));window.print()});
+  const root=$('printRoot');
+  root.innerHTML=pagesHTML(rows);
+  await waitForPrintAssets(root);
+  fitText(root);
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  window.print();
 }
 function importRows(){
   const parsed=$('paste').value.split(/\r?\n/).filter(Boolean).map(line=>{const c=line.split('\t'),raw=(c[1]||'').trim(),m=raw.match(/^(PT|CV|YAYASAN)\.?\s+(.+)$/i),f=(c[5]||'').trim(),p=f.match(/\(([^()]*)\)\s*$/);return{prefix:m?m[1].toUpperCase():'',company:m?m[2]:raw,attn:(c[6]||'').trim(),phone:p?p[1].trim():'',address:p?f.slice(0,p.index).trim():f,sender:'KSB INDONESIA'}}).map(normalizeLabel).filter(r=>r.company&&!/^(penerima|recipient|company)$/i.test(r.company));
