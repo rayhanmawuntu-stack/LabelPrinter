@@ -1,0 +1,65 @@
+/* Live preview composition repair. Print output remains controlled by style-04.css. */
+.preview-panel{overflow:visible!important}
+.preview-panel .panel-head{flex:0 0 auto!important;position:relative!important;z-index:4!important}
+.preview-panel .layout-picker{
+  position:relative!important;
+  z-index:4!important;
+  flex:0 0 auto!important;
+  min-height:42px!important;
+  margin:0!important;
+  padding:0 15px 10px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  background:#fff!important;
+}
+.preview-panel .layout{
+  flex:0 0 58px!important;
+  min-width:58px!important;
+  height:36px!important;
+  min-height:36px!important;
+}
+.preview-panel .stage{
+  position:relative!important;
+  z-index:1!important;
+  flex:0 0 auto!important;
+  width:calc(100% - 28px)!important;
+  height:clamp(360px,33vw,470px)!important;
+  min-height:0!important;
+  margin:0 14px!important;
+  padding:14px!important;
+  display:grid!important;
+  place-items:center!important;
+  overflow:hidden!important;
+  border:1px solid #e3e6e9!important;
+  border-radius:20px!important;
+}
+.preview-panel .viewport{position:relative!important;display:block!important;margin:auto!important;overflow:visible!important}
+.preview-panel .page{position:absolute!important;left:0!important;top:0!important;transform-origin:top left!important}
+.preview-panel .caption{flex:0 0 auto!important;margin:10px 17px 8px!important}
+.preview-panel .preview-actions{flex:0 0 auto!important;padding:0 14px 14px!important}
+.preview-panel .sheet{box-shadow:0 16px 42px rgba(18,22,28,.16)!important;outline:1px solid rgba(18,22,28,.08)!important}
+.preview-sheet .preview-empty-slot{
+  position:relative;
+  display:grid;
+  place-items:center;
+  border:.35mm dashed rgba(20,24,30,.16);
+  background:repeating-linear-gradient(135deg,rgba(20,24,30,.018) 0,rgba(20,24,30,.018) 2.2mm,transparent 2.2mm,transparent 4.4mm);
+  color:rgba(20,24,30,.25);
+  font:700 8pt Arial,sans-serif;
+}
+.preview-sheet .preview-empty-slot span{
+  width:9mm;
+  height:9mm;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.78);
+  border:.25mm solid rgba(20,24,30,.10);
+}
+@media(max-width:1250px){.preview-panel .stage{height:440px!important}}
+@media(max-width:850px){.preview-panel .stage{height:410px!important}}
+@media(max-width:760px){
+  .preview-panel .layout-picker{padding:0 10px 8px!important}
+  .preview-panel .stage{width:calc(100% - 20px)!important;height:310px!important;margin:0 10px!important;padding:9px!important}
+  .preview-panel .preview-actions{padding:0 10px 10px!important}
+}
