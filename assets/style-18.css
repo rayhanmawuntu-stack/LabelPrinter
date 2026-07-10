@@ -1,0 +1,7 @@
+/* Current-batch utility controls. */
+.batch-head-actions{display:flex;align-items:center;gap:8px}
+.clear-batch{height:30px;padding:0 11px;border:1px solid rgba(138,58,52,.14);border-radius:999px;background:#fff;color:#8c4741;font-size:9px;font-weight:850;cursor:pointer;transition:transform .16s ease,background .16s ease,border-color .16s ease,opacity .16s ease}
+.clear-batch:hover:not(:disabled){transform:translateY(-1px);background:#fff7f6;border-color:rgba(138,58,52,.28)}
+.clear-batch:active:not(:disabled){transform:scale(.97)}
+.clear-batch:disabled{opacity:.38;cursor:not-allowed}
+@media(max-width:760px){.batch-head-actions{gap:6px}.clear-batch{height:28px;padding:0 9px;font-size:8px}}
