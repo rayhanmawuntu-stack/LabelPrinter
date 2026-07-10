@@ -17,6 +17,7 @@ async function sync(){
       h.history.forEach(x=>merged.set(x.id,{...x,labels:usableLabels(x.labels||[]),syncState:'synced'}));
       history=[...merged.values()].filter(x=>x?.id).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,1000);
       save('ksb-history',history);
+      rebuildCompanyPrefixes();
       renderHistory();
       renderAnalytics();
     }
@@ -37,6 +38,8 @@ async function syncBatch(batch,announce=true){
   try{
     batch.labels=usableLabels(batch.labels||[]);
     if(!batch.labels.length)throw new Error('Batch has no printable labels');
+    batch.labels.forEach(row=>rememberCompanyPrefix(row,false));
+    save(COMPANY_PREFIX_KEY,companyPrefixes);
     await post('saveBatch',batch);
     batch.syncState='synced';
     save('ksb-history',history);
