@@ -9,21 +9,25 @@ function renderCards(){
   $('addCard').onclick=addLabel;
   $('batchCount').textContent=`${labels.length} / ${MAX_LABELS}`;
   $('statCount').textContent=labels.length;
-  const addTop=$('addRecipient');
+  const addTop=$('addRecipient'),clearButton=$('clearAll');
   if(addTop){addTop.disabled=atLimit;addTop.title=atLimit?`Maximum ${MAX_LABELS} labels per batch`:''}
+  if(clearButton)clearButton.disabled=!labels.length;
 }
 function renderForm(){
-  if(!labels.length)labels=[blankLabel()];
-  selected=Math.max(0,Math.min(selected,labels.length-1));
-  labels[selected]=applyRememberedPrefix(labels[selected]);
-  const r=labels[selected];
-  $('editIndex').textContent=String(selected+1).padStart(2,'0');
+  selected=Math.max(0,Math.min(selected,Math.max(0,labels.length-1)));
+  const hasLabel=labels.length>0;
+  if(hasLabel)labels[selected]=applyRememberedPrefix(labels[selected]);
+  const r=hasLabel?labels[selected]:blankLabel();
+  $('editIndex').textContent=hasLabel?String(selected+1).padStart(2,'0'):'00';
   ['prefix','company','attn','phone','address'].forEach(id=>$(id).value=r[id]||'');
   const custom=!!r.sender&&!['KSB INDONESIA','KSB SALES INDONESIA'].includes(r.sender);
   $('sender').value=custom?'__CUSTOM__':r.sender||'KSB INDONESIA';
   $('customField').classList.toggle('hidden',!custom);
   $('customSender').value=custom?r.sender:'';
-  rememberCompanyPrefix(r);
+  const removeButton=$('remove'),duplicateButton=$('duplicate');
+  if(removeButton)removeButton.disabled=!hasLabel;
+  if(duplicateButton)duplicateButton.disabled=!hasLabel;
+  if(hasLabel)rememberCompanyPrefix(r);
   saveSoon('ksb-labels',labels);
 }
 const renderPreviewSoon=debounce(()=>renderPreview(),80);
@@ -52,11 +56,22 @@ function addLabel(){
   renderAll();
 }
 function removeLabel(){
-  if(labels.length===1){labels=[blankLabel()];selected=0;save('ksb-labels',labels);renderAll();return toast('Cleared recipient')}
+  if(!labels.length)return;
+  if(labels.length===1){labels=[];selected=0;save('ksb-labels',labels);renderAll();return toast('Recipient removed')}
   labels.splice(selected,1);
   selected=Math.max(0,selected-1);
   save('ksb-labels',labels);
   renderAll();
+}
+function clearAllLabels(){
+  if(!labels.length)return toast('Current batch is already empty');
+  if(!window.confirm(`Remove all ${labels.length} label${labels.length===1?'':'s'} from the current batch?`))return;
+  labels=[];
+  selected=0;
+  historySelected=null;
+  save('ksb-labels',labels);
+  renderAll();
+  toast('Current batch cleared');
 }
 function duplicate(){
   if(labels.length>=MAX_LABELS)return toast(`Maximum ${MAX_LABELS} labels per batch`);
