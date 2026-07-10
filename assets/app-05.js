@@ -1,7 +1,7 @@
 function openModal(id){$(id).classList.add('show')}
 function closeModals(){document.querySelectorAll('.modal').forEach(x=>x.classList.remove('show'))}
 function review(){
-  const rows=usableLabels(labels);
+  const rows=usableLabels(labels).slice(0,MAX_LABELS);
   if(!rows.length)return toast('Add at least one recipient before review');
   const wrap=$('reviewWrap');
   wrap.innerHTML=pagesHTML(rows);
@@ -9,20 +9,21 @@ function review(){
   openModal('reviewModal');
 }
 function printNow(){
-  const rows=usableLabels(labels);
+  const rows=usableLabels(labels).slice(0,MAX_LABELS);
   if(!rows.length)return toast('Add at least one recipient before printing');
   $('printRoot').innerHTML=pagesHTML(rows);
   requestAnimationFrame(()=>{fitText($('printRoot'));window.print()});
 }
 function importRows(){
-  const rows=$('paste').value.split(/\r?\n/).filter(Boolean).map(line=>{const c=line.split('\t'),raw=(c[1]||'').trim(),m=raw.match(/^(PT|CV|YAYASAN)\.?\s+(.+)$/i),f=(c[5]||'').trim(),p=f.match(/\(([^()]*)\)\s*$/);return{prefix:m?m[1].toUpperCase():'',company:m?m[2]:raw,attn:(c[6]||'').trim(),phone:p?p[1].trim():'',address:p?f.slice(0,p.index).trim():f,sender:'KSB INDONESIA'}}).map(normalizeLabel).filter(r=>r.company&&!/^(penerima|recipient|company)$/i.test(r.company));
-  if(!rows.length)return toast('No valid rows detected');
+  const parsed=$('paste').value.split(/\r?\n/).filter(Boolean).map(line=>{const c=line.split('\t'),raw=(c[1]||'').trim(),m=raw.match(/^(PT|CV|YAYASAN)\.?\s+(.+)$/i),f=(c[5]||'').trim(),p=f.match(/\(([^()]*)\)\s*$/);return{prefix:m?m[1].toUpperCase():'',company:m?m[2]:raw,attn:(c[6]||'').trim(),phone:p?p[1].trim():'',address:p?f.slice(0,p.index).trim():f,sender:'KSB INDONESIA'}}).map(normalizeLabel).filter(r=>r.company&&!/^(penerima|recipient|company)$/i.test(r.company));
+  if(!parsed.length)return toast('No valid rows detected');
+  const rows=parsed.slice(0,MAX_LABELS);
   labels=rows;
   selected=0;
   save('ksb-labels',labels);
   closeModals();
   renderAll();
-  toast(`${rows.length} labels imported`);
+  toast(parsed.length>MAX_LABELS?`Imported first ${MAX_LABELS} of ${parsed.length} labels`:`${rows.length} labels imported`);
 }
 function settings(){const e=$('endpoint');e.value=endpoint();$('connectionResult').textContent=connected?'Connected to Google Sheets.':(window.__lastSheetsError?`Last error: ${window.__lastSheetsError}`:'Connection not tested.');openModal('settingsModal')}
 async function testConnection(){
