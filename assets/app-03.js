@@ -1,10 +1,16 @@
+const MAX_LABELS=20;
+if(labels.length>MAX_LABELS){labels=labels.slice(0,MAX_LABELS);save('ksb-labels',labels)}
 function renderCards(){
   const q=$('search').value.trim().toLowerCase();
   const shown=labels.map((r,i)=>({r,i})).filter(x=>!q||[full(x.r),x.r.attn,x.r.address,x.r.phone].join(' ').toLowerCase().includes(q));
-  $('cards').innerHTML=shown.map(x=>`<button class="recipient ${x.i===selected?'active':''}" data-label="${x.i}"><span class="num">${String(x.i+1).padStart(2,'0')}</span><b>${esc(full(x.r)||'Blank recipient')}</b><span>${esc(x.r.attn||x.r.address||'Ready to edit')}</span></button>`).join('')+`<button class="recipient add" id="addCard"><b>＋ Add recipient</b></button>`;
+  const atLimit=labels.length>=MAX_LABELS;
+  $('cards').innerHTML=shown.map(x=>`<button class="recipient ${x.i===selected?'active':''}" data-label="${x.i}"><span class="num">${String(x.i+1).padStart(2,'0')}</span><b>${esc(full(x.r)||'Blank recipient')}</b><span>${esc(x.r.attn||x.r.address||'Ready to edit')}</span></button>`).join('')+`<button class="recipient add" id="addCard" ${atLimit?'disabled':''}><b>${atLimit?`${MAX_LABELS} label limit reached`:'＋ Add recipient'}</b></button>`;
   document.querySelectorAll('[data-label]').forEach(b=>b.onclick=()=>{selected=+b.dataset.label;renderAll()});
   $('addCard').onclick=addLabel;
-  $('batchCount').textContent=$('statCount').textContent=labels.length;
+  $('batchCount').textContent=`${labels.length} / ${MAX_LABELS}`;
+  $('statCount').textContent=labels.length;
+  const addTop=$('addRecipient');
+  if(addTop){addTop.disabled=atLimit;addTop.title=atLimit?`Maximum ${MAX_LABELS} labels per batch`:''}
 }
 function renderForm(){
   if(!labels.length)labels=[blankLabel()];
@@ -29,6 +35,7 @@ function update(id,val){
   renderPreviewSoon();
 }
 function addLabel(){
+  if(labels.length>=MAX_LABELS)return toast(`Maximum ${MAX_LABELS} labels per batch`);
   labels.push(blankLabel());
   selected=labels.length-1;
   save('ksb-labels',labels);
@@ -42,6 +49,7 @@ function removeLabel(){
   renderAll();
 }
 function duplicate(){
+  if(labels.length>=MAX_LABELS)return toast(`Maximum ${MAX_LABELS} labels per batch`);
   if(!labels[selected])return addLabel();
   labels.splice(selected+1,0,clone(labels[selected]));
   selected++;
