@@ -1,3 +1,4 @@
+function historySyncState(value){return['synced','pending','failed'].includes(value)?value:'pending'}
 function saveBatch(){
   const printable=usableLabels(labels).slice(0,MAX_LABELS).map(applyRememberedPrefix);
   if(!printable.length){toast('Add at least one recipient before generating');return null}
@@ -16,7 +17,7 @@ function renderDashboardHistory(){
   if(!root)return;
   const recent=history.slice(0,4);
   root.className='recent-list';
-  root.innerHTML=recent.length?recent.map(b=>{const when=new Date(b.timestamp),state=b.syncState||'synced';return `<button class="recent-row" data-open-batch="${esc(b.id)}"><span class="recent-icon">▤</span><span><b>${esc(b.id)}</b><small>${isNaN(when)?'Unknown date':when.toLocaleDateString()} · ${b.labels.length} label${b.labels.length===1?'':'s'}</small></span><span><em class="sync ${state}" title="${esc(state)}" aria-label="${esc(state)}"></em></span></button>`}).join(''):'<div class="empty-mini">No generated batches yet.</div>';
+  root.innerHTML=recent.length?recent.map(b=>{const when=new Date(b.timestamp),state=historySyncState(b.syncState);return `<button class="recent-row" data-open-batch="${esc(b.id)}"><span class="recent-icon">▤</span><span><b>${esc(b.id)}</b><small>${isNaN(when)?'Unknown date':when.toLocaleDateString()} · ${b.labels.length} label${b.labels.length===1?'':'s'}</small></span><span><em class="sync ${state}" title="${state}" aria-label="${state}"></em></span></button>`}).join(''):'<div class="empty-mini">No generated batches yet.</div>';
   root.querySelectorAll('[data-open-batch]').forEach(btn=>btn.onclick=()=>{historySelected=btn.dataset.openBatch;switchView('history');renderHistory()});
 }
 function renderHistory(){
@@ -24,9 +25,9 @@ function renderHistory(){
   const total=history.reduce((s,b)=>s+b.labels.length,0),unique=new Set(history.flatMap(b=>b.labels.map(full).filter(Boolean))).size;
   $('historyBadge').textContent=history.length;
   $('historyCount').textContent=`${history.length} batches`;
-  $('historyKpis').innerHTML=[['Saved batches',history.length,'dark'],['Total labels',total,'blue'],['Recipients',unique,'lime'],['Latest layout',history[0]?LAYOUTS[history[0].layout]?.label||history[0].layout:'—','']].map(x=>`<article class="metric ${x[2]}"><span>${x[0]}</span><strong>${x[1]}</strong><small>${connected?'Google Sheets + cache':'Local cache'}</small></article>`).join('');
+  $('historyKpis').innerHTML=[['Saved batches',history.length,'dark'],['Total labels',total,'blue'],['Recipients',unique,'lime'],['Latest layout',history[0]?LAYOUTS[history[0].layout]?.label||history[0].layout:'—','']].map(x=>`<article class="metric ${x[2]}"><span>${x[0]}</span><strong>${esc(x[1])}</strong><small>${connected?'Google Sheets + cache':'Local cache'}</small></article>`).join('');
   const list=$('historyList');
-  list.innerHTML=history.length?history.map(b=>{const state=b.syncState||'synced';return `<button class="history-row ${b.id===historySelected?'active':''}" data-batch="${b.id}"><span class="batch-icon">${LAYOUTS[b.layout]?.label||b.layout}</span><span><b>${esc(b.id)} <em class="sync ${state}" title="${esc(state)}" aria-label="${esc(state)}"></em></b><small>${b.labels.slice(0,2).map(full).filter(Boolean).map(esc).join(' · ')||'No recipient preview'}</small></span><b>${b.labels.length}</b></button>`}).join(''):`<div class="empty">No generated batches yet.</div>`;
+  list.innerHTML=history.length?history.map(b=>{const state=historySyncState(b.syncState),layoutName=LAYOUTS[b.layout]?.label||clean(b.layout)||'Unknown';return `<button class="history-row ${b.id===historySelected?'active':''}" data-batch="${esc(b.id)}"><span class="batch-icon">${esc(layoutName)}</span><span><b>${esc(b.id)} <em class="sync ${state}" title="${state}" aria-label="${state}"></em></b><small>${b.labels.slice(0,2).map(full).filter(Boolean).map(esc).join(' · ')||'No recipient preview'}</small></span><b>${b.labels.length}</b></button>`}).join(''):`<div class="empty">No generated batches yet.</div>`;
   list.querySelectorAll('[data-batch]').forEach(b=>b.onclick=()=>{historySelected=b.dataset.batch;renderHistory()});
   renderDetail();
   renderDashboardHistory();
