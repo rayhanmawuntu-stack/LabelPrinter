@@ -1,0 +1,51 @@
+/* Balance the three primary dashboard containers. */
+.dashboard-grid{
+  grid-template-columns:minmax(260px,1fr) minmax(300px,1fr) minmax(500px,1.4fr)!important;
+  align-items:stretch!important;
+}
+.dashboard-grid>.batch-panel,
+.dashboard-grid>.editor-panel,
+.dashboard-grid>.preview-panel{
+  height:680px!important;
+  min-height:680px!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+.batch-panel .cards{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:auto!important;
+}
+.editor-panel .editor{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  overflow:auto!important;
+}
+.preview-panel .stage{
+  flex:1 1 auto!important;
+  height:auto!important;
+  min-height:390px!important;
+}
+.preview-panel .preview-actions{
+  flex:0 0 auto!important;
+}
+@media(max-width:1250px){
+  .dashboard-grid{grid-template-columns:minmax(260px,1fr) minmax(300px,1fr)!important}
+  .dashboard-grid>.batch-panel,
+  .dashboard-grid>.editor-panel{height:620px!important;min-height:620px!important}
+  .dashboard-grid>.preview-panel{grid-column:1/-1!important;height:650px!important;min-height:650px!important}
+}
+@media(max-width:850px){
+  .dashboard-grid{grid-template-columns:1fr!important}
+  .dashboard-grid>.batch-panel,
+  .dashboard-grid>.editor-panel,
+  .dashboard-grid>.preview-panel{height:auto!important;min-height:560px!important}
+  .preview-panel .stage{min-height:390px!important}
+}
+@media(max-width:760px){
+  .dashboard-grid>.batch-panel,
+  .dashboard-grid>.editor-panel,
+  .dashboard-grid>.preview-panel{height:auto!important;min-height:0!important}
+  .preview-panel .stage{min-height:310px!important}
+}
