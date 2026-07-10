@@ -19,6 +19,20 @@ async function waitForPrintAssets(root){
   if(document.fonts?.ready)await Promise.race([document.fonts.ready,new Promise(resolve=>setTimeout(resolve,800))]);
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
 }
+function printLabelSignature(rows){
+  return JSON.stringify((rows||[]).map(r=>{const n=normalizeLabel(r);return[n.prefix,n.company,n.attn,n.phone,n.address,n.sender]}));
+}
+function resolvePrintBatchId(rows){
+  const selectedBatch=history.find(b=>b?.id===historySelected);
+  if(selectedBatch&&printLabelSignature(selectedBatch.labels)===printLabelSignature(rows))return selectedBatch.id;
+  return 'KSB-'+Date.now().toString(36).toUpperCase();
+}
+function safePrintName(value){return clean(value).replace(/[\\/:*?"<>|]+/g,'-').replace(/\s+/g,' ').trim()||'USER'}
+function buildPrintTitle(rows){
+  const batchId=resolvePrintBatchId(rows);
+  const user=safePrintName(currentUser?.name||currentUser?.nickname||'Local User');
+  return `LABEL-${safePrintName(batchId)}-${user}`;
+}
 async function printNow(){
   const rows=usableLabels(labels).slice(0,MAX_LABELS);
   if(!rows.length)return toast('Add at least one recipient before printing');
@@ -27,6 +41,12 @@ async function printNow(){
   await waitForPrintAssets(root);
   fitText(root);
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  const previousTitle=document.title;
+  document.title=buildPrintTitle(rows);
+  let restored=false;
+  const restoreTitle=()=>{if(restored)return;restored=true;document.title=previousTitle};
+  window.addEventListener('afterprint',restoreTitle,{once:true});
+  setTimeout(restoreTitle,30000);
   window.print();
 }
 function importRows(){
