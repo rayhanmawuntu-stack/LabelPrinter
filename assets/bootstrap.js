@@ -1,6 +1,6 @@
 (async()=>{
   try{
-    const version='20260710-dark-page-header-fix-16';
+    const version='20260710-xlsx-history-import-17';
     let initialTheme='light';
     try{
       const savedTheme=localStorage.getItem('ksb-theme');
@@ -13,7 +13,7 @@
     const html=(await Promise.all(files.map(async path=>{const r=await fetch(`${path}?v=${version}`,{cache:'no-store'});if(!r.ok)throw new Error(`Failed to load ${path}`);return r.text()}))).join('');
     document.body.innerHTML=html;
     const loadScript=src=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=()=>reject(new Error(`Failed to load ${src}`));document.body.appendChild(s)});
-    const scripts=['assets/no-mock.js','assets/app-01.js','assets/app-theme.js','assets/app-02.js','assets/app-03.js','assets/app-03b.js','assets/app-04.js','assets/app-04b.js','assets/app-pdf.js','assets/app-05.js'];
+    const scripts=['assets/no-mock.js','assets/app-01.js','assets/app-theme.js','assets/app-02.js','assets/app-03.js','assets/app-03b.js','assets/app-04.js','assets/app-04b.js','assets/app-import.js','assets/app-pdf.js','assets/app-05.js'];
     for(const src of scripts)await loadScript(`${src}?v=${version}`);
   }catch(error){document.body.innerHTML=`<div class="boot">Unable to load KSB LabelPrint: ${String(error.message||error)}</div>`}
 })();
