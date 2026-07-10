@@ -39,6 +39,7 @@ $('importRows').onclick=importRows;
 $('review').onclick=review;
 $('generate').onclick=()=>{const b=saveBatch();if(!b)return;review();toast(`${b.id} generated`)};
 $('print').onclick=printNow;
+$('printDirect').onclick=printNow;
 $('remove').onclick=removeLabel;
 $('duplicate').onclick=duplicate;
 $('newBatch').onclick=()=>switchView('create');
