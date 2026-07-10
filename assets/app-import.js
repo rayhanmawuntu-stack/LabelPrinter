@@ -120,7 +120,13 @@ async function importHistoryWorkbook(file){
         if(button)button.textContent=`Syncing ${index+1}/${added.length}…`;
         await syncBatch(added[index],false);
       }
-      toast(`Imported and synced ${added.length} historical batches`);
+      const synced=added.filter(batch=>batch.syncState==='synced').length;
+      const pending=added.filter(batch=>batch.syncState==='pending').length;
+      const failed=added.filter(batch=>batch.syncState==='failed').length;
+      const parts=[`${synced} synced`];
+      if(pending)parts.push(`${pending} pending`);
+      if(failed)parts.push(`${failed} failed`);
+      toast(`Imported ${added.length} batches · ${parts.join(' · ')}`);
     }else{
       toast(`Imported ${added.length} batches locally · sync will resume when connected`);
     }
