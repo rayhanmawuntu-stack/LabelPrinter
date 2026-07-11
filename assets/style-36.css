@@ -1,0 +1,183 @@
+/* Consistent palette application across the full interface. Print surfaces stay untouched. */
+html[data-palette]:not([data-palette="ksb"]){
+  --scheme-ui-accent:var(--scheme-primary);
+  --scheme-ui-on-accent:var(--scheme-on-primary);
+  --scheme-ui-soft:color-mix(in srgb,var(--scheme-primary) 10%,var(--scheme-surface));
+  --scheme-ui-soft-strong:color-mix(in srgb,var(--scheme-primary) 18%,var(--scheme-surface));
+  --scheme-ui-secondary-soft:color-mix(in srgb,var(--scheme-secondary) 48%,white);
+  --scheme-ui-accent-soft:color-mix(in srgb,var(--scheme-accent) 38%,white);
+  --scheme-ui-line:color-mix(in srgb,var(--scheme-primary) 20%,#dfe4e9);
+  --scheme-ui-shadow:color-mix(in srgb,var(--scheme-primary) 18%,transparent);
+  --scheme-ui-text:#171a1f;
+  --scheme-ui-muted:#69717b;
+}
+
+/* Page shell and structural surfaces. */
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) body{
+  background:
+    radial-gradient(circle at 82% 2%,color-mix(in srgb,var(--scheme-secondary) 23%,transparent),transparent 31rem),
+    linear-gradient(180deg,color-mix(in srgb,var(--scheme-wash) 72%,white),var(--scheme-wash))!important;
+  color:var(--scheme-ui-text)!important;
+}
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .sidebar,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .topbar,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .hero,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .page-head,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .panel,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .modal-card,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .entry-card,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .editor{
+  background:color-mix(in srgb,var(--scheme-surface) 97%,white)!important;
+  border-color:var(--scheme-ui-line)!important;
+}
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .panel,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .hero,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .page-head,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .modal-card,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .entry-card{
+  box-shadow:0 18px 48px var(--scheme-ui-shadow)!important;
+}
+
+/* Primary actions and active navigation use one clear accent. */
+html[data-palette]:not([data-palette="ksb"]) .btn.dark,
+html[data-palette]:not([data-palette="ksb"]) .monthly-download,
+html[data-palette]:not([data-palette="ksb"]) .nav button.active,
+html[data-palette]:not([data-palette="ksb"]) .nav button.active:hover,
+html[data-palette]:not([data-palette="ksb"]) .layout.active,
+html[data-palette]:not([data-palette="ksb"]) .history-row.active .batch-icon,
+html[data-palette]:not([data-palette="ksb"]) .panel-chip,
+html[data-palette]:not([data-palette="ksb"]) .detail-count,
+html[data-palette]:not([data-palette="ksb"]) .index,
+html[data-palette]:not([data-palette="ksb"]) .picker-avatar.selected,
+html[data-palette]:not([data-palette="ksb"]) .avatar{
+  background:var(--scheme-ui-accent)!important;
+  border-color:var(--scheme-ui-accent)!important;
+  color:var(--scheme-ui-on-accent)!important;
+  box-shadow:0 10px 26px var(--scheme-ui-shadow)!important;
+}
+html[data-palette]:not([data-palette="ksb"]) .btn.dark:hover,
+html[data-palette]:not([data-palette="ksb"]) .monthly-download:hover{
+  background:color-mix(in srgb,var(--scheme-ui-accent) 88%,black)!important;
+}
+
+/* Secondary actions and informational cards use the supporting palette color. */
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .btn.lime,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .metric.lime,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .dash-metric,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .mini-rankings>div{
+  background:var(--scheme-ui-secondary-soft)!important;
+  border-color:color-mix(in srgb,var(--scheme-secondary) 58%,#d9dfe5)!important;
+  color:#171a1f!important;
+}
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .metric.blue{
+  background:var(--scheme-ui-accent-soft)!important;
+  border-color:color-mix(in srgb,var(--scheme-accent) 52%,#d9dfe5)!important;
+  color:#171a1f!important;
+}
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .metric.lime :is(span,strong,small),
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .metric.blue :is(span,strong,small),
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .dash-metric :is(span,strong,small),
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .mini-rankings :is(b,strong,small,em){color:#171a1f!important}
+
+/* Neutral controls inherit the selected scheme through borders, focus, and hover states. */
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .btn.light,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .control,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .recipient,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .history-row,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .recent-row,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .appearance-option,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .palette-option{
+  border-color:var(--scheme-ui-line)!important;
+}
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .btn.light:hover,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .recipient:hover,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .history-row:hover,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .recent-row:hover{
+  background:var(--scheme-ui-soft)!important;
+}
+html[data-palette]:not([data-palette="ksb"]) .control:focus,
+html[data-palette]:not([data-palette="ksb"]) .appearance-option:focus-visible,
+html[data-palette]:not([data-palette="ksb"]) .palette-option:focus-visible,
+html[data-palette]:not([data-palette="ksb"]) .recipient:focus-visible,
+html[data-palette]:not([data-palette="ksb"]) .history-row:focus-visible{
+  border-color:var(--scheme-ui-accent)!important;
+  outline-color:color-mix(in srgb,var(--scheme-ui-accent) 48%,transparent)!important;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--scheme-ui-accent) 17%,transparent)!important;
+}
+
+/* Selected rows, table highlights, links, and small accents. */
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .recipient.active,
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .history-row.active{
+  background:var(--scheme-ui-soft-strong)!important;
+  border-color:color-mix(in srgb,var(--scheme-ui-accent) 55%,#d4dae0)!important;
+}
+html[data-palette]:not([data-palette="ksb"]) :is(.kicker,.detail-kicker,.text-link,.clear-batch,.entry-kicker){color:var(--scheme-ui-accent)!important}
+html[data-palette]:not([data-palette="ksb"]) .monthly-report-table tbody tr.current-month{background:var(--scheme-ui-soft)!important}
+html[data-palette]:not([data-palette="ksb"]) .line-path{stroke:var(--scheme-ui-accent)!important}
+html[data-palette]:not([data-palette="ksb"]) .line-point{stroke:var(--scheme-ui-accent)!important}
+html[data-palette]:not([data-palette="ksb"]) .line-area{fill:color-mix(in srgb,var(--scheme-ui-accent) 22%,transparent)!important}
+html[data-palette]:not([data-palette="ksb"]) .interactive-line-chart stop:first-child{stop-color:var(--scheme-ui-accent)!important}
+html[data-palette]:not([data-palette="ksb"]) .interactive-line-chart .line-point-halo{fill:color-mix(in srgb,var(--scheme-ui-accent) 30%,transparent)!important}
+
+/* Dark mode keeps neutral dark surfaces while using the palette's brighter supporting color. */
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]){
+  --scheme-ui-accent:var(--scheme-accent);
+  --scheme-ui-on-accent:#111315;
+  --scheme-ui-soft:color-mix(in srgb,var(--scheme-accent) 10%,#171b21);
+  --scheme-ui-soft-strong:color-mix(in srgb,var(--scheme-accent) 16%,#171b21);
+  --scheme-ui-line:color-mix(in srgb,var(--scheme-accent) 24%,#303842);
+  --scheme-ui-shadow:color-mix(in srgb,var(--scheme-accent) 16%,transparent);
+  --scheme-ui-text:#f1f4f7;
+  --scheme-ui-muted:#9fa8b2;
+}
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) body{
+  background:radial-gradient(circle at 82% 2%,color-mix(in srgb,var(--scheme-ui-accent) 10%,transparent),transparent 31rem),#0d1014!important;
+}
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) :is(.sidebar,.topbar,.hero,.page-head,.panel,.modal-card,.entry-card,.editor){
+  background:#171b21!important;
+  border-color:var(--scheme-ui-line)!important;
+  color:var(--scheme-ui-text)!important;
+}
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) :is(.btn.light,.control,.recipient,.history-row,.recent-row,.appearance-option,.palette-option){
+  background:#1d232a!important;
+  border-color:var(--scheme-ui-line)!important;
+  color:var(--scheme-ui-text)!important;
+}
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) :is(.btn.light,.recipient,.history-row,.recent-row):hover{background:#252c34!important}
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) :is(.recipient.active,.history-row.active,.dash-metric,.mini-rankings>div,.metric.lime,.metric.blue){
+  background:var(--scheme-ui-soft-strong)!important;
+  border-color:color-mix(in srgb,var(--scheme-ui-accent) 48%,#303842)!important;
+  color:var(--scheme-ui-text)!important;
+}
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) :is(.recipient.active,.history-row.active,.dash-metric,.mini-rankings>div,.metric.lime,.metric.blue) :is(span,strong,small,b,em){color:inherit!important}
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) :is(.panel p,.panel small,.hero small,.page-head p,.field label,.caption,.monthly-year-field span){color:var(--scheme-ui-muted)!important}
+
+/* Mobile navigation had fixed KSB yellow values; make it follow the active palette too. */
+@media(max-width:900px){
+  html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .sidebar{
+    background:color-mix(in srgb,var(--scheme-surface) 94%,transparent)!important;
+    border-color:color-mix(in srgb,var(--scheme-primary) 18%,white)!important;
+  }
+  html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .sidebar{
+    background:rgba(23,27,33,.96)!important;
+    border-color:var(--scheme-ui-line)!important;
+  }
+  html[data-palette]:not([data-palette="ksb"]) .sidebar .nav button.active,
+  html[data-palette]:not([data-palette="ksb"]) .sidebar .nav button.active:hover{
+    background:var(--scheme-ui-accent)!important;
+    color:var(--scheme-ui-on-accent)!important;
+    box-shadow:0 10px 24px var(--scheme-ui-shadow)!important;
+  }
+}
+
+/* The palette selector previews remain literal; printing remains strictly black on white. */
+html[data-palette] :is(.sheet,.physical,.print-page,.print-root,#reviewWrap .sheet,#page .sheet){
+  background:#fff!important;
+  color:#000!important;
+  color-scheme:light!important;
+}
+
+@supports not (color:color-mix(in srgb,#000 50%,#fff)){
+  html[data-palette]:not([data-palette="ksb"]){--scheme-ui-line:#d9dee4;--scheme-ui-shadow:rgba(0,0,0,.1)}
+  html[data-theme="dark"][data-palette]:not([data-palette="ksb"]){--scheme-ui-line:#303842;--scheme-ui-shadow:rgba(0,0,0,.25)}
+}
