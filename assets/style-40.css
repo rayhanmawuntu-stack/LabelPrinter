@@ -1,18 +1,22 @@
-/* Larger LabelPrint hero title with a small KSB mark on the upper-left side. */
+/* Stacked hero identity: the real KSB logo sits above the larger LabelPrint wordmark. */
 .hero-title-wrap{
   display:flex!important;
+  flex-direction:column!important;
   align-items:flex-start!important;
   justify-content:flex-start!important;
-  gap:13px!important;
+  gap:8px!important;
   min-width:0!important;
 }
 .hero-title-logo{
-  width:28px!important;
-  height:28px!important;
-  flex:0 0 28px!important;
+  display:block!important;
+  width:58px!important;
+  height:24px!important;
+  flex:0 0 auto!important;
   object-fit:contain!important;
-  margin-top:7px!important;
-  filter:grayscale(1) brightness(.18)!important;
+  object-position:left center!important;
+  margin:0!important;
+  padding:0!important;
+  filter:none!important;
 }
 .hero-title-text{
   margin:0!important;
@@ -24,20 +28,27 @@
   color:var(--ui-text,var(--mock-ink,#111315))!important;
 }
 html[data-theme="dark"] .hero-title-logo{
-  filter:grayscale(1) brightness(0) invert(1)!important;
-  opacity:.92!important;
+  padding:3px 5px!important;
+  width:68px!important;
+  height:30px!important;
+  border-radius:6px!important;
+  background:rgba(255,255,255,.94)!important;
+  box-shadow:0 4px 14px rgba(0,0,0,.18)!important;
 }
 
 @media(min-width:1251px) and (max-width:1380px){
-  .hero-title-logo{width:24px!important;height:24px!important;flex-basis:24px!important;margin-top:6px!important}
+  .hero-title-logo{width:52px!important;height:22px!important}
   .hero-title-text{font-size:48px!important}
+  html[data-theme="dark"] .hero-title-logo{width:62px!important;height:28px!important}
 }
 @media(max-width:900px){
-  .hero-title-wrap{gap:10px!important}
-  .hero-title-logo{width:22px!important;height:22px!important;flex-basis:22px!important;margin-top:5px!important}
+  .hero-title-wrap{gap:6px!important}
+  .hero-title-logo{width:46px!important;height:19px!important}
   .hero-title-text{font-size:40px!important;letter-spacing:-.045em!important}
+  html[data-theme="dark"] .hero-title-logo{width:56px!important;height:25px!important}
 }
 @media(max-width:560px){
-  .hero-title-logo{width:19px!important;height:19px!important;flex-basis:19px!important;margin-top:4px!important}
+  .hero-title-logo{width:42px!important;height:18px!important}
   .hero-title-text{font-size:34px!important}
+  html[data-theme="dark"] .hero-title-logo{width:52px!important;height:24px!important}
 }
