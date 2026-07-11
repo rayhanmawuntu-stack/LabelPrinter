@@ -31,9 +31,20 @@ function collectAnalytics(data){
   data.forEach(b=>{const count=(b.labels||[]).length,user=String(b.user||b.nickname||'Unknown user').trim()||'Unknown user';if(!users[user])users[user]={labels:0,batches:0};users[user].labels+=count;users[user].batches+=1;(b.labels||[]).forEach(r=>{const name=full(r);if(name)companies[name]=(companies[name]||0)+1})});
   return{companies,users,companyEntries:Object.entries(companies).sort((a,b)=>b[1]-a[1]),userEntries:Object.entries(users).sort((a,b)=>b[1].labels-a[1].labels||b[1].batches-a[1].batches)};
 }
+function monthlyHistorySnapshot(){
+  const byId=new Map();
+  (Array.isArray(history)?history:[]).forEach(batch=>{
+    const id=clean(batch?.id),date=new Date(batch?.timestamp),rows=usableLabels(batch?.labels||[]);
+    if(!id||Number.isNaN(date.getTime())||!rows.length)return;
+    const candidate={...batch,labels:rows,_date:date};
+    const current=byId.get(id);
+    if(!current||rows.length>current.labels.length||(rows.length===current.labels.length&&batch.syncState==='synced'&&current.syncState!=='synced'))byId.set(id,candidate);
+  });
+  return[...byId.values()];
+}
 function monthlyReportYears(){
   const currentYear=new Date().getFullYear(),years=new Set([currentYear]);
-  history.forEach(batch=>{const date=new Date(batch.timestamp);if(!Number.isNaN(date.getTime()))years.add(date.getFullYear())});
+  monthlyHistorySnapshot().forEach(batch=>years.add(batch._date.getFullYear()));
   return[...years].sort((a,b)=>b-a);
 }
 function ensureMonthlyYear(){
@@ -54,59 +65,34 @@ function topMapEntry(map){
 function monthlyReportData(year){
   const months=Array.from({length:12},(_,month)=>({month,labels:0,batches:0,recipients:new Set(),customers:new Map(),users:new Map()}));
   const recipients=new Set(),customers=new Map(),users=new Map();
-  history.forEach(batch=>{
-    const date=new Date(batch.timestamp);
-    if(Number.isNaN(date.getTime())||date.getFullYear()!==year)return;
-    const item=months[date.getMonth()],rows=Array.isArray(batch.labels)?batch.labels:[],count=rows.length,user=clean(batch.user||batch.nickname)||'Unknown user';
-    item.labels+=count;
-    item.batches+=1;
-    item.users.set(user,(item.users.get(user)||0)+count);
-    users.set(user,(users.get(user)||0)+count);
-    rows.forEach(row=>{
-      const customer=full(row);
-      if(!customer)return;
-      item.recipients.add(customer);
-      recipients.add(customer);
-      item.customers.set(customer,(item.customers.get(customer)||0)+1);
-      customers.set(customer,(customers.get(customer)||0)+1);
-    });
+  monthlyHistorySnapshot().forEach(batch=>{
+    const date=batch._date;
+    if(date.getFullYear()!==year)return;
+    const item=months[date.getMonth()],rows=batch.labels,count=rows.length,user=clean(batch.user||batch.nickname)||'Unknown user';
+    item.labels+=count;item.batches+=1;item.users.set(user,(item.users.get(user)||0)+count);users.set(user,(users.get(user)||0)+count);
+    rows.forEach(row=>{const customer=full(row);if(!customer)return;item.recipients.add(customer);recipients.add(customer);item.customers.set(customer,(item.customers.get(customer)||0)+1);customers.set(customer,(customers.get(customer)||0)+1)});
   });
-  const rows=months.map(item=>{
-    const topCustomer=topMapEntry(item.customers),topUser=topMapEntry(item.users);
-    return{...item,recipientCount:item.recipients.size,topCustomer:topCustomer?.[0]||'—',topCustomerLabels:topCustomer?.[1]||0,topUser:topUser?.[0]||'—',topUserLabels:topUser?.[1]||0};
-  });
+  const rows=months.map(item=>{const topCustomer=topMapEntry(item.customers),topUser=topMapEntry(item.users);return{...item,recipientCount:item.recipients.size,topCustomer:topCustomer?.[0]||'—',topCustomerLabels:topCustomer?.[1]||0,topUser:topUser?.[0]||'—',topUserLabels:topUser?.[1]||0}});
   const annualCustomer=topMapEntry(customers),annualUser=topMapEntry(users);
   return{rows,totals:{labels:rows.reduce((sum,row)=>sum+row.labels,0),batches:rows.reduce((sum,row)=>sum+row.batches,0),recipients:recipients.size,topCustomer:annualCustomer?.[0]||'—',topCustomerLabels:annualCustomer?.[1]||0,topUser:annualUser?.[0]||'—',topUserLabels:annualUser?.[1]||0}};
 }
-function reportLeader(name,count){
-  return count?`${esc(name)}<small>${count} label${count===1?'':'s'}</small>`:'—';
-}
+function reportLeader(name,count){return count?`${esc(name)}<small>${count} label${count===1?'':'s'}</small>`:'—'}
 function renderMonthlyReport(){
   const body=$('monthlyReportBody'),foot=$('monthlyReportFoot'),summary=$('monthlyReportSummary');
   if(!body||!foot||!summary)return;
   const year=ensureMonthlyYear(),report=monthlyReportData(year),now=new Date();
   summary.innerHTML=`<article class="monthly-summary-card"><span>Labels</span><strong>${report.totals.labels.toLocaleString('en-GB')}</strong><small>${year} total</small></article><article class="monthly-summary-card"><span>Batches</span><strong>${report.totals.batches.toLocaleString('en-GB')}</strong><small>${year} total</small></article><article class="monthly-summary-card monthly-customer-card"><span>Top customer</span><strong title="${esc(report.totals.topCustomer)}">${esc(report.totals.topCustomer)}</strong><small>${report.totals.topCustomerLabels?`${report.totals.topCustomerLabels} label${report.totals.topCustomerLabels===1?'':'s'} in ${year}`:`No customer data in ${year}`}</small></article><article class="monthly-summary-card"><span>Unique recipients</span><strong>${report.totals.recipients.toLocaleString('en-GB')}</strong><small>${year} total</small></article>`;
-  body.innerHTML=report.rows.map(row=>{
-    const current=year===now.getFullYear()&&row.month===now.getMonth();
-    const month=new Date(year,row.month,1).toLocaleDateString('en-GB',{month:'long'});
-    return `<tr class="${current?'current-month':''}"><td><b>${month}</b><small>${year}</small></td><td>${row.labels.toLocaleString('en-GB')}</td><td>${row.batches.toLocaleString('en-GB')}</td><td class="monthly-top-user">${reportLeader(row.topCustomer,row.topCustomerLabels)}</td><td>${row.recipientCount.toLocaleString('en-GB')}</td><td class="monthly-top-user">${reportLeader(row.topUser,row.topUserLabels)}</td></tr>`;
-  }).join('');
+  body.innerHTML=report.rows.map(row=>{const current=year===now.getFullYear()&&row.month===now.getMonth(),month=new Date(year,row.month,1).toLocaleDateString('en-GB',{month:'long'});return `<tr class="${current?'current-month':''}"><td><b>${month}</b><small>${year}</small></td><td>${row.labels.toLocaleString('en-GB')}</td><td>${row.batches.toLocaleString('en-GB')}</td><td class="monthly-top-user">${reportLeader(row.topCustomer,row.topCustomerLabels)}</td><td>${row.recipientCount.toLocaleString('en-GB')}</td><td class="monthly-top-user">${reportLeader(row.topUser,row.topUserLabels)}</td></tr>`}).join('');
   foot.innerHTML=`<tr><th>Total</th><th>${report.totals.labels.toLocaleString('en-GB')}</th><th>${report.totals.batches.toLocaleString('en-GB')}</th><th>${reportLeader(report.totals.topCustomer,report.totals.topCustomerLabels)}</th><th>${report.totals.recipients.toLocaleString('en-GB')}</th><th>${reportLeader(report.totals.topUser,report.totals.topUserLabels)}</th></tr>`;
 }
 function renderDashboardAnalytics(){
   const root=$('dashboardAnalytics');if(!root)return;
   const cut=Date.now()-7*86400000,data=history.filter(b=>new Date(b.timestamp).getTime()>=cut),total=data.reduce((s,b)=>s+(b.labels?.length||0),0),sheets=data.reduce((s,b)=>s+Math.max(1,Math.ceil((b.labels?.length||0)/(LAYOUTS[b.layout]?.n||6))),0),collected=collectAnalytics(data);
   root.innerHTML=`<article class="dash-metric"><span>Labels printed</span><strong>${total}</strong><small>Last 7 days</small></article><article class="dash-metric"><span>Sheets printed</span><strong>${sheets}</strong><small>${data.length} generated batch${data.length===1?'':'es'}</small></article>`;
-  $('dashboardLine').innerHTML=lineChartHTML(analyticsBuckets(data,7),'dashboard');
-  $('dashboardTopUsers').innerHTML=miniRankingHTML(collected.userEntries,'users');
-  $('dashboardTopRecipients').innerHTML=miniRankingHTML(collected.companyEntries);
+  $('dashboardLine').innerHTML=lineChartHTML(analyticsBuckets(data,7),'dashboard');$('dashboardTopUsers').innerHTML=miniRankingHTML(collected.userEntries,'users');$('dashboardTopRecipients').innerHTML=miniRankingHTML(collected.companyEntries);
 }
 function renderAnalytics(){
   const range=$('range'),days=Number(range?.value||30),cut=days?Date.now()-days*86400000:0,data=history.filter(b=>new Date(b.timestamp).getTime()>=cut),total=data.reduce((s,b)=>s+(b.labels?.length||0),0),avg=data.length?(total/data.length).toFixed(1):0,collected=collectAnalytics(data);
   $('analyticsKpis').innerHTML=[['Generated labels',total,'dark'],['Batches',data.length,'blue'],['Average / batch',avg,'lime'],['Unique recipients',Object.keys(collected.companies).length,'']].map(x=>`<article class="metric ${x[2]}"><span>${x[0]}</span><strong>${x[1]}</strong><small>Selected period</small></article>`).join('');
-  $('bars').innerHTML=lineChartHTML(analyticsBuckets(data,days),'analytics');
-  $('ranking').innerHTML=rankingHTML(collected.companyEntries)||'<div class="empty">No recipient data yet.</div>';
-  $('userRanking').innerHTML=rankingHTML(collected.userEntries,'users')||'<div class="empty">No user data yet.</div>';
-  renderMonthlyReport();
-  renderDashboardAnalytics();
+  $('bars').innerHTML=lineChartHTML(analyticsBuckets(data,days),'analytics');$('ranking').innerHTML=rankingHTML(collected.companyEntries)||'<div class="empty">No recipient data yet.</div>';$('userRanking').innerHTML=rankingHTML(collected.userEntries,'users')||'<div class="empty">No user data yet.</div>';renderMonthlyReport();renderDashboardAnalytics();
 }
