@@ -30,7 +30,7 @@ html[data-palette] body{
   background:radial-gradient(circle at 82% 2%,color-mix(in srgb,var(--ui-primary) 12%,transparent),transparent 32rem),var(--ui-wash)!important;
   color:var(--ui-text)!important;
 }
-html[data-palette] :is(.sidebar,.topbar,.hero,.page-head,.panel,.modal-card,.entry-card,.editor,.editor-panel .panel-head){
+html[data-palette] :is(.sidebar,.hero,.panel,.modal-card,.entry-card,.editor,.editor-panel .panel-head){
   background:color-mix(in srgb,var(--ui-surface) 97%,transparent)!important;
   border-color:var(--ui-line)!important;
   color:var(--ui-text)!important;
