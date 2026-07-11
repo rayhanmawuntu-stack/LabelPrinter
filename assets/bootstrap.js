@@ -1,6 +1,6 @@
 (async()=>{
   try{
-    const version='20260711-hero-title-logo-40';
+    const version='20260711-stacked-real-ksb-logo-41';
     let initialTheme='light',initialPalette='ksb';
     try{
       const savedTheme=localStorage.getItem('ksb-theme');
