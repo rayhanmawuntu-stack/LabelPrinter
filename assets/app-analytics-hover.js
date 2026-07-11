@@ -2,13 +2,14 @@
   const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
 
   window.lineChartHTML=function(buckets,key='chart'){
+    const safeBuckets=Array.isArray(buckets)?buckets:[];
     const width=720,height=250,left=40,right=16,top=18,bottom=38;
     const innerW=width-left-right,innerH=height-top-bottom;
-    const max=Math.max(1,...buckets.map(item=>Number(item.value)||0));
-    const points=buckets.map((bucket,index)=>({
+    const max=Math.max(1,...safeBuckets.map(item=>Number(item.value)||0));
+    const points=safeBuckets.map((bucket,index)=>({
       ...bucket,
       value:Number(bucket.value)||0,
-      x:left+(buckets.length===1?innerW/2:index*innerW/(buckets.length-1)),
+      x:left+(safeBuckets.length===1?innerW/2:index*innerW/(safeBuckets.length-1)),
       y:top+(1-(Number(bucket.value)||0)/max)*innerH
     }));
     const path=points.length?`M ${points.map(point=>`${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(' L ')}`:'';
@@ -18,7 +19,8 @@
       const y=top+innerH*value,label=Math.round(max*(1-value));
       return `<line class="line-grid" x1="${left}" y1="${y}" x2="${width-right}" y2="${y}"/><text class="line-label y-label" x="${left-8}" y="${y+4}" text-anchor="end">${label}</text>`;
     }).join('');
-    const axisLabels=points.map(point=>`<text class="line-label" x="${point.x}" y="${height-12}" text-anchor="middle">${esc(point.label)}</text>`).join('');
+    const labelStep=Math.max(1,Math.ceil(points.length/10));
+    const axisLabels=points.map((point,index)=>index%labelStep===0||index===points.length-1?`<text class="line-label" x="${point.x}" y="${height-12}" text-anchor="middle">${esc(point.label)}</text>`:'').join('');
     const tooltipWidth=126,tooltipHeight=46;
     const hoverTargets=points.map((point,index)=>{
       const previous=index?points[index-1].x:left;
