@@ -1,42 +1,43 @@
-/* Hero identity: larger LabelPrint wordmark with a compact KSB mark at its upper-left. */
-.hero-identity.hero-title-only{
+/* Larger LabelPrint hero title with a small KSB mark on the upper-left side. */
+.hero-title-wrap{
   display:flex!important;
   align-items:flex-start!important;
   justify-content:flex-start!important;
-  gap:12px!important;
-  min-width:0;
+  gap:13px!important;
+  min-width:0!important;
 }
-.hero-identity.hero-title-only::before{
-  content:"";
-  display:block;
-  width:38px;
-  height:24px;
-  flex:0 0 38px;
-  margin-top:3px;
-  background-image:url("https://file.garden/ad-wGPVIV3ilAD_L/WORK%20PROJECT/LABEL%20MAKER/KSB_SVG.svg.png");
-  background-repeat:no-repeat;
-  background-position:left top;
-  background-size:contain;
+.hero-title-logo{
+  width:28px!important;
+  height:28px!important;
+  flex:0 0 28px!important;
+  object-fit:contain!important;
+  margin-top:7px!important;
+  filter:grayscale(1) brightness(.18)!important;
 }
-.hero-identity.hero-title-only h1{
+.hero-title-text{
   margin:0!important;
-  font-size:48px!important;
+  font-size:56px!important;
   line-height:.92!important;
-  letter-spacing:-2.4px!important;
+  letter-spacing:-.055em!important;
   font-weight:900!important;
-  white-space:nowrap;
+  white-space:nowrap!important;
+  color:var(--ui-text,var(--mock-ink,#111315))!important;
+}
+html[data-theme="dark"] .hero-title-logo{
+  filter:grayscale(1) brightness(0) invert(1)!important;
+  opacity:.92!important;
 }
 
-@media(max-width:1250px){
-  .hero-identity.hero-title-only h1{font-size:43px!important;letter-spacing:-2px!important}
-  .hero-identity.hero-title-only::before{width:34px;height:22px;flex-basis:34px;margin-top:2px}
+@media(min-width:1251px) and (max-width:1380px){
+  .hero-title-logo{width:24px!important;height:24px!important;flex-basis:24px!important;margin-top:6px!important}
+  .hero-title-text{font-size:48px!important}
 }
 @media(max-width:900px){
-  .hero-identity.hero-title-only{gap:10px!important}
-  .hero-identity.hero-title-only h1{font-size:38px!important;letter-spacing:-1.7px!important}
-  .hero-identity.hero-title-only::before{width:31px;height:20px;flex-basis:31px;margin-top:2px}
+  .hero-title-wrap{gap:10px!important}
+  .hero-title-logo{width:22px!important;height:22px!important;flex-basis:22px!important;margin-top:5px!important}
+  .hero-title-text{font-size:40px!important;letter-spacing:-.045em!important}
 }
 @media(max-width:560px){
-  .hero-identity.hero-title-only h1{font-size:34px!important;letter-spacing:-1.4px!important}
-  .hero-identity.hero-title-only::before{width:28px;height:18px;flex-basis:28px;margin-top:1px}
+  .hero-title-logo{width:19px!important;height:19px!important;flex-basis:19px!important;margin-top:4px!important}
+  .hero-title-text{font-size:34px!important}
 }
