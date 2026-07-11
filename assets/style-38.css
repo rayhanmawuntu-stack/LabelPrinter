@@ -1,0 +1,64 @@
+/* Repair the palette-layout regression without changing print or PDF output. */
+html,body{max-width:100%;overflow-x:clip}
+.app,.main,.view,.hero,.stats,.actions{min-width:0}
+
+/* These areas are structural chrome, not cards. Keep them transparent. */
+html[data-palette] .topbar,
+html[data-palette] .page-head{
+  background:transparent!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html[data-palette] .editor-panel>.panel-head{
+  background:transparent!important;
+  box-shadow:none!important;
+  border-bottom-color:var(--ui-line)!important;
+}
+
+/* Keep desktop navigation fully inside its rail. */
+@media(min-width:901px){
+  .app{width:min(100%,1600px);margin-inline:auto}
+  .sidebar{min-width:0;overflow:hidden}
+  .sidebar :is(.brand,.nav,.side-bottom){width:100%;max-width:100%;min-width:0}
+  .sidebar .nav button{max-width:100%;margin-inline:0}
+}
+
+/* Balance the hero instead of allowing the title column to consume empty space. */
+@media(min-width:1251px){
+  .hero{
+    grid-template-columns:minmax(230px,.72fr) minmax(500px,1.38fr) minmax(230px,.64fr)!important;
+    gap:20px!important;
+  }
+  .hero .actions{width:100%;min-width:0}
+  .hero .actions .btn{width:100%;min-width:0}
+  .hero .stat{padding-inline:16px}
+}
+@media(min-width:1251px) and (max-width:1380px){
+  .app{grid-template-columns:124px minmax(0,1fr);gap:16px;padding:16px}
+  .hero{
+    grid-template-columns:minmax(205px,.62fr) minmax(440px,1.3fr) minmax(210px,.58fr)!important;
+    gap:16px!important;
+    padding-inline:22px!important;
+  }
+  .hero .stat{padding-inline:12px}
+  .search{min-width:230px}
+}
+
+/* Give each palette a restrained hero tint while preserving contrast. */
+html[data-theme="light"][data-palette] .hero{
+  background:
+    radial-gradient(circle at 92% 8%,color-mix(in srgb,var(--ui-primary) 8%,transparent),transparent 23rem),
+    color-mix(in srgb,var(--ui-surface) 98%,white)!important;
+}
+html[data-theme="dark"][data-palette] .hero{
+  background:
+    radial-gradient(circle at 92% 8%,color-mix(in srgb,var(--ui-primary) 9%,transparent),transparent 23rem),
+    var(--ui-surface)!important;
+}
+
+/* Physical label surfaces remain neutral. */
+@media print{
+  html,body{overflow:visible!important}
+}
