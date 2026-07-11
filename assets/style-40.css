@@ -6,6 +6,8 @@
   justify-content:flex-start!important;
   gap:8px!important;
   min-width:0!important;
+  color:var(--ui-text,var(--mock-ink,#111315))!important;
+  isolation:isolate;
 }
 .hero-title-logo{
   display:block!important;
@@ -16,7 +18,13 @@
   object-position:left center!important;
   margin:0!important;
   padding:0!important;
-  filter:none!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  filter:grayscale(1) contrast(1000%)!important;
+  mix-blend-mode:multiply!important;
+  opacity:.96!important;
 }
 .hero-title-text{
   margin:0!important;
@@ -25,30 +33,33 @@
   letter-spacing:-.055em!important;
   font-weight:900!important;
   white-space:nowrap!important;
-  color:var(--ui-text,var(--mock-ink,#111315))!important;
+  color:inherit!important;
 }
 html[data-theme="dark"] .hero-title-logo{
-  padding:3px 5px!important;
-  width:68px!important;
-  height:30px!important;
-  border-radius:6px!important;
-  background:rgba(255,255,255,.94)!important;
-  box-shadow:0 4px 14px rgba(0,0,0,.18)!important;
+  width:58px!important;
+  height:24px!important;
+  padding:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  filter:grayscale(1) contrast(1000%) invert(1)!important;
+  mix-blend-mode:screen!important;
+  opacity:.94!important;
 }
 
 @media(min-width:1251px) and (max-width:1380px){
-  .hero-title-logo{width:52px!important;height:22px!important}
+  .hero-title-logo,
+  html[data-theme="dark"] .hero-title-logo{width:52px!important;height:22px!important}
   .hero-title-text{font-size:48px!important}
-  html[data-theme="dark"] .hero-title-logo{width:62px!important;height:28px!important}
 }
 @media(max-width:900px){
   .hero-title-wrap{gap:6px!important}
-  .hero-title-logo{width:46px!important;height:19px!important}
+  .hero-title-logo,
+  html[data-theme="dark"] .hero-title-logo{width:46px!important;height:19px!important}
   .hero-title-text{font-size:40px!important;letter-spacing:-.045em!important}
-  html[data-theme="dark"] .hero-title-logo{width:56px!important;height:25px!important}
 }
 @media(max-width:560px){
-  .hero-title-logo{width:42px!important;height:18px!important}
+  .hero-title-logo,
+  html[data-theme="dark"] .hero-title-logo{width:42px!important;height:18px!important}
   .hero-title-text{font-size:34px!important}
-  html[data-theme="dark"] .hero-title-logo{width:52px!important;height:24px!important}
 }
