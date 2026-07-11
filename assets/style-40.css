@@ -1,0 +1,42 @@
+/* Hero identity: larger LabelPrint wordmark with a compact KSB mark at its upper-left. */
+.hero-identity.hero-title-only{
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:flex-start!important;
+  gap:12px!important;
+  min-width:0;
+}
+.hero-identity.hero-title-only::before{
+  content:"";
+  display:block;
+  width:38px;
+  height:24px;
+  flex:0 0 38px;
+  margin-top:3px;
+  background-image:url("https://file.garden/ad-wGPVIV3ilAD_L/WORK%20PROJECT/LABEL%20MAKER/KSB_SVG.svg.png");
+  background-repeat:no-repeat;
+  background-position:left top;
+  background-size:contain;
+}
+.hero-identity.hero-title-only h1{
+  margin:0!important;
+  font-size:48px!important;
+  line-height:.92!important;
+  letter-spacing:-2.4px!important;
+  font-weight:900!important;
+  white-space:nowrap;
+}
+
+@media(max-width:1250px){
+  .hero-identity.hero-title-only h1{font-size:43px!important;letter-spacing:-2px!important}
+  .hero-identity.hero-title-only::before{width:34px;height:22px;flex-basis:34px;margin-top:2px}
+}
+@media(max-width:900px){
+  .hero-identity.hero-title-only{gap:10px!important}
+  .hero-identity.hero-title-only h1{font-size:38px!important;letter-spacing:-1.7px!important}
+  .hero-identity.hero-title-only::before{width:31px;height:20px;flex-basis:31px;margin-top:2px}
+}
+@media(max-width:560px){
+  .hero-identity.hero-title-only h1{font-size:34px!important;letter-spacing:-1.4px!important}
+  .hero-identity.hero-title-only::before{width:28px;height:18px;flex-basis:28px;margin-top:1px}
+}
