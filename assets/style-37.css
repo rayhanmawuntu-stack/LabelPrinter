@@ -1,0 +1,119 @@
+/* Palette consistency pass: one semantic mapping for every selectable scheme. */
+html[data-palette]{
+  --ui-primary:var(--scheme-primary,#dfff3f);
+  --ui-on-primary:var(--scheme-on-primary,#111315);
+  --ui-accent:var(--scheme-accent,#b9d0ff);
+  --ui-surface:var(--scheme-surface,#fff);
+  --ui-wash:var(--scheme-wash,#f1f2f4);
+  --ui-text:#15191f;
+  --ui-muted:#6c747e;
+  --ui-line:color-mix(in srgb,var(--ui-primary) 20%,#dfe5ea);
+  --ui-soft:color-mix(in srgb,var(--ui-primary) 11%,var(--ui-surface));
+  --ui-soft-strong:color-mix(in srgb,var(--ui-primary) 18%,var(--ui-surface));
+  --ui-accent-soft:color-mix(in srgb,var(--ui-accent) 34%,var(--ui-surface));
+  --ui-shadow:color-mix(in srgb,var(--ui-primary) 15%,transparent);
+}
+html[data-theme="dark"][data-palette]{
+  --ui-surface:#171b21;
+  --ui-wash:#0d1014;
+  --ui-text:#eef2f5;
+  --ui-muted:#9fa8b2;
+  --ui-line:color-mix(in srgb,var(--ui-primary) 23%,#303842);
+  --ui-soft:color-mix(in srgb,var(--ui-primary) 9%,#171b21);
+  --ui-soft-strong:color-mix(in srgb,var(--ui-primary) 15%,#171b21);
+  --ui-accent-soft:color-mix(in srgb,var(--ui-accent) 14%,#171b21);
+  --ui-shadow:color-mix(in srgb,var(--ui-primary) 13%,transparent);
+}
+
+/* App chrome follows the same palette structure in light and dark mode. */
+html[data-palette] body{
+  background:radial-gradient(circle at 82% 2%,color-mix(in srgb,var(--ui-primary) 12%,transparent),transparent 32rem),var(--ui-wash)!important;
+  color:var(--ui-text)!important;
+}
+html[data-palette] :is(.sidebar,.topbar,.hero,.page-head,.panel,.modal-card,.entry-card,.editor,.editor-panel .panel-head){
+  background:color-mix(in srgb,var(--ui-surface) 97%,transparent)!important;
+  border-color:var(--ui-line)!important;
+  color:var(--ui-text)!important;
+}
+html[data-palette] :is(.panel p,.panel small,.hero p,.hero small,.page-head p,.field label,.caption,.monthly-year-field span,.palette-copy small,.detail-top p,.entry-copy p){
+  color:var(--ui-muted)!important;
+}
+
+/* Primary actions, selected navigation, and strong chips always use primary. */
+html[data-palette] :is(.btn.dark,.btn.lime,.monthly-download,.nav button.active,.nav button.active:hover,.layout.active,.panel-chip,.detail-count,.index,.avatar,.picker-avatar.selected,.history-row.active .batch-icon,.palette-option[aria-pressed="true"]::after,.appearance-option[aria-pressed="true"]){
+  background:var(--ui-primary)!important;
+  border-color:var(--ui-primary)!important;
+  color:var(--ui-on-primary)!important;
+  box-shadow:0 10px 26px var(--ui-shadow)!important;
+}
+html[data-palette] :is(.btn.dark,.btn.lime,.monthly-download):hover{
+  background:color-mix(in srgb,var(--ui-primary) 86%,black)!important;
+  border-color:color-mix(in srgb,var(--ui-primary) 86%,black)!important;
+  color:var(--ui-on-primary)!important;
+}
+
+/* Secondary information areas use the accent color, never hard-coded KSB colors. */
+html[data-palette] :is(.metric.blue,.metric.lime,.dash-metric,.mini-rankings>div,.monthly-summary-card){
+  background:var(--ui-accent-soft)!important;
+  border-color:color-mix(in srgb,var(--ui-accent) 42%,var(--ui-line))!important;
+  color:var(--ui-text)!important;
+}
+html[data-palette] :is(.metric.blue,.metric.lime,.dash-metric,.mini-rankings>div,.monthly-summary-card) :is(span,strong,small,b,em){
+  color:inherit!important;
+}
+
+/* Inputs, rows, and selectors share one hover/active/focus language. */
+html[data-palette] :is(.btn.light,.control,.recipient,.recent-row,.history-row,.appearance-option,.palette-option,.layout){
+  border-color:var(--ui-line)!important;
+}
+html[data-theme="dark"][data-palette] :is(.btn.light,.control,.recipient,.recent-row,.history-row,.appearance-option,.palette-option,.layout){
+  background:#1d232a!important;
+  color:var(--ui-text)!important;
+}
+html[data-palette] :is(.btn.light,.recipient,.recent-row,.history-row,.layout,.palette-option,.appearance-option):hover{
+  background:var(--ui-soft)!important;
+  border-color:color-mix(in srgb,var(--ui-primary) 38%,var(--ui-line))!important;
+}
+html[data-palette] :is(.recipient.active,.history-row.active,.palette-option[aria-pressed="true"]){
+  background:var(--ui-soft-strong)!important;
+  border-color:color-mix(in srgb,var(--ui-primary) 58%,var(--ui-line))!important;
+}
+html[data-palette] :is(.control:focus,.recipient:focus-visible,.recent-row:focus-visible,.history-row:focus-visible,.layout:focus-visible,.palette-option:focus-visible,.appearance-option:focus-visible){
+  border-color:var(--ui-primary)!important;
+  outline-color:color-mix(in srgb,var(--ui-primary) 48%,transparent)!important;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--ui-primary) 18%,transparent)!important;
+}
+
+/* Charts, report highlights, text accents, and progress details follow primary. */
+html[data-palette] :is(.kicker,.detail-kicker,.entry-kicker,.text-link,.clear-batch){color:var(--ui-primary)!important}
+html[data-palette] .monthly-report-table tbody tr.current-month{background:var(--ui-soft)!important}
+html[data-palette] :is(.line-path,.line-point){stroke:var(--ui-primary)!important}
+html[data-palette] .line-area{fill:color-mix(in srgb,var(--ui-primary) 22%,transparent)!important}
+html[data-palette] .interactive-line-chart stop:first-child{stop-color:var(--ui-primary)!important}
+html[data-palette] .interactive-line-chart .line-point-halo{fill:color-mix(in srgb,var(--ui-primary) 30%,transparent)!important}
+html[data-palette] .line-tooltip-value{fill:var(--ui-primary)!important}
+
+/* Settings swatches remain literal previews, while selected state follows the actual active palette. */
+.palette-option[aria-pressed="true"]{box-shadow:0 0 0 3px color-mix(in srgb,var(--ui-primary) 16%,transparent)!important}
+html[data-theme="dark"] .palette-option[aria-pressed="true"]{background:var(--ui-soft-strong)!important}
+
+/* Mobile bottom pill no longer keeps any old yellow-only styling. */
+@media(max-width:900px){
+  html[data-palette] .sidebar{
+    background:color-mix(in srgb,var(--ui-surface) 94%,transparent)!important;
+    border-color:var(--ui-line)!important;
+  }
+  html[data-theme="dark"][data-palette] .sidebar{background:rgba(23,27,33,.96)!important}
+}
+
+/* Printing and PDF preview must stay physical-label neutral. */
+html[data-palette] :is(.sheet,.physical,.print-page,.print-root,#reviewWrap .sheet,#page .sheet){
+  background:#fff!important;
+  color:#000!important;
+  color-scheme:light!important;
+}
+
+@supports not (color:color-mix(in srgb,#000 50%,#fff)){
+  html[data-palette]{--ui-line:#dce1e7;--ui-soft:#f4f6f8;--ui-soft-strong:#eef2f5;--ui-accent-soft:#f1f4f7;--ui-shadow:rgba(0,0,0,.1)}
+  html[data-theme="dark"][data-palette]{--ui-line:#303842;--ui-soft:#20262e;--ui-soft-strong:#252c34;--ui-accent-soft:#20262e;--ui-shadow:rgba(0,0,0,.28)}
+}
