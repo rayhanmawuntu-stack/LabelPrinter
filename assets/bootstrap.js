@@ -1,6 +1,6 @@
 (async()=>{
   try{
-    const version='20260710-report-reliability-33';
+    const version='20260710-report-hardening-34';
     let initialTheme='light',initialPalette='ksb';
     try{
       const savedTheme=localStorage.getItem('ksb-theme');
