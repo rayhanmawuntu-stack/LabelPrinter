@@ -1,0 +1,135 @@
+/* Final palette hierarchy: primary actions, supporting accents, and neutral surfaces. */
+html[data-palette]{
+  --theme-primary:var(--scheme-primary,#dfff3f);
+  --theme-on-primary:var(--scheme-on-primary,#111315);
+  --theme-accent:var(--scheme-accent,#b9d0ff);
+  --theme-on-accent:#111315;
+  --theme-surface:var(--ui-surface,var(--scheme-surface,#fff));
+  --theme-text:var(--ui-text,#15191f);
+  --theme-muted:var(--ui-muted,#6c747e);
+  --theme-line:color-mix(in srgb,var(--theme-primary) 22%,#dfe5ea);
+  --theme-primary-soft:color-mix(in srgb,var(--theme-primary) 13%,var(--theme-surface));
+  --theme-accent-soft:color-mix(in srgb,var(--theme-accent) 24%,var(--theme-surface));
+  --theme-primary-shadow:color-mix(in srgb,var(--theme-primary) 22%,transparent);
+}
+html[data-theme="dark"][data-palette]{
+  --theme-surface:#171b21;
+  --theme-text:#eef2f5;
+  --theme-muted:#9fa8b2;
+  --theme-line:color-mix(in srgb,var(--theme-primary) 27%,#303842);
+  --theme-primary-soft:color-mix(in srgb,var(--theme-primary) 16%,#171b21);
+  --theme-accent-soft:color-mix(in srgb,var(--theme-accent) 16%,#171b21);
+  --theme-primary-shadow:color-mix(in srgb,var(--theme-primary) 20%,transparent);
+}
+
+/* Primary hierarchy. */
+html[data-palette] :is(.btn.dark,#newBatch,#loadBatch,.monthly-download:not(.monthly-download-pdf),.nav button.active,.nav button.active:hover,.layout.active,.avatar,.picker-avatar.selected,.index){
+  background:var(--theme-primary)!important;
+  border-color:var(--theme-primary)!important;
+  color:var(--theme-on-primary)!important;
+  box-shadow:0 10px 26px var(--theme-primary-shadow)!important;
+}
+html[data-palette] :is(.btn.dark,#newBatch,#loadBatch,.monthly-download:not(.monthly-download-pdf)):hover{
+  background:color-mix(in srgb,var(--theme-primary) 86%,black)!important;
+  border-color:color-mix(in srgb,var(--theme-primary) 86%,black)!important;
+  color:var(--theme-on-primary)!important;
+}
+html[data-palette] :is(.kicker,.detail-kicker,.entry-kicker,.text-link,.clear-batch){color:var(--theme-primary)!important}
+
+/* Supporting accent hierarchy. */
+html[data-palette] :is(.btn.lime,.panel-chip,.detail-count,.badge){
+  background:var(--theme-accent)!important;
+  border-color:var(--theme-accent)!important;
+  color:var(--theme-on-accent)!important;
+  box-shadow:none!important;
+}
+html[data-palette] .btn.lime:hover{
+  background:color-mix(in srgb,var(--theme-accent) 88%,black)!important;
+  border-color:color-mix(in srgb,var(--theme-accent) 88%,black)!important;
+  color:var(--theme-on-accent)!important;
+}
+
+/* KPI cards use stable semantic roles instead of legacy color names. */
+html[data-palette] .metric.primary,
+html[data-palette] .metric.dark{
+  background:var(--theme-primary)!important;
+  border-color:var(--theme-primary)!important;
+  color:var(--theme-on-primary)!important;
+  box-shadow:0 15px 34px var(--theme-primary-shadow)!important;
+}
+html[data-palette] .metric.accent,
+html[data-palette] .metric.blue{
+  background:var(--theme-accent)!important;
+  border-color:color-mix(in srgb,var(--theme-accent) 72%,var(--theme-line))!important;
+  color:var(--theme-on-accent)!important;
+}
+html[data-palette] .metric.soft,
+html[data-palette] .metric.lime{
+  background:var(--theme-primary-soft)!important;
+  border-color:color-mix(in srgb,var(--theme-primary) 46%,var(--theme-line))!important;
+  color:var(--theme-text)!important;
+}
+html[data-palette] .metric.neutral,
+html[data-palette] .metric:not(.primary):not(.accent):not(.soft):not(.dark):not(.blue):not(.lime){
+  background:var(--theme-surface)!important;
+  border-color:var(--theme-line)!important;
+  color:var(--theme-text)!important;
+}
+html[data-palette] .metric :is(span,strong,small,b,em){color:inherit!important}
+
+/* History and analytics details follow the same two-color system. */
+html[data-palette] .history-row.active{
+  background:var(--theme-primary-soft)!important;
+  border-color:color-mix(in srgb,var(--theme-primary) 62%,var(--theme-line))!important;
+}
+html[data-palette] .history-row.active .batch-icon{
+  background:var(--theme-primary)!important;
+  border-color:var(--theme-primary)!important;
+  color:var(--theme-on-primary)!important;
+}
+html[data-palette] .history-row> b:last-child,
+html[data-palette] .rank>strong,
+html[data-palette] .mini-rank>strong{color:var(--theme-accent)!important}
+html[data-palette] #analyticsView .rank:first-child em,
+html[data-palette] .monthly-bar-rank:first-child{
+  background:var(--theme-accent)!important;
+  color:var(--theme-on-accent)!important;
+}
+html[data-palette] :is(.history-row,.recent-row,.control,.btn.light,.range-control){border-color:var(--theme-line)!important}
+html[data-palette] :is(.history-row,.recent-row,.btn.light):hover{
+  background:var(--theme-primary-soft)!important;
+  border-color:color-mix(in srgb,var(--theme-primary) 46%,var(--theme-line))!important;
+}
+html[data-palette] :is(.control:focus,.history-row:focus-visible,.recent-row:focus-visible,.btn:focus-visible){
+  border-color:var(--theme-primary)!important;
+  outline-color:color-mix(in srgb,var(--theme-primary) 48%,transparent)!important;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--theme-primary) 18%,transparent)!important;
+}
+
+/* Charts use primary for the line and accent for the supporting fill. */
+html[data-palette] :is(.line-path,.line-point){stroke:var(--theme-primary)!important}
+html[data-palette] .line-area{fill:color-mix(in srgb,var(--theme-accent) 25%,transparent)!important}
+html[data-palette] .interactive-line-chart stop:first-child{stop-color:var(--theme-accent)!important}
+html[data-palette] .interactive-line-chart .line-point-halo{fill:color-mix(in srgb,var(--theme-primary) 28%,transparent)!important}
+html[data-palette] .line-tooltip-value{fill:var(--theme-primary)!important}
+
+/* Keep dark surfaces neutral while retaining palette-tinted borders. */
+html[data-theme="dark"][data-palette] :is(.page-head,.panel,.modal-card,.entry-card,.editor,.history-row,.recent-row,.control,.btn.light,.range-control){
+  color:var(--theme-text)!important;
+}
+html[data-theme="dark"][data-palette] :is(.history-row,.recent-row,.control,.btn.light,.range-control){background:#1d232a!important}
+html[data-theme="dark"][data-palette] .history-row.active{background:var(--theme-primary-soft)!important}
+html[data-theme="dark"][data-palette] :is(.panel p,.panel small,.page-head p,.detail-top p,.field label,.caption){color:var(--theme-muted)!important}
+
+/* Status green remains semantic and is intentionally not recolored by palettes. */
+html[data-palette] :is(.status[data-state="connected"] .dot,.sync.synced){filter:none!important}
+
+/* Print surfaces remain neutral. */
+@media print{
+  html[data-palette] :is(.sheet,.physical,.print-page,.print-root,#reviewWrap .sheet,#page .sheet){background:#fff!important;color:#000!important}
+}
+
+@supports not (color:color-mix(in srgb,#000 50%,#fff)){
+  html[data-palette]{--theme-line:#dce1e7;--theme-primary-soft:#f2f4f6;--theme-accent-soft:#f2f4f6;--theme-primary-shadow:rgba(0,0,0,.12)}
+  html[data-theme="dark"][data-palette]{--theme-line:#303842;--theme-primary-soft:#20262e;--theme-accent-soft:#20262e;--theme-primary-shadow:rgba(0,0,0,.3)}
+}
