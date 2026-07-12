@@ -1,6 +1,6 @@
 (async()=>{
   try{
-    const version='20260712-pdf-report-charts-47';
+    const version='20260712-pdf-report-charts-48';
     let initialTheme='light',initialPalette='ksb';
     try{
       const savedTheme=localStorage.getItem('ksb-theme');
@@ -20,7 +20,7 @@
     const criticalScripts=['assets/no-mock.js','assets/app-01.js','assets/app-sanitize.js','assets/app-theme.js','assets/app-palette.js','assets/app-02.js'];
     for(const src of criticalScripts)await loadScript(`${src}?v=${version}`);
     loadScript(`assets/app-favicon.js?v=${version}`).catch(error=>console.warn(error));
-    const scripts=['assets/app-03.js','assets/app-03b.js','assets/app-04.js','assets/app-04b.js','assets/app-analytics-hover.js','assets/app-monthly-report-graphs.js','assets/app-import.js','assets/app-report-export.js','assets/app-report-pdf.js','assets/app-pdf.js','assets/app-05.js','assets/app-validation.js'];
+    const scripts=['assets/app-03.js','assets/app-03b.js','assets/app-04.js','assets/app-04b.js','assets/app-analytics-hover.js','assets/app-monthly-report-graphs.js','assets/app-import.js','assets/app-report-export.js','assets/app-report-pdf-v2.js','assets/app-pdf.js','assets/app-05.js','assets/app-validation.js'];
     for(const src of scripts)await loadScript(`${src}?v=${version}`);
   }catch(error){document.body.innerHTML=`<div class="boot">Unable to load KSB LabelPrint: ${String(error.message||error)}</div>`}
 })();
