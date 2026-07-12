@@ -9,8 +9,15 @@
       <div class="kpis" id="analyticsKpis"></div>
       <div class="charts"><section class="panel chart main-chart"><div class="panel-head"><div><h2>Labels generated</h2><p>Daily output trend</p></div></div><div class="bars" id="bars"></div></section><section class="panel chart"><div class="panel-head"><div><h3>Top users</h3><p>Most labels printed</p></div></div><div class="ranking" id="userRanking"></div></section><section class="panel chart"><div class="panel-head"><div><h3>Top recipients</h3><p>Most frequently printed</p></div></div><div class="ranking" id="ranking"></div></section></div>
       <section class="panel monthly-report-panel">
-        <div class="panel-head monthly-report-head"><div><h2>Monthly report</h2><p>Labels, batches, top customers, recipients, and top user by month.</p></div><div class="monthly-report-controls"><label class="monthly-year-field"><span>Report year</span><select class="control" id="monthlyYear" aria-label="Monthly report year"></select></label><button class="btn dark monthly-download" id="downloadMonthlyReport" type="button" title="Download an extensive Excel report for the selected year">↓ Download XLSX</button></div></div>
+        <div class="panel-head monthly-report-head"><div><h2>Monthly report</h2><p>Labels, batches, customers, users, senders, layouts, and synchronization quality by year.</p></div><div class="monthly-report-controls"><label class="monthly-year-field"><span>Report year</span><select class="control" id="monthlyYear" aria-label="Monthly report year"></select></label><div class="monthly-report-downloads"><button class="btn light monthly-download monthly-download-pdf" id="downloadMonthlyReportPdf" type="button" title="Download a visual PDF report with charts and detailed tables">↓ Download PDF</button><button class="btn dark monthly-download" id="downloadMonthlyReport" type="button" title="Download an extensive Excel report for the selected year">↓ Download XLSX</button></div></div></div>
         <div class="monthly-report-summary" id="monthlyReportSummary"></div>
+        <div class="monthly-report-visuals">
+          <section class="monthly-visual-card monthly-trend-chart"><div class="panel-head"><div><h3>Monthly output trend</h3><p>Labels generated across the selected year</p></div></div><div id="monthlyTrendChart"></div></section>
+          <div class="monthly-leader-stack">
+            <section class="monthly-visual-card"><div class="panel-head"><div><h3>Top recipients</h3><p>Most frequently printed this year</p></div></div><div class="monthly-bars" id="monthlyTopCustomersChart"></div></section>
+            <section class="monthly-visual-card"><div class="panel-head"><div><h3>Top users</h3><p>Most labels generated this year</p></div></div><div class="monthly-bars" id="monthlyTopUsersChart"></div></section>
+          </div>
+        </div>
         <div class="monthly-table-wrap">
           <table class="monthly-report-table">
             <thead><tr><th>Month</th><th>Labels</th><th>Batches</th><th>Top customer</th><th>Recipients</th><th>Top user</th></tr></thead>
