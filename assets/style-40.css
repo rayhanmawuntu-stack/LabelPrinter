@@ -1,4 +1,4 @@
-/* Stacked hero identity: the real KSB logo sits above the larger LabelPrint wordmark. */
+/* Stacked hero identity: the KSB logo sits above the larger LabelPrint wordmark. */
 .hero-title-wrap{
   display:flex!important;
   flex-direction:column!important;
@@ -22,9 +22,9 @@
   border-radius:0!important;
   background:transparent!important;
   box-shadow:none!important;
-  filter:grayscale(1) contrast(1000%)!important;
-  mix-blend-mode:multiply!important;
-  opacity:.96!important;
+  filter:brightness(0) saturate(0)!important;
+  mix-blend-mode:normal!important;
+  opacity:1!important;
 }
 .hero-title-text{
   margin:0!important;
@@ -42,9 +42,9 @@ html[data-theme="dark"] .hero-title-logo{
   border-radius:0!important;
   background:transparent!important;
   box-shadow:none!important;
-  filter:grayscale(1) contrast(1000%) invert(1)!important;
-  mix-blend-mode:screen!important;
-  opacity:.94!important;
+  filter:brightness(0) saturate(0) invert(1)!important;
+  mix-blend-mode:normal!important;
+  opacity:1!important;
 }
 
 @media(min-width:1251px) and (max-width:1380px){
