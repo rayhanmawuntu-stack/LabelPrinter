@@ -20,7 +20,6 @@ html[data-theme="light"][data-palette]:not([data-palette="ksb"]) body{
   color:var(--scheme-ui-text)!important;
 }
 html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .sidebar,
-html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .topbar,
 html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .hero,
 html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .page-head,
 html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .panel,
@@ -133,7 +132,7 @@ html[data-theme="dark"][data-palette]:not([data-palette="ksb"]){
 html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) body{
   background:radial-gradient(circle at 82% 2%,color-mix(in srgb,var(--scheme-ui-accent) 10%,transparent),transparent 31rem),#0d1014!important;
 }
-html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) :is(.sidebar,.topbar,.hero,.page-head,.panel,.modal-card,.entry-card,.editor){
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) :is(.sidebar,.hero,.page-head,.panel,.modal-card,.entry-card,.editor){
   background:#171b21!important;
   border-color:var(--scheme-ui-line)!important;
   color:var(--scheme-ui-text)!important;
