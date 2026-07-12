@@ -75,6 +75,6 @@ function renderDashboardAnalytics(){
 }
 function renderAnalytics(){
   const range=$('range'),days=Number(range?.value||30),cut=days?Date.now()-days*86400000:0,snapshot=monthlyHistorySnapshot(),data=snapshot.filter(b=>b._date.getTime()>=cut),total=data.reduce((s,b)=>s+b.labels.length,0),avg=data.length?(total/data.length).toFixed(1):0,collected=collectAnalytics(data);
-  $('analyticsKpis').innerHTML=[['Generated labels',total,'dark'],['Batches',data.length,'blue'],['Average / batch',avg,'lime'],['Unique recipients',Object.keys(collected.companies).length,'']].map(x=>`<article class="metric ${x[2]}"><span>${x[0]}</span><strong>${x[1]}</strong><small>Selected period</small></article>`).join('');
+  $('analyticsKpis').innerHTML=[['Generated labels',total,'primary'],['Batches',data.length,'accent'],['Average / batch',avg,'soft'],['Unique recipients',Object.keys(collected.companies).length,'neutral']].map(x=>`<article class="metric ${x[2]}"><span>${x[0]}</span><strong>${x[1]}</strong><small>Selected period</small></article>`).join('');
   $('bars').innerHTML=lineChartHTML(analyticsBuckets(data,days),'analytics');$('ranking').innerHTML=rankingHTML(collected.companyEntries)||'<div class="empty">No recipient data yet.</div>';$('userRanking').innerHTML=rankingHTML(collected.userEntries,'users')||'<div class="empty">No user data yet.</div>';renderMonthlyReport();renderDashboardAnalytics();
 }
