@@ -1,0 +1,48 @@
+/* Monthly report: dual-format downloads and visual summaries. */
+.monthly-report-controls{display:flex!important;align-items:flex-end!important;justify-content:flex-end!important;gap:9px!important;flex-wrap:wrap!important}
+.monthly-report-downloads{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.monthly-download{min-width:132px!important;white-space:nowrap}
+.monthly-download-pdf{min-width:126px!important}
+.monthly-download:disabled{opacity:.58!important;cursor:wait!important;transform:none!important}
+
+.monthly-report-visuals{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(260px,.8fr);gap:12px;margin:14px 0}
+.monthly-visual-card{min-width:0;border:1px solid var(--ui-line,var(--mock-line,#e2e6eb));border-radius:20px;background:color-mix(in srgb,var(--ui-surface,#fff) 97%,transparent);padding:14px;overflow:hidden}
+.monthly-visual-card .panel-head{padding:0 0 10px!important;background:transparent!important;border:0!important}
+.monthly-visual-card .panel-head h3{margin:0;font-size:12px}
+.monthly-visual-card .panel-head p{margin:3px 0 0;font-size:8px;color:var(--ui-muted,var(--mock-muted,#707985))}
+.monthly-trend-chart .line-chart{min-height:245px}
+.monthly-trend-chart svg{display:block;width:100%;height:auto;min-height:245px}
+.monthly-leader-stack{display:grid;grid-template-rows:1fr 1fr;gap:12px}
+.monthly-bars{display:grid;gap:8px}
+.monthly-bar-row{display:grid;grid-template-columns:18px minmax(0,1fr);gap:7px;align-items:start}
+.monthly-bar-rank{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:var(--ui-soft,var(--mock-soft,#f1f3f5));font-size:7px;font-weight:900;color:var(--ui-muted,var(--mock-muted,#707985))}
+.monthly-bar-main{min-width:0}
+.monthly-bar-label{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;font-size:8px}
+.monthly-bar-label b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ui-text,var(--mock-ink,#15191f))}
+.monthly-bar-label strong{flex:none;color:var(--ui-text,var(--mock-ink,#15191f))}
+.monthly-bar-track{height:5px;border-radius:999px;background:var(--ui-soft,var(--mock-soft,#edf0f3));overflow:hidden}
+.monthly-bar-track i{display:block;height:100%;border-radius:inherit;background:var(--ui-primary,var(--scheme-primary,#dfff3f));box-shadow:0 3px 10px var(--ui-shadow,rgba(0,0,0,.08))}
+.monthly-leader-stack .monthly-visual-card:last-child .monthly-bar-track i{background:var(--ui-accent,var(--scheme-accent,#b9d0ff))}
+.monthly-visual-empty{min-height:80px;display:grid;place-items:center;text-align:center;color:var(--ui-muted,var(--mock-muted,#707985));font-size:9px}
+
+html[data-theme="dark"] .monthly-visual-card{background:#171b21;border-color:var(--ui-line,#303842)}
+html[data-theme="dark"] .monthly-bar-rank{background:#252c34;color:#b7c0ca}
+html[data-theme="dark"] .monthly-bar-track{background:#252c34}
+
+@media(max-width:900px){
+  .monthly-report-controls{width:100%;display:grid!important;grid-template-columns:minmax(0,1fr)!important;align-items:stretch!important}
+  .monthly-report-controls .monthly-year-field{min-width:0!important}
+  .monthly-report-downloads{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  .monthly-download{width:100%;min-width:0!important}
+  .monthly-report-visuals{grid-template-columns:1fr}
+  .monthly-leader-stack{grid-template-columns:1fr 1fr;grid-template-rows:none}
+}
+@media(max-width:560px){
+  .monthly-report-downloads{grid-template-columns:1fr}
+  .monthly-leader-stack{grid-template-columns:1fr}
+  .monthly-visual-card{padding:12px;border-radius:17px}
+  .monthly-trend-chart .line-chart,.monthly-trend-chart svg{min-height:210px}
+}
+@supports not (color:color-mix(in srgb,#000 50%,#fff)){
+  .monthly-visual-card{background:var(--ui-surface,#fff)}
+}
