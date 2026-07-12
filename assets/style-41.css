@@ -1,0 +1,34 @@
+/* Keep every history KPI readable in every palette and theme. */
+html[data-palette]:not([data-palette="ksb"]) .metric.dark{
+  background:var(--scheme-ui-accent,var(--scheme-primary,#151619))!important;
+  border-color:color-mix(in srgb,var(--scheme-ui-accent,var(--scheme-primary,#151619)) 78%,black)!important;
+  color:var(--scheme-ui-on-accent,var(--scheme-on-primary,#fff))!important;
+  box-shadow:0 16px 38px var(--scheme-ui-shadow,rgba(0,0,0,.12))!important;
+}
+html[data-palette]:not([data-palette="ksb"]) .metric.dark :is(span,strong,small,b,em){
+  color:inherit!important;
+  opacity:1!important;
+}
+
+/* Neutral KPI cards must never inherit white text from a previous variant. */
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .metric:not(.dark):not(.blue):not(.lime){
+  background:color-mix(in srgb,var(--scheme-surface) 97%,white)!important;
+  color:var(--scheme-ui-text,#171a1f)!important;
+  border-color:var(--scheme-ui-line,#dfe4e9)!important;
+}
+html[data-theme="light"][data-palette]:not([data-palette="ksb"]) .metric:not(.dark):not(.blue):not(.lime) :is(span,strong,small,b,em){
+  color:inherit!important;
+}
+
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .metric:not(.dark):not(.blue):not(.lime){
+  background:#171b21!important;
+  color:var(--scheme-ui-text,#f1f4f7)!important;
+  border-color:var(--scheme-ui-line,#303842)!important;
+}
+html[data-theme="dark"][data-palette]:not([data-palette="ksb"]) .metric:not(.dark):not(.blue):not(.lime) :is(span,strong,small,b,em){
+  color:inherit!important;
+}
+
+@supports not (color:color-mix(in srgb,#000 50%,#fff)){
+  html[data-palette]:not([data-palette="ksb"]) .metric.dark{border-color:var(--scheme-ui-accent,var(--scheme-primary,#151619))!important}
+}
