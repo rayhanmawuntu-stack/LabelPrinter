@@ -1,6 +1,6 @@
 (async()=>{
   try{
-    const version='20260711-monochrome-transparent-logo-42';
+    const version='20260712-flat-monochrome-logo-43';
     let initialTheme='light',initialPalette='ksb';
     try{
       const savedTheme=localStorage.getItem('ksb-theme');
