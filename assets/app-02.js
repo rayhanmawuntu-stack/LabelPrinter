@@ -14,29 +14,54 @@ async function flushDeletedBatches(){
 }
 
 document.documentElement.classList.toggle('profile-selected',!!currentUser);
+
+function normalizedRemoteUsers(rows){
+  const seen=new Set();
+  return(Array.isArray(rows)?rows:[]).filter(x=>x&&clean(x.name)).map(x=>({name:clean(x.name),nickname:clean(x.nickname)||clean(x.name).split(/\s+/)[0]})).filter(user=>{const key=user.name.toLowerCase();if(seen.has(key))return false;seen.add(key);return true});
+}
+function applyRemoteUsers(response){
+  const next=normalizedRemoteUsers(response?.users);
+  if(!next.length)return false;
+  const changed=JSON.stringify(next)!==JSON.stringify(users);
+  users=next;
+  save('ksb-users',users);
+  if(changed)renderUsers();
+  return true;
+}
+let usersFetchPromise=null,usersFetchSettledAt=0;
+function fetchUsersFast(force=false){
+  const fresh=usersFetchPromise&&(Date.now()-usersFetchSettledAt<30000);
+  if(fresh&&!force)return usersFetchPromise;
+  usersFetchPromise=apiGet('getUsers').then(response=>({ok:applyRemoteUsers(response),response})).catch(error=>({ok:false,error})).finally(()=>{usersFetchSettledAt=Date.now()});
+  return usersFetchPromise;
+}
+function applyRemoteHistory(response){
+  if(!response?.history)return false;
+  const deleted=deletedBatchIds();
+  const merged=new Map(history.filter(x=>!deleted.has(clean(x?.id))).map(x=>[x.id,x]));
+  response.history.forEach(x=>{if(!deleted.has(clean(x?.id)))merged.set(x.id,{...x,labels:usableLabels(x.labels||[]),syncState:'synced'})});
+  history=[...merged.values()].filter(x=>x?.id).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,1000);
+  save('ksb-history',history);
+  rebuildCompanyPrefixes();
+  refreshDataSurfaces();
+  return true;
+}
+
 async function sync(){
   if(syncInFlight)return;
   syncInFlight=true;
   setStatus('syncing','Connecting to Sheets…');
+  const usersTask=fetchUsersFast();
+  const historyTask=apiGet('getHistory',{limit:500}).then(response=>({ok:applyRemoteHistory(response)})).catch(error=>({ok:false,error}));
+  const pingTask=apiGet('ping');
   try{
-    const p=await apiGet('ping');
+    const p=await pingTask;
     if(!p?.success)throw Error('Invalid LabelPrint API response');
     setStatus('connected',`Sheets connected${p.spreadsheetName?` · ${p.spreadsheetName}`:''}`);
-    const [u,h]=await Promise.all([apiGet('getUsers'),apiGet('getHistory',{limit:500})]);
-    if(u?.users?.length){
-      users=u.users.filter(x=>x&&x.name).map(x=>({name:clean(x.name),nickname:clean(x.nickname)||clean(x.name).split(/\s+/)[0]}));
-      save('ksb-users',users);
-      renderUsers();
-    }
-    if(h?.history){
-      const deleted=deletedBatchIds();
-      const merged=new Map(history.filter(x=>!deleted.has(clean(x?.id))).map(x=>[x.id,x]));
-      h.history.forEach(x=>{if(!deleted.has(clean(x?.id)))merged.set(x.id,{...x,labels:usableLabels(x.labels||[]),syncState:'synced'})});
-      history=[...merged.values()].filter(x=>x?.id).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,1000);
-      save('ksb-history',history);
-      rebuildCompanyPrefixes();
-      refreshDataSurfaces();
-    }
+    const [userResult,historyResult]=await Promise.all([usersTask,historyTask]);
+    if(userResult?.error&&historyResult?.error)throw userResult.error;
+    if(userResult?.error)console.warn('User refresh failed; using cached profiles:',userResult.error);
+    if(historyResult?.error)console.warn('History refresh failed; using cached history:',historyResult.error);
     await flushDeletedBatches();
     for(const batch of history.filter(x=>x.syncState==='pending'||x.syncState==='failed'))await syncBatch(batch,false);
     window.__lastSheetsError='';
@@ -137,3 +162,9 @@ function switchView(v){
   if(v==='analytics')renderAnalytics();
   if(v==='create')requestAnimationFrame(fitPreview);
 }
+
+/* Show cached profiles as soon as the profile code is ready, then refresh them in the background. */
+renderUsers();
+const earlyEntry=$('entry');
+if(earlyEntry)earlyEntry.classList.add('show');
+fetchUsersFast();
