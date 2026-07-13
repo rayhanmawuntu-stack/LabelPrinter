@@ -29,12 +29,12 @@
     return request;
   }
 
-  function measureBlock(doc,row,w,h,scale,leftPad,rightPad){
+  function measureBlock(doc,row,w,h,scale,leftPad,rightPad,showLogo){
     const name=fullName(row)||' ';
     const attn=clean(row?.attn)?`ATTN: ${upper(row.attn)}`:' ';
     const phone=clean(row?.phone);
     const address=[upper(row?.address),phone?`(${upper(phone)})`:''].filter(Boolean).join(' ')||' ';
-    const nameWidth=Math.max(10,w-leftPad-rightPad-25*scale);
+    const nameWidth=Math.max(10,w-leftPad-rightPad-(showLogo?25*scale:0));
     const bodyWidth=Math.max(10,w-leftPad-rightPad);
     const availableBottom=46.2*scale-1.4*scale;
     const nameTop=10.1*scale;
@@ -73,7 +73,7 @@
     doc.setTextColor(0,0,0);
   }
 
-  function drawLabel(doc,row,x,y,w,h,logoData,layoutKey){
+  function drawLabel(doc,row,x,y,w,h,logoData,layoutKey,showLogo){
     const scale=Math.min(w/91,h/62);
     const leftPad=(layoutKey==='2x3'?7.5:6.6*scale);
     const rightPad=(layoutKey==='2x3'?7.5:6.6*scale);
@@ -86,10 +86,12 @@
     doc.setLineWidth(.35*scale);
     doc.rect(x+inset,y+inset,w-2*inset,h-2*inset,'S');
 
-    const logoW=23*scale,logoH=7.4*scale;
-    drawLogo(doc,logoData,x+w-5*scale-logoW,y+4.5*scale,logoW,logoH,scale);
+    if(showLogo){
+      const logoW=23*scale,logoH=7.4*scale;
+      drawLogo(doc,logoData,x+w-5*scale-logoW,y+4.5*scale,logoW,logoH,scale);
+    }
 
-    const block=measureBlock(doc,row,w,h,scale,leftPad,rightPad);
+    const block=measureBlock(doc,row,w,h,scale,leftPad,rightPad,showLogo);
     const fit=block?.fit||1;
     doc.setTextColor(0,0,0);
     doc.setFont('helvetica','normal');
@@ -129,9 +131,10 @@
     const def=options.layoutDef;
     if(!rows.length||!def)throw new Error('No printable labels');
 
+    const showLogo=options.showLogo!==false&&window.printLogoEnabled!==false;
     const doc=new jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'a4',compress:true,putOnlyUsedFonts:true});
     doc.setProperties({title:normalizedFileName(options.filename),subject:'KSB shipping labels',creator:'LabelPrint'});
-    const logoData=await loadImageData(options.logoUrl);
+    const logoData=showLogo?await loadImageData(options.logoUrl):null;
     const gapX=options.layoutKey==='2x3'?2:4;
     const gapY=4;
     const gridW=def.c*def.w+(def.c-1)*gapX;
@@ -147,7 +150,7 @@
       chunk.forEach((row,index)=>{
         const col=index%def.c,rowIndex=Math.floor(index/def.c);
         const x=startX+col*(def.w+gapX),y=startY+rowIndex*(def.h+gapY);
-        drawLabel(doc,row,x,y,def.w,def.h,logoData,options.layoutKey);
+        drawLabel(doc,row,x,y,def.w,def.h,logoData,options.layoutKey,showLogo);
       });
     }
 
