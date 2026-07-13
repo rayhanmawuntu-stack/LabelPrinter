@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="190" viewBox="0 0 760 190" role="img" aria-labelledby="title desc"><title id="title">KSB LabelPrint</title><desc id="desc">KSB LabelPrint project logo</desc><rect width="760" height="190" rx="34" fill="#f7f8fa"/><rect x="34" y="34" width="122" height="122" rx="30" fill="#dfff3f"/><g fill="#111315"><rect x="56" y="72" width="14" height="46" rx="3"/><rect x="70" y="91" width="27" height="9" rx="2" transform="rotate(-38 70 91)"/><rect x="70" y="95" width="30" height="9" rx="2" transform="rotate(38 70 95)"/><path d="M101 73h31c9 0 16 7 16 15 0 6-3 11-8 13 7 2 11 8 11 15 0 9-7 16-17 16h-33V73zm15 12v11h13c3 0 5-2 5-5s-2-6-5-6h-13zm0 23v12h15c3 0 5-3 5-6s-2-6-5-6h-15z" transform="scale(.72) translate(37 31)"/><text x="94" y="112" font-family="Arial,Helvetica,sans-serif" font-size="31" font-weight="900" text-anchor="middle">KSB</text></g><text x="184" y="92" font-family="Arial,Helvetica,sans-serif" font-size="58" font-weight="900" letter-spacing="-2" fill="#111315">LabelPrint</text><text x="187" y="126" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" letter-spacing="1.5" fill="#66707a">CREATE · PREVIEW · PRINT</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="190" viewBox="0 0 420 190" role="img" aria-labelledby="title desc">
+  <title id="title">KSB LabelPrint</title>
+  <desc id="desc">Compact dark KSB LabelPrint logo.</desc>
+  <rect width="420" height="190" rx="18" fill="#151a20"/>
+  <g fill="#ffffff">
+    <rect x="28" y="31" width="22" height="22" rx="5" fill="none" stroke="#ffffff" stroke-width="5"/>
+    <path d="M34 37v10h10M44 37l-7 7m7 3-7-7" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="61" y="51" font-family="Arial,Helvetica,sans-serif" font-size="25" font-weight="900" letter-spacing="-1">KSB</text>
+    <text x="28" y="137" font-family="Arial,Helvetica,sans-serif" font-size="69" font-weight="900" letter-spacing="-3.6">LabelPrint</text>
+  </g>
+</svg>
