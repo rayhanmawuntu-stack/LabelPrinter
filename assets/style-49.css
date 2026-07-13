@@ -1,0 +1,22 @@
+/* Keep every mobile navigation tab on one row, including dynamically added tabs. */
+@media(max-width:760px){
+  .sidebar .nav{
+    display:flex!important;
+    grid-template-columns:none!important;
+    grid-auto-flow:initial!important;
+    align-items:stretch!important;
+    flex-wrap:nowrap!important;
+  }
+  .sidebar .nav button{
+    flex:1 1 0!important;
+    width:auto!important;
+    max-width:none!important;
+    overflow:hidden!important;
+  }
+  .sidebar .nav button>span:not(.badge){
+    max-width:100%!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+  }
+}
