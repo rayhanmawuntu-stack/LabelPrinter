@@ -5,6 +5,7 @@
   const label=document.getElementById('themeLabel');
   const icon=button?.querySelector('.theme-icon');
   const optionButtons=[...document.querySelectorAll('[data-theme-option]')];
+  let transitionTimer=0;
 
   function preferredTheme(){
     try{
@@ -30,8 +31,18 @@
     });
   }
 
-  function applyTheme(value,persist=false){
+  function beginTransition(){
+    if(root.classList.contains('low-spec')||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+    clearTimeout(transitionTimer);
+    root.classList.remove('theme-switching');
+    void root.offsetWidth;
+    root.classList.add('theme-switching');
+    transitionTimer=setTimeout(()=>root.classList.remove('theme-switching'),460);
+  }
+
+  function applyTheme(value,persist=false,animate=false){
     const theme=value==='dark'?'dark':'light';
+    if(animate&&root.dataset.theme!==theme)beginTransition();
     root.dataset.theme=theme;
     root.style.colorScheme=theme;
     syncControls(theme);
@@ -43,7 +54,7 @@
   }
 
   let theme=applyTheme(root.dataset.theme||preferredTheme());
-  button?.addEventListener('click',()=>{theme=applyTheme(theme==='dark'?'light':'dark',true)});
-  optionButtons.forEach(option=>option.addEventListener('click',()=>{theme=applyTheme(option.dataset.themeOption,true)}));
+  button?.addEventListener('click',()=>{theme=applyTheme(theme==='dark'?'light':'dark',true,true)});
+  optionButtons.forEach(option=>option.addEventListener('click',()=>{theme=applyTheme(option.dataset.themeOption,true,true)}));
   window.LabelPrintTheme={apply:applyTheme,get:()=>theme};
 })();
