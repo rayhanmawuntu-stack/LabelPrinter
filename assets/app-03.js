@@ -7,9 +7,20 @@ function renderCards(){
   const atLimit=labels.length>=MAX_LABELS;
   const cards=$('cards');
   cards.innerHTML=shown.map(x=>`<button type="button" class="recipient ${x.i===selected?'active':''}" data-label="${x.i}"><span class="num">${String(x.i+1).padStart(2,'0')}</span><b>${esc(full(x.r)||'Blank recipient')}</b><span>${esc(x.r.attn||x.r.address||'Ready to edit')}</span></button>`).join('')+`<button type="button" class="recipient add" id="addCard" ${atLimit?'disabled':''}><b>${atLimit?`${MAX_LABELS} label limit reached`:'＋ Add recipient'}</b></button>`;
-  cards.querySelectorAll('[data-label]').forEach(button=>button.onclick=()=>{selected=Number(button.dataset.label);renderAll()});
-  const addCard=cards.querySelector('#addCard');
-  if(addCard)addCard.onclick=addLabel;
+  if(!cards.dataset.delegated){
+    cards.dataset.delegated='true';
+    cards.addEventListener('click',event=>{
+      const button=event.target.closest('button');
+      if(!button||!cards.contains(button)||button.disabled)return;
+      if(button.id==='addCard')return addLabel(event);
+      if(button.dataset.label===undefined)return;
+      const next=Number(button.dataset.label);
+      if(!Number.isInteger(next)||next===selected)return;
+      selected=next;
+      renderCards();
+      renderForm();
+    });
+  }
   $('batchCount').textContent=`${labels.length} / ${MAX_LABELS}`;
   $('statCount').textContent=labels.length;
   const addTop=$('addRecipient'),clearButton=$('clearAll');
@@ -38,7 +49,7 @@ function renderForm(){
   if(hasLabel)rememberCompanyDefaults(r);
   saveSoon('ksb-labels',labels);
 }
-const renderPreviewSoon=debounce(()=>renderPreview(),80);
+const renderPreviewSoon=debounce(()=>renderPreview(),window.LabelPrintPerformance?.lowSpec?130:80);
 function update(id,val){
   if(!labels[selected])labels[selected]=blankLabel();
   labels[selected][id]=val;
