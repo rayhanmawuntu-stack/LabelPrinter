@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260713-mobile-nav-icons-only-64';
+    const version='20260713-track-button-label-65';
     let initialTheme='light';
     let initialPalette='ksb';
     try{
