@@ -11,6 +11,8 @@
 
   trackingPanel.classList.remove('panel');
   trackingPanel.classList.add('tracking-settings-card');
+  const refreshed=trackingPanel.querySelector('#trackingRefreshedAt');
+  if(refreshed&&refreshed.textContent.trim()==='—')refreshed.textContent='On opening Tracking tab';
   section.appendChild(trackingPanel);
 
   const backendSection=$('endpoint')?.closest('.settings-section');
