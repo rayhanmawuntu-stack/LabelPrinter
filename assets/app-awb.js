@@ -1,5 +1,5 @@
 (()=>{
-  const JNE_TRACKING_URL='https://www.jne.co.id/id/tracking/trace';
+  const JNE_TRACKING_URL='https://cekresi.com/tracking/cek-resi-pos.php';
   const UNIVERSAL_TRACKING_URL='https://www.17track.net/en';
 
   function selectedRow(){return labels[selected]||blankLabel()}
@@ -30,12 +30,12 @@
   function syncAwbTrackingControl(row=selectedRow()){
     const r=normalizeLabel(row||{}),button=$('trackAwb'),help=$('awbHelp');
     if(button){button.disabled=!r.awb;button.textContent=r.courier==='JNE'?'Track JNE':'Track package';button.title=r.awb?`Track ${r.awb}`:'Enter an AWB / resi number first'}
-    if(help)help.textContent=r.courier==='JNE'?'Opens JNE tracking and copies the AWB':'Opens a universal tracking page';
+    if(help)help.textContent=r.courier==='JNE'?'Opens CekResi JNE tracking and copies the AWB':'Opens a universal tracking page';
   }
 
   const phoneField=$('phone')?.closest('.field'),form=phoneField?.parentElement;
   if(form&&!$('awb')){
-    phoneField.insertAdjacentHTML('afterend',`<div class="field awb-courier-field"><label>Courier</label><select class="control" id="courier"><option value="JNE">JNE</option><option value="OTHER">Other courier</option></select></div><div class="field two awb-number-field"><label>AWB / resi</label><div class="awb-control-row"><input class="control" id="awb" inputmode="text" autocomplete="off" spellcheck="false" placeholder="Enter tracking number"><button class="awb-track-button" id="trackAwb" type="button">Track JNE</button></div><small class="awb-help" id="awbHelp">Opens JNE tracking and copies the AWB</small></div>`);
+    phoneField.insertAdjacentHTML('afterend',`<div class="field awb-courier-field"><label>Courier</label><select class="control" id="courier"><option value="JNE">JNE</option><option value="OTHER">Other courier</option></select></div><div class="field two awb-number-field"><label>AWB / resi</label><div class="awb-control-row"><input class="control" id="awb" inputmode="text" autocomplete="off" spellcheck="false" placeholder="Enter tracking number"><button class="awb-track-button" id="trackAwb" type="button">Track JNE</button></div><small class="awb-help" id="awbHelp">Opens CekResi JNE tracking and copies the AWB</small></div>`);
   }
 
   $('awb')?.addEventListener('input',event=>{update('awb',normalizeAwb(event.target.value));event.target.value=normalizeAwb(event.target.value);syncAwbTrackingControl()});
