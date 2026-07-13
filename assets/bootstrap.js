@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260713-cekresi-jne-tracking-58';
+    const version='20260713-cekresi-jne-specific-59';
     let initialTheme='light';
     let initialPalette='ksb';
     try{
