@@ -67,7 +67,7 @@
       return promise;
     };
     const loadFiles=async files=>{for(const file of files)await load(file.startsWith('assets/')?file:'assets/'+file)};
-    const analyticsExtras=[...(!hardwareLow?['app-analytics-hover.js']:[]),'app-monthly-report-graphs.js','app-report-export.js','app-report-pdf-v2.js'];
+    const analyticsExtras=[...(!hardwareLow?['app-analytics-hover.js']:[]),'app-monthly-report-graphs.js','app-report-export.js','app-report-tracking-columns.js','app-report-pdf-v2.js'];
     let analyticsPromise=null;
     let pdfPromise=null;
     const ensureAnalytics=()=>analyticsPromise||(analyticsPromise=loadFiles(analyticsExtras).then(()=>{
