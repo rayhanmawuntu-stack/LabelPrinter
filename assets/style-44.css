@@ -1,0 +1,65 @@
+/* Low-spec rendering mode: preserve layout and color schemes while reducing GPU and layout cost. */
+.history-row,.recent-row,.detail-line,.monthly-visual-card{
+  content-visibility:auto;
+  contain-intrinsic-size:72px;
+}
+.detail-line{contain-intrinsic-size:48px}
+.monthly-visual-card{contain-intrinsic-size:280px}
+
+html.app-paused *{
+  animation-play-state:paused!important;
+}
+
+html.low-spec{
+  scroll-behavior:auto!important;
+}
+html.low-spec body{
+  background:var(--ui-wash,var(--scheme-wash,#f1f2f4))!important;
+  background-image:none!important;
+}
+html.low-spec :is(.sidebar,.hero,.panel,.modal-card,.entry-card,.metric,.monthly-visual-card,.search,.status){
+  box-shadow:0 4px 14px rgba(12,18,24,.08)!important;
+}
+html[data-theme="dark"].low-spec :is(.sidebar,.hero,.panel,.modal-card,.entry-card,.metric,.monthly-visual-card,.search,.status){
+  box-shadow:0 3px 12px rgba(0,0,0,.24)!important;
+}
+html.low-spec :is(.modal,.entry,.sidebar,.topbar,.hero,.panel,.modal-card,.entry-card){
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html.low-spec :is(.view,.sidebar,.recipient,.history-row,.recent-row,.btn,.layout,.palette-option,.appearance-option,.modal-card,.entry-card,.line-hit,.line-point,.line-point-halo){
+  animation:none!important;
+  transition-duration:.01ms!important;
+}
+html.low-spec :is(.recipient,.history-row,.recent-row,.btn,.layout,.palette-option,.appearance-option):hover{
+  transform:none!important;
+}
+html.low-spec .line-area{
+  opacity:.28!important;
+}
+html.low-spec :is(.hero,.panel,.metric,.monthly-visual-card,.history-row,.recent-row,.recipient){
+  contain:layout paint;
+}
+html.low-spec .physical{
+  contain:layout paint style;
+}
+html.low-spec .stage{
+  overscroll-behavior:contain;
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    scroll-behavior:auto!important;
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+  }
+}
+
+@media print{
+  html.low-spec :is(.sheet,.physical,.print-page,.print-root,#reviewWrap .sheet,#page .sheet){
+    contain:none!important;
+    content-visibility:visible!important;
+    box-shadow:none!important;
+  }
+}
