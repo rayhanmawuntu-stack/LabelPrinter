@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260713-low-spec-performance-66';
+    const version='20260713-low-spec-scroll-67';
     let initialTheme='light';
     let initialPalette='ksb';
     try{
@@ -72,13 +72,23 @@
       ...(!lowSpec?['app-analytics-hover.js']:[]),
       'app-monthly-report-graphs.js','app-import.js','app-report-export.js','app-report-pdf-v2.js','app-pdf.js'
     ];
+    const waitForQuiet=()=>new Promise(resolve=>{
+      const performanceHelper=window.LabelPrintPerformance;
+      if(lowSpec&&performanceHelper?.whenScrollIdle){performanceHelper.whenScrollIdle(resolve);return}
+      if('requestIdleCallback'in window){requestIdleCallback(resolve,{timeout:1800});return}
+      setTimeout(resolve,lowSpec?420:24);
+    });
     const loadOptional=async()=>{
-      for(const file of optional)await load('assets/'+file);
+      for(const file of optional){
+        if(lowSpec)await waitForQuiet();
+        await load('assets/'+file);
+      }
     };
     if(lowSpec){
       const run=()=>loadOptional().catch(error=>console.warn('Optional module load failed:',error));
-      if('requestIdleCallback'in window)requestIdleCallback(run,{timeout:1800});
-      else setTimeout(run,260);
+      const performanceHelper=window.LabelPrintPerformance;
+      if(performanceHelper?.whenScrollIdle)performanceHelper.whenScrollIdle(run);
+      else setTimeout(run,500);
     }else{
       await loadOptional();
     }
