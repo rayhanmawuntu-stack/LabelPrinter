@@ -20,7 +20,7 @@ async function waitForPrintAssets(root){
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
 }
 function printLabelSignature(rows){
-  return JSON.stringify((rows||[]).map(r=>{const n=normalizeLabel(r);return[n.prefix,n.company,n.attn,n.phone,n.address,n.sender,n.courier,n.awb]}));
+  return JSON.stringify((rows||[]).map(r=>{const n=normalizeLabel(r);return[n.prefix,n.company,n.invoice,n.attn,n.phone,n.address,n.sender,n.courier,n.awb]}));
 }
 function resolvePrintBatchId(rows){
   const selectedBatch=history.find(b=>b?.id===historySelected);
@@ -111,6 +111,7 @@ async function printNow(){
   const controls=[$('print'),$('printDirect')].filter(Boolean);
   controls.forEach(button=>{button.disabled=true;button.dataset.originalText=button.textContent;button.textContent='Preparing print…'});
   try{
+    await window.LabelPrintModules?.ensurePdf?.();
     await ensurePdfLibrary();
     if(typeof window.generateLabelPdf!=='function')throw new Error('PDF generator did not load');
     const result=await window.generateLabelPdf({rows,layoutKey:layout,layoutDef:LAYOUTS[layout],filename:title,logoUrl:CONFIG.logo,output:'blob'});
@@ -126,7 +127,7 @@ async function printNow(){
 }
 function bulkDuplicateKey(row){
   const n=normalizeLabel(row);
-  return[n.prefix,n.company,n.attn,n.phone,n.address,n.sender,n.courier,n.awb].map(value=>clean(value).toUpperCase().replace(/\s+/g,' ')).join('|');
+  return[n.prefix,n.company,n.invoice,n.attn,n.phone,n.address,n.sender,n.courier,n.awb].map(value=>clean(value).toUpperCase().replace(/\s+/g,' ')).join('|');
 }
 function importRows(){
   const parsed=$('paste').value.split(/\r?\n/).filter(Boolean).map(line=>{
@@ -138,21 +139,22 @@ function importRows(){
     return{
       prefix:companyMatch?companyMatch[1].toUpperCase():'',
       company:companyMatch?companyMatch[2]:raw,
+      invoice:(c[2]||'').trim(),
       courier:(c[3]||'').trim()||'JNE',
       awb:(c[4]||'').trim(),
       attn:(c[6]||'').trim(),
       phone:phoneMatch?phoneMatch[1].trim():'',
       address:phoneMatch?addressAndPhone.slice(0,phoneMatch.index).trim():addressAndPhone,
-      sender:'KSB INDONESIA'
+      sender:''
     };
-  }).map(normalizeLabel).map(applyRememberedPrefix).filter(r=>r.company&&!/^(penerima|recipient|company)$/i.test(r.company));
+  }).map(normalizeLabel).map(row=>applyRememberedCompanyDefaults(row,false)).filter(r=>r.company&&!/^(penerima|recipient|company)$/i.test(r.company));
   if(!parsed.length)return toast('No valid rows detected');
   const seen=new Set();
   const unique=parsed.filter(row=>{const key=bulkDuplicateKey(row);if(seen.has(key))return false;seen.add(key);return true});
   const duplicateCount=parsed.length-unique.length;
   const rows=unique.slice(0,MAX_LABELS);
-  rows.forEach(row=>rememberCompanyPrefix(row,false));
-  save(COMPANY_PREFIX_KEY,companyPrefixes);
+  rows.forEach(row=>rememberCompanyDefaults(row,false));
+  persistCompanyMemory();
   labels=rows;
   selected=0;
   save('ksb-labels',labels);
@@ -160,8 +162,10 @@ function importRows(){
   renderAll();
   const limited=unique.length>MAX_LABELS;
   const tracked=rows.filter(row=>clean(row.awb)).length;
+  const invoiced=rows.filter(row=>clean(row.invoice)).length;
   let message=limited?`Imported first ${MAX_LABELS} of ${unique.length} unique labels`:`${rows.length} labels imported`;
   if(tracked)message+=` · ${tracked} AWB${tracked===1?'':'s'}`;
+  if(invoiced)message+=` · ${invoiced} invoice${invoiced===1?'':'s'}`;
   if(duplicateCount)message+=` · ${duplicateCount} duplicate${duplicateCount===1?'':'s'} removed`;
   toast(message);
 }
@@ -182,11 +186,13 @@ $('review').onclick=review;
 $('generate').onclick=()=>{const b=saveBatch();if(!b)return;review();toast(`${b.id} generated`)};
 $('print').onclick=printNow;
 $('printDirect').onclick=printNow;
-[$('print'),$('printDirect')].filter(Boolean).forEach(button=>{
-  const warm=()=>ensurePdfLibrary().catch(()=>{});
-  button.addEventListener('pointerenter',warm,{once:true,passive:true});
-  button.addEventListener('focus',warm,{once:true,passive:true});
-});
+if(!window.LabelPrintPerformance?.lowSpec){
+  [$('print'),$('printDirect')].filter(Boolean).forEach(button=>{
+    const warm=()=>Promise.all([window.LabelPrintModules?.ensurePdf?.(),ensurePdfLibrary()]).catch(()=>{});
+    button.addEventListener('pointerenter',warm,{once:true,passive:true});
+    button.addEventListener('focus',warm,{once:true,passive:true});
+  });
+}
 $('remove').onclick=removeLabel;
 $('duplicate').onclick=duplicate;
 $('newBatch').onclick=()=>switchView('create');
@@ -199,7 +205,16 @@ document.querySelectorAll('.modal').forEach(m=>m.onclick=e=>{if(e.target===m)clo
 ['prefix','company','attn','phone','address'].forEach(id=>$(id).oninput=e=>update(id,e.target.value));
 $('sender').onchange=e=>{const custom=e.target.value==='__CUSTOM__';$('customField').classList.toggle('hidden',!custom);if(!custom)update('sender',e.target.value)};
 $('customSender').oninput=e=>update('sender',e.target.value);
-window.onresize=debounce(fitPreview,120);
+const resizeDelay=window.LabelPrintPerformance?.lowSpec?260:120;
+const fitOnResize=debounce(()=>{
+  const performanceHelper=window.LabelPrintPerformance;
+  if(performanceHelper?.lowSpec&&performanceHelper.isScrolling?.()){
+    performanceHelper.whenScrollIdle?.(fitPreview);
+    return;
+  }
+  fitPreview();
+},resizeDelay);
+window.addEventListener('resize',fitOnResize,{passive:true});
 window.onkeydown=e=>{if(e.key==='Escape')closeModals()};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!connected)sync()});
 renderUsers();
