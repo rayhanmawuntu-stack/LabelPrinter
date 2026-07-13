@@ -11,13 +11,15 @@
     if(!navigator.clipboard?.writeText)return false;
     try{await navigator.clipboard.writeText(awb);return true}catch{return false}
   }
-  async function openAwbTracking(row=selectedRow()){
+  function openAwbTracking(row=selectedRow()){
     const r=normalizeLabel(row||{});
     if(!r.awb){$('awb')?.focus();toast('Enter an AWB / resi number first');return false}
-    const copied=await copyAwb(r.awb);
-    const opened=window.open(trackingUrl(r),'_blank','noopener,noreferrer');
-    if(!opened)toast('Allow pop-ups to open tracking');
-    else toast(`${r.courier==='JNE'?'JNE':'Package'} tracking opened${copied?' · AWB copied':''}`);
+    const opened=window.open(trackingUrl(r),'_blank');
+    if(opened)opened.opener=null;
+    copyAwb(r.awb).then(copied=>{
+      if(!opened)toast('Allow pop-ups to open tracking');
+      else toast(`${r.courier==='JNE'?'JNE':'Package'} tracking opened${copied?' · AWB copied':''}`);
+    });
     return !!opened;
   }
   function trackButtonHTML(row,label='Track'){
