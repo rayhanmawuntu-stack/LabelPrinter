@@ -1,5 +1,5 @@
 const CONFIG={endpoint:'https://script.google.com/macros/s/AKfycbwVOHKp4BIbj0rbMNV-y543i7L-175E8CbjFlz2f5kA6RYqpt9aj2crriQ-unsW9RO9/exec',logo:'https://file.garden/ad-wGPVIV3ilAD_L/WORK%20PROJECT/LABEL%20MAKER/KSB_SVG.svg.png'};
-const APP_REVISION='2026-07-13-jne-awb-tracking';
+const APP_REVISION='2026-07-13-invoice-awb-filter';
 const ENDPOINT_REVISION='2026-07-08-03';
 const LEGACY_ENDPOINTS=['https://script.google.com/macros/s/AKfycbwohEPF9QkHyX7FO2VpnFtzHwbx3kZawul3uZXHNtqk4QbHlMYQkp_J78pV46DjOzFd/exec'];
 const LEGACY_SAMPLE_COMPANIES=new Set();
@@ -16,8 +16,8 @@ const saveTimers={};
 function saveSoon(k,v,delay=180){clearTimeout(saveTimers[k]);saveTimers[k]=setTimeout(()=>save(k,v),delay)}
 function debounce(fn,delay=120){let t;return(...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),delay)}}
 function normalizeAwb(value){return clean(value).replace(/\s+/g,'').toUpperCase()}
-function blankLabel(){return{prefix:'',company:'',attn:'',phone:'',address:'',sender:'KSB INDONESIA',courier:'JNE',awb:''}}
-function normalizeLabel(r={}){let prefix=clean(r.prefix).toUpperCase(),company=clean(r.company);const combined=company.match(/^(PT|CV|YAYASAN)\.?\s+(.+)$/i);if(combined){if(!prefix)prefix=combined[1].toUpperCase();company=clean(combined[2])}const courier=clean(r.courier||r.shippingCourier||r.expedition||'JNE').toUpperCase()||'JNE';const awb=normalizeAwb(r.awb||r.resi||r.trackingNumber||r.tracking_number);return{prefix,company,attn:clean(r.attn),phone:clean(r.phone),address:clean(r.address),sender:clean(r.sender)||'KSB INDONESIA',courier,awb}}
+function blankLabel(){return{prefix:'',company:'',invoice:'',attn:'',phone:'',address:'',sender:'KSB INDONESIA',courier:'JNE',awb:''}}
+function normalizeLabel(r={}){let prefix=clean(r.prefix).toUpperCase(),company=clean(r.company);const combined=company.match(/^(PT|CV|YAYASAN)\.?\s+(.+)$/i);if(combined){if(!prefix)prefix=combined[1].toUpperCase();company=clean(combined[2])}const courier=clean(r.courier||r.shippingCourier||r.expedition||'JNE').toUpperCase()||'JNE';const awb=normalizeAwb(r.awb||r.resi||r.trackingNumber||r.tracking_number);const invoice=clean(r.invoice||r.invoiceNumber||r.invoice_number||r.invoiceNo||r.invoice_no);return{prefix,company,invoice,attn:clean(r.attn),phone:clean(r.phone),address:clean(r.address),sender:clean(r.sender)||'KSB INDONESIA',courier,awb}}
 function isLegacySample(r){return LEGACY_SAMPLE_COMPANIES.has(clean(r?.company).toUpperCase())}
 function hasLabelContent(r){return !![r?.company,r?.attn,r?.phone,r?.address].some(v=>clean(v))}
 function usableLabels(rows=labels){return(Array.isArray(rows)?rows:[]).map(normalizeLabel).filter(r=>hasLabelContent(r)&&!isLegacySample(r))}
