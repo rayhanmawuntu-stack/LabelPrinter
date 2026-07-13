@@ -1,6 +1,6 @@
 (async()=>{
   try{
-    const version='20260713-jne-awb-tracking-55';
+    const version='20260713-recipient-import-awb-56';
     let initialTheme='light',initialPalette='ksb';
     try{
       const savedTheme=localStorage.getItem('ksb-theme');
