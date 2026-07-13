@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260713-low-spec-scroll-67';
+    const version='20260713-invoice-awb-filter-68';
     let initialTheme='light';
     let initialPalette='ksb';
     try{
@@ -65,7 +65,7 @@
     for(const file of critical)await load('assets/'+file);
     load('assets/app-favicon.js').catch(console.warn);
 
-    const essential=['app-03.js','app-03b.js','app-awb.js','app-print-logo.js','app-04.js','app-04b.js','app-analytics-fast.js','app-05.js','app-validation.js','app-tracking-tab.js','app-tracking-settings.js'];
+    const essential=['app-03.js','app-03b.js','app-awb.js','app-print-logo.js','app-04.js','app-04b.js','app-analytics-fast.js','app-05.js','app-invoice-import.js','app-validation.js','app-tracking-tab-v2.js','app-tracking-settings.js'];
     for(const file of essential)await load('assets/'+file);
 
     const optional=[
