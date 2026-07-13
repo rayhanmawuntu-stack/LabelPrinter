@@ -47,13 +47,14 @@ function previewSignature(rows){
 }
 function renderPreview(){
   const rows=labels.length?labels:[blankLabel()];
-  const page=$('page');
+  const page=$('page'),stage=$('stage');
   const signature=previewSignature(rows);
   const changed=page.dataset.previewSignature!==signature;
   if(changed){
     page.style.transform='none';
     page.innerHTML=sheetHTML(rows,true);
     page.dataset.previewSignature=signature;
+    if(stage)delete stage.dataset.previewScale;
   }
   const l=LAYOUTS[layout];
   $('statLayout').textContent=l.label;
@@ -77,7 +78,7 @@ function fitPreview(){
   const availableHeight=Math.max(1,stage.clientHeight-verticalPadding-18);
   const scale=Math.max(.12,Math.min(.72,availableWidth/naturalWidth,availableHeight/naturalHeight));
   const scaleKey=scale.toFixed(3);
-  if(stage.dataset.previewScale===scaleKey)return;
+  if(stage.dataset.previewScale===scaleKey&&page.style.transform)return;
   page.style.transformOrigin='top left';
   page.style.transform=`scale(${scale})`;
   viewport.style.width=`${Math.ceil(naturalWidth*scale)}px`;
