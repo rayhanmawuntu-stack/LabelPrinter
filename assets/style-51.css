@@ -1,0 +1,53 @@
+/* Refined theme switching for capable devices, plus a lean rendering profile for low-spec PCs. */
+html:not(.low-spec).theme-switching :where(
+  body,.sidebar,.main,.topbar,.hero,.panel,.metric,.recipient,.history-row,.tracking-row,
+  .tracking-settings-card,.tracking-api-meta,.modal-card,.entry-card,.control,.search,.status,
+  .btn,.nav button,.theme-toggle,.settings,.avatar,.stage,.layout,.user,.tracking-action,
+  .tracking-search,.tracking-courier-mark,.panel-chip,.badge
+){
+  transition-property:background-color,color,border-color,box-shadow,fill,stroke,opacity!important;
+  transition-duration:360ms!important;
+  transition-timing-function:cubic-bezier(.22,.8,.24,1)!important;
+}
+html:not(.low-spec).theme-switching body{transition:background-color 420ms cubic-bezier(.22,.8,.24,1),color 320ms ease!important}
+html:not(.low-spec).theme-switching svg{transition:fill 320ms ease,stroke 320ms ease,color 320ms ease!important}
+
+html.low-spec{
+  --motion-fast:.001ms!important;
+  --motion-med:.001ms!important;
+}
+html.low-spec *,html.low-spec *::before,html.low-spec *::after{
+  animation-duration:.001ms!important;
+  animation-delay:0s!important;
+  animation-iteration-count:1!important;
+  transition-duration:.001ms!important;
+  scroll-behavior:auto!important;
+}
+html.low-spec body{background-image:none!important}
+html.low-spec :where(
+  .sidebar,.main,.hero,.panel,.metric,.recipient,.history-row,.tracking-row,.tracking-api-panel,
+  .tracking-settings-card,.modal-card,.entry-card,.stage,.search,.status,.avatar,.user,.sheet
+){
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  box-shadow:none!important;
+}
+html.low-spec :where(.hero,.tracking-api-panel,.stage,.avatar,.metric,.entry-card){background-image:none!important}
+html.low-spec :where(.btn:hover,.panel:hover,.recipient:hover,.history-row:hover,.tracking-row:hover,.user:hover,.layout:hover,.status:hover){
+  transform:none!important;
+  box-shadow:none!important;
+}
+html.low-spec :where(.dashboard-lower,.analytics-overview,.recent-history,.tracking-list-panel,.history-grid,.charts){
+  content-visibility:auto;
+  contain-intrinsic-size:auto 620px;
+}
+html.low-spec .bar i{animation:none!important}
+html.low-spec .tracking-row:hover{border-color:var(--theme-line,var(--line,#e4e7ed))!important}
+html.app-paused *,html.app-paused *::before,html.app-paused *::after{animation-play-state:paused!important}
+
+@media(prefers-reduced-motion:reduce){
+  html.theme-switching *{transition-duration:.001ms!important}
+}
+@media print{
+  html.low-spec :where(.physical,.sheet,.print-root){content-visibility:visible!important;contain:none!important}
+}
