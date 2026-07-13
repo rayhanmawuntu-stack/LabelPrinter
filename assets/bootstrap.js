@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260713-tracking-status-settings-61';
+    const version='20260713-tracking-settings-render-fix-62';
     let initialTheme='light';
     let initialPalette='ksb';
     try{
