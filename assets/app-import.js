@@ -1,4 +1,4 @@
-const HISTORY_IMPORT_REVISION='2026-07-10-xlsx-history-import-02';
+const HISTORY_IMPORT_REVISION='2026-07-13-tracking-history-import-03';
 let xlsxLibraryPromise=null;
 function ensureXlsxLibrary(){
   if(window.XLSX)return Promise.resolve(window.XLSX);
@@ -87,7 +87,10 @@ function buildImportedHistory(book){
     const nickname=importText(importValue(meta,['nickname'])||nicknames.get(user))||user.split(/\s+/)[0]||'User';
     const labels=usableLabels(rows.map(row=>({
       prefix:importText(importValue(row,['prefix'])).toUpperCase(),
-      company:importText(importValue(row,['companyName','penerima','company'])),
+      company:importText(importValue(row,['companyName','penerima','company','full recipient'])),
+      invoice:importText(importValue(row,['invoice','invoice number','invoice no','invoiceNo'])),
+      courier:importText(importValue(row,['courier','expedition','shipping courier']))||'JNE',
+      awb:importText(importValue(row,['awb','resi','awb / resi','tracking number'])),
       attn:importText(importValue(row,['attn','attention'])),
       phone:importText(importValue(row,['phone','telephone'])),
       address:importText(importValue(row,['address'])),
@@ -146,5 +149,7 @@ async function importHistoryWorkbook(file){
 const importHistoryButton=$('importHistory'),historyFile=$('historyFile');
 if(importHistoryButton&&historyFile){
   importHistoryButton.onclick=()=>historyFile.click();historyFile.onchange=()=>importHistoryWorkbook(historyFile.files?.[0]);
-  const warm=()=>ensureXlsxLibrary().catch(()=>{});importHistoryButton.addEventListener('pointerenter',warm,{once:true,passive:true});importHistoryButton.addEventListener('focus',warm,{once:true,passive:true});
+  if(!window.LabelPrintPerformance?.lowSpec){
+    const warm=()=>ensureXlsxLibrary().catch(()=>{});importHistoryButton.addEventListener('pointerenter',warm,{once:true,passive:true});importHistoryButton.addEventListener('focus',warm,{once:true,passive:true});
+  }
 }
