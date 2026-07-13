@@ -1,0 +1,123 @@
+/* Cross-tab readability and contrast refinements. Print output remains unchanged. */
+html[data-theme="light"]{
+  --ink:#15191f;
+  --muted:#5d6874;
+  --line:#cfd6de;
+  --theme-text:#15191f;
+  --theme-muted:#5d6874;
+  --theme-line:#cfd6de;
+  --scheme-ui-text:#15191f;
+  --scheme-ui-muted:#5d6874;
+  --scheme-ui-line:#cfd6de;
+}
+html[data-theme="dark"]{
+  --ink:#f3f6f9;
+  --muted:#b5bec8;
+  --line:#3b4652;
+  --theme-text:#f3f6f9;
+  --theme-muted:#b5bec8;
+  --theme-line:#3b4652;
+  --scheme-ui-text:#f3f6f9;
+  --scheme-ui-muted:#b5bec8;
+  --scheme-ui-line:#3b4652;
+}
+
+html[data-theme] body{
+  color:var(--theme-text,var(--ink));
+  font-size:14px;
+  line-height:1.5;
+  text-rendering:optimizeLegibility;
+}
+html[data-theme] :where(.main,.sidebar,.panel,.hero,.modal-card,.entry-card,.editor){color:var(--theme-text,var(--ink))}
+html[data-theme] :where(.page-head p,.panel p,.panel small,.hero small,.hello small,.field label,.caption,.settings-section-copy,.monthly-year-field span,.detail-top p){
+  color:var(--theme-muted,var(--muted));
+}
+
+/* Headings and supporting copy. */
+.page-title{line-height:1.08;letter-spacing:-.025em}
+.page-head>div>p:not(.kicker){font-size:12px!important;line-height:1.65!important;max-width:72ch}
+.kicker,.detail-kicker,.entry-kicker{font-size:9px!important;line-height:1.3!important;letter-spacing:.11em!important;font-weight:850!important}
+.panel-head h2,.panel-head h3,.detail-top h2,.settings-section-title{line-height:1.25!important;letter-spacing:-.01em!important}
+.panel-head h2{font-size:16px!important}
+.panel-head h3,.settings-section-title{font-size:13px!important}
+.panel-head p,.panel-head small{font-size:10.5px!important;line-height:1.5!important}
+
+/* Form controls and action labels. */
+html[data-theme] :where(.control,.search input,.tracking-search input,textarea,input,select){
+  font-size:12px;
+  line-height:1.45;
+}
+html[data-theme] :where(.control,.search,.tracking-search){border-color:var(--theme-line,var(--line))}
+html[data-theme="light"] :where(.control,.search,.tracking-search){background:#fff;color:#15191f}
+html[data-theme="dark"] :where(.control,.search,.tracking-search){background:#20262d;color:#f3f6f9}
+html[data-theme] :where(input,textarea)::placeholder{color:var(--theme-muted,var(--muted));opacity:.82}
+.field label{font-size:10.5px!important;line-height:1.35!important;font-weight:750!important}
+.btn,.tracking-action,.tracking-show-more{font-size:11px!important;line-height:1.2!important;letter-spacing:.005em}
+.text-link{font-size:11px;font-weight:800;text-underline-offset:3px}
+
+/* Create tab recipient cards and editor. */
+.recipient b{font-size:11.5px!important;line-height:1.35!important}
+.recipient>span:not(.num){font-size:10px!important;line-height:1.4!important;color:var(--theme-muted,var(--muted))}
+.num,.index{font-variant-numeric:tabular-nums}
+.editor .field{gap:6px}
+
+/* KPI cards across Create, History, Tracking, and Analytics. */
+.metric span,.dash-metric span{font-size:9.5px!important;line-height:1.35!important;font-weight:800!important}
+.metric strong,.dash-metric strong{line-height:1.05!important;letter-spacing:-.025em}
+.metric small,.dash-metric small{font-size:9.5px!important;line-height:1.45!important;color:var(--theme-muted,var(--muted))!important}
+
+/* History tab. */
+.history-row b,.recent-row b,.detail-line b{font-size:11.5px!important;line-height:1.4!important}
+.history-row small,.recent-row small,.detail-line,.detail-phone{font-size:10px!important;line-height:1.5!important;color:var(--theme-muted,var(--muted))}
+.detail-count{font-size:10px!important}
+.sync{outline:1px solid color-mix(in srgb,currentColor 28%,transparent)}
+
+/* Tracking tab. */
+.tracking-recipient b{font-size:12px!important;line-height:1.35!important}
+.tracking-recipient span{font-size:10.5px!important;line-height:1.45!important;color:var(--theme-muted,var(--muted))}
+.tracking-recipient small,.tracking-awb span,.tracking-awb small{font-size:9.5px!important;line-height:1.45!important;color:var(--theme-muted,var(--muted))}
+.tracking-awb strong{font-size:12px!important;line-height:1.35!important;letter-spacing:.015em}
+.tracking-courier-mark{font-size:9px!important;font-weight:900!important;letter-spacing:.04em}
+
+/* Analytics tables, rankings, and charts. */
+.rank b,.mini-rankings b{font-size:10.5px!important;line-height:1.4!important}
+.rank small,.mini-rankings small,.rank em,.mini-rankings em{font-size:9.5px!important;line-height:1.4!important;color:var(--theme-muted,var(--muted))}
+.monthly-report-table{font-size:10px!important;line-height:1.4!important}
+.monthly-report-table th{font-size:9px!important;letter-spacing:.045em!important;line-height:1.3!important}
+.monthly-report-table td,.monthly-report-table th{padding-top:9px!important;padding-bottom:9px!important;border-color:var(--theme-line,var(--line))!important}
+
+/* Settings and modal content previously used very small text. */
+.modal-head h3{font-size:17px!important;line-height:1.25!important}
+.modal-card>p,.settings-section-copy{font-size:11px!important;line-height:1.6!important}
+.appearance-option b,.palette-copy b{font-size:10.5px!important;line-height:1.3!important}
+.tracking-settings-section .tracking-api-copy h2{font-size:16px!important;line-height:1.25!important}
+.tracking-settings-section .tracking-api-copy p{font-size:10.5px!important;line-height:1.6!important}
+.tracking-settings-section .tracking-mode{font-size:8.5px!important;line-height:1.2!important}
+.tracking-settings-section .tracking-api-meta span{font-size:9.5px!important;line-height:1.4!important;color:var(--theme-muted,var(--muted))!important}
+.tracking-settings-section .tracking-api-meta strong{font-size:10.5px!important;line-height:1.4!important}
+#connectionResult{font-size:10.5px;line-height:1.5;color:var(--theme-muted,var(--muted))}
+
+/* Clearer surfaces and separators. */
+html[data-theme="light"] :where(.panel,.metric,.recipient,.history-row,.tracking-row,.modal-card,.entry-card,.tracking-settings-card){border-color:#cfd6de!important}
+html[data-theme="dark"] :where(.panel,.metric,.recipient,.history-row,.tracking-row,.modal-card,.entry-card,.tracking-settings-card){border-color:#3b4652!important}
+html[data-theme="dark"] :where(.panel,.recipient,.history-row,.tracking-row,.modal-card,.entry-card){color:#f3f6f9}
+html[data-theme="dark"] :where(.history-row small,.recent-row small,.tracking-recipient span,.tracking-recipient small,.tracking-awb span,.tracking-awb small){color:#b5bec8!important}
+
+/* Keyboard readability and visible interaction state. */
+html[data-theme] :where(button,a,input,select,textarea):focus-visible{
+  outline:3px solid color-mix(in srgb,var(--scheme-ui-accent,var(--lime,#dfff3f)) 45%,transparent)!important;
+  outline-offset:2px!important;
+}
+
+@media(max-width:760px){
+  html[data-theme] body{font-size:14px;line-height:1.52}
+  .page-head>div>p:not(.kicker){font-size:11.5px!important}
+  .panel-head h2{font-size:15px!important}
+  .panel-head h3,.settings-section-title{font-size:12.5px!important}
+  .btn,.tracking-action,.tracking-show-more{font-size:10.5px!important}
+  .monthly-report-table{font-size:9.5px!important}
+}
+
+@media print{
+  html[data-theme] :where(.sheet,.physical,.print-page,.print-root,#reviewWrap){font-size:initial;line-height:normal;text-rendering:auto}
+}
