@@ -4,6 +4,21 @@ A responsive shipping-label workspace for creating, previewing, printing, and tr
 
 **Live app:** https://rayhanmawuntu-stack.github.io/LabelPrinter/
 
+## Screenshots
+
+The screenshots below are generated from the live GitHub Pages deployment so they stay aligned with the current interface.
+
+### Desktop workspace
+
+[![KSB LabelPrint desktop workspace](https://image.thum.io/get/width/1400/crop/900/noanimate/https://rayhanmawuntu-stack.github.io/LabelPrinter/)](https://rayhanmawuntu-stack.github.io/LabelPrinter/)
+
+### Compact views
+
+<p align="center">
+  <a href="https://rayhanmawuntu-stack.github.io/LabelPrinter/"><img src="https://image.thum.io/get/width/760/crop/900/noanimate/https://rayhanmawuntu-stack.github.io/LabelPrinter/" alt="KSB LabelPrint compact desktop view" width="58%"></a>
+  <a href="https://rayhanmawuntu-stack.github.io/LabelPrinter/"><img src="https://image.thum.io/get/width/430/crop/860/noanimate/https://rayhanmawuntu-stack.github.io/LabelPrinter/" alt="KSB LabelPrint mobile view" width="36%"></a>
+</p>
+
 ## Features
 
 - Create and edit multiple recipients in one batch
@@ -67,10 +82,11 @@ To deploy under another GitHub account:
 ```text
 LabelPrinter/
 ├── index.html
+├── Code.gs
 ├── assets/
 │   ├── bootstrap.js
 │   ├── app-01.js ... app-05.js
-│   └── style-01.css ... style-08.css
+│   └── style-01.css ... style-45.css
 ├── partials/
 │   ├── body-01.html
 │   ├── body-02.html
