@@ -1,16 +1,17 @@
-/* Tracking provider information now lives inside Settings. */
-#trackingView>.tracking-api-panel{display:none!important}
-.tracking-settings-section .tracking-api-panel{display:grid;grid-template-columns:1fr;gap:14px;margin:12px 0 0;padding:16px;border:1px solid var(--theme-line,var(--line,#e4e7ed));border-radius:18px;background:var(--theme-card,var(--card,#fff));box-shadow:none;overflow:hidden}
+/* Tracking provider information lives only inside Settings. */
+#trackingView .tracking-api-panel{display:none!important}
+.tracking-settings-section{overflow:hidden}
+.tracking-settings-section .tracking-settings-card{display:grid;grid-template-columns:1fr;gap:14px;margin:12px 0 0;padding:16px;border:1px solid var(--theme-line,var(--line,#e4e7ed));border-radius:18px;background:var(--theme-card,var(--card,#fff));box-shadow:none;overflow:hidden}
 .tracking-settings-section .tracking-api-copy h2{margin:8px 0 6px;font-size:17px;letter-spacing:-.35px}
 .tracking-settings-section .tracking-api-copy p{margin:0;max-width:none;font-size:9px;line-height:1.55;color:var(--theme-muted,var(--muted,#747b87))}
 .tracking-settings-section .tracking-mode{padding:5px 8px;font-size:7px}
-.tracking-settings-section .tracking-api-meta{padding:12px 13px;border-radius:14px;gap:8px 12px;background:var(--theme-primary-soft,var(--ui-soft,#f3f5f6))}
-.tracking-settings-section .tracking-api-meta span{font-size:7.5px}
-.tracking-settings-section .tracking-api-meta strong{font-size:8.5px}
-html[data-theme="dark"] .tracking-settings-section .tracking-api-panel{background:#1b2026;border-color:#36404a}
+.tracking-settings-section .tracking-api-meta{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;padding:12px 13px;border:1px solid var(--theme-line,var(--line,#e4e7ed));border-radius:14px;background:var(--theme-primary-soft,var(--ui-soft,#f3f5f6))}
+.tracking-settings-section .tracking-api-meta span{font-size:7.5px;color:var(--theme-muted,var(--muted,#747b87))}
+.tracking-settings-section .tracking-api-meta strong{text-align:right;font-size:8.5px;overflow-wrap:anywhere}
+html[data-theme="dark"] .tracking-settings-section .tracking-settings-card{background:#1b2026;border-color:#36404a}
 html[data-theme="dark"] .tracking-settings-section .tracking-api-meta{background:#232a31;border-color:#37414b}
 @media(max-width:560px){
-  .tracking-settings-section .tracking-api-panel{padding:14px}
+  .tracking-settings-section .tracking-settings-card{padding:14px}
   .tracking-settings-section .tracking-api-meta{grid-template-columns:1fr}
   .tracking-settings-section .tracking-api-meta strong{text-align:left;margin-bottom:3px}
 }
