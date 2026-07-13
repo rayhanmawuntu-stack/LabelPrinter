@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260713-tracking-visibility-73';
+    const version='20260713-invoice-history-repair-74';
     let initialTheme='light';
     let initialPalette='ksb';
     try{
@@ -81,7 +81,7 @@
     await loadFiles(critical);
     load('assets/app-favicon.js').catch(console.warn);
 
-    const essential=['app-03.js','app-03b.js','app-awb.js','app-print-logo.js','app-04.js','app-04b.js','app-analytics-fast.js','app-05.js','app-validation.js','app-fixed-backend.js','app-tracking-tab-v2.js','app-tracking-settings.js','app-import.js'];
+    const essential=['app-03.js','app-03b.js','app-awb.js','app-print-logo.js','app-04.js','app-04b.js','app-analytics-fast.js','app-05.js','app-invoice-memory.js','app-validation.js','app-fixed-backend.js','app-tracking-tab-v2.js','app-tracking-settings.js','app-import.js'];
     await loadFiles(essential);
 
     const analyticsNav=document.querySelector('[data-view="analytics"]');
