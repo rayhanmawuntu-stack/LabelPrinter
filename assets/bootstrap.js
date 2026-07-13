@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260713-cekresi-jne-specific-59';
+    const version='20260713-dedicated-tracking-tab-60';
     let initialTheme='light';
     let initialPalette='ksb';
     try{
@@ -16,7 +16,7 @@
     const lowSpec=(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4)||(navigator.deviceMemory&&navigator.deviceMemory<=4)||navigator.connection?.saveData||matchMedia('(prefers-reduced-motion: reduce)').matches;
     root.classList.toggle('low-spec',Boolean(lowSpec));
 
-    const styles=['style-03b.css','style-05b.css','style-06.css','style-07.css','style-08.css','style-09.css','style-10.css','style-11.css','style-12.css','style-13.css','style-14.css','style-15.css','style-16.css','style-17.css','style-18.css','style-19.css','style-20.css','style-21.css','style-22.css','style-23.css','style-24.css','style-25.css','style-26.css','style-27.css','style-28.css','style-29.css','style-30.css','style-31.css','style-32.css','style-33.css','style-34.css','style-35.css','style-36.css','style-37.css','style-38.css','style-39.css','style-40.css','style-41.css','style-42.css','style-43.css','style-44.css','style-45.css','style-46.css'];
+    const styles=['style-03b.css','style-05b.css','style-06.css','style-07.css','style-08.css','style-09.css','style-10.css','style-11.css','style-12.css','style-13.css','style-14.css','style-15.css','style-16.css','style-17.css','style-18.css','style-19.css','style-20.css','style-21.css','style-22.css','style-23.css','style-24.css','style-25.css','style-26.css','style-27.css','style-28.css','style-29.css','style-30.css','style-31.css','style-32.css','style-33.css','style-34.css','style-35.css','style-36.css','style-37.css','style-38.css','style-39.css','style-40.css','style-41.css','style-42.css','style-43.css','style-44.css','style-45.css','style-46.css','style-47.css'];
     styles.forEach(file=>{
       const link=document.createElement('link');
       link.rel='stylesheet';
@@ -45,7 +45,7 @@
     const critical=['no-mock.js','app-01.js','app-sanitize.js','app-theme.js','app-palette.js','app-performance.js','app-02.js'];
     for(const file of critical)await load('assets/'+file);
     load('assets/app-favicon.js').catch(console.warn);
-    const deferred=['app-03.js','app-03b.js','app-awb.js','app-print-logo.js','app-04.js','app-04b.js','app-analytics-fast.js','app-analytics-hover.js','app-monthly-report-graphs.js','app-import.js','app-report-export.js','app-report-pdf-v2.js','app-pdf.js','app-05.js','app-validation.js'];
+    const deferred=['app-03.js','app-03b.js','app-awb.js','app-print-logo.js','app-04.js','app-04b.js','app-analytics-fast.js','app-analytics-hover.js','app-monthly-report-graphs.js','app-import.js','app-report-export.js','app-report-pdf-v2.js','app-pdf.js','app-05.js','app-validation.js','app-tracking-tab.js'];
     for(const file of deferred)await load('assets/'+file);
   }catch(error){
     document.body.innerHTML='<div class="boot">Unable to load KSB LabelPrint: '+String(error&&error.message||error)+'</div>';
