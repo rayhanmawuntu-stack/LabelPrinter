@@ -42,15 +42,33 @@
     analyticsView.parentNode.insertBefore(section,analyticsView);
   }
 
+  const lowSpec=!!window.LabelPrintPerformance?.lowSpec;
+  const pageSize=lowSpec?80:180;
+  let renderLimit=pageSize;
   let refreshedAt=null;
   let visibleShipments=[];
+  let shipmentCache={labelsRef:null,historyRef:null,labelSignature:'',shipments:[]};
 
   function trackingKey(row){
     const r=normalizeLabel(row||{});
     return `${r.courier||'JNE'}|${r.awb}`;
   }
 
-  function collectShipments(){
+  function currentLabelSignature(){
+    return(Array.isArray(labels)?labels:[]).map(raw=>{
+      const row=normalizeLabel(raw||{});
+      return[row.prefix,row.company,row.invoice,row.courier,row.awb].join('\u001f');
+    }).join('\u001e');
+  }
+
+  function invalidateTracking(){
+    shipmentCache={labelsRef:null,historyRef:null,labelSignature:'',shipments:[]};
+  }
+
+  function collectShipments(force=false){
+    const signature=currentLabelSignature();
+    if(!force&&shipmentCache.labelsRef===labels&&shipmentCache.historyRef===history&&shipmentCache.labelSignature===signature)return shipmentCache.shipments;
+
     const map=new Map();
     const absorb=(raw,meta)=>{
       const row=normalizeLabel(raw||{});
@@ -58,7 +76,7 @@
       const key=trackingKey(row);
       let shipment=map.get(key);
       if(!shipment){
-        shipment={key,row,current:false,currentIndex:null,batches:new Set(),recipients:new Set(),invoices:new Set(),awbs:new Set(),latestBatch:'',latestTimestamp:'',latestUser:'',occurrences:0};
+        shipment={key,row,current:false,currentIndex:null,batches:new Set(),recipients:new Set(),invoices:new Set(),awbs:new Set(),latestBatch:'',latestTimestamp:'',latestUser:'',occurrences:0,searchText:''};
         map.set(key,shipment);
       }
       shipment.occurrences++;
@@ -70,8 +88,10 @@
         shipment.currentIndex=meta.index;
         shipment.row=row;
       }else{
-        shipment.batches.add(meta.batchId);
-        if(!shipment.latestTimestamp||new Date(meta.timestamp)>new Date(shipment.latestTimestamp)){
+        if(meta.batchId)shipment.batches.add(meta.batchId);
+        const incomingTime=new Date(meta.timestamp||0).getTime()||0;
+        const storedTime=new Date(shipment.latestTimestamp||0).getTime()||0;
+        if(!shipment.latestTimestamp||incomingTime>=storedTime){
           shipment.latestTimestamp=meta.timestamp||'';
           shipment.latestBatch=meta.batchId||'';
           shipment.latestUser=meta.user||'';
@@ -85,10 +105,16 @@
       (Array.isArray(batch?.labels)?batch.labels:[]).forEach(row=>absorb(row,{source:'history',batchId:clean(batch.id),timestamp:batch.timestamp,user:batch.user}));
     });
 
-    return[...map.values()].sort((a,b)=>{
+    const shipments=[...map.values()].map(shipment=>{
+      shipment.searchText=[...shipment.recipients,...shipment.invoices,...shipment.awbs].join(' ').toLowerCase();
+      return shipment;
+    }).sort((a,b)=>{
       if(a.current!==b.current)return a.current?-1:1;
-      return new Date(b.latestTimestamp||0)-new Date(a.latestTimestamp||0);
+      return(new Date(b.latestTimestamp||0).getTime()||0)-(new Date(a.latestTimestamp||0).getTime()||0);
     });
+
+    shipmentCache={labelsRef:labels,historyRef:history,labelSignature:signature,shipments};
+    return shipments;
   }
 
   function updateTrackingBadge(shipments=collectShipments()){
@@ -116,9 +142,7 @@
       if(scope==='current'&&!shipment.current)return false;
       if(scope==='history'&&!shipment.batches.size)return false;
       if(courier!=='all'&&shipment.row.courier!==courier)return false;
-      if(!terms.length)return true;
-      const searchable=[...shipment.recipients,...shipment.invoices,...shipment.awbs].join(' ').toLowerCase();
-      return terms.every(term=>searchable.includes(term));
+      return !terms.length||terms.every(term=>shipment.searchText.includes(term));
     });
   }
 
@@ -127,15 +151,25 @@
     if(!select)return;
     const selected=select.value||'all';
     const couriers=[...new Set(shipments.map(item=>item.row.courier).filter(Boolean))].sort();
-    select.innerHTML='<option value="all">All couriers</option>'+couriers.map(name=>`<option value="${esc(name)}">${esc(name)}</option>`).join('');
+    const next='<option value="all">All couriers</option>'+couriers.map(name=>`<option value="${esc(name)}">${esc(name)}</option>`).join('');
+    if(select.innerHTML!==next)select.innerHTML=next;
     select.value=couriers.includes(selected)?selected:'all';
   }
 
-  function renderTracking(){
-    const shipments=collectShipments();
+  function invoiceLabel(shipment){
+    const values=[...shipment.invoices];
+    if(!values.length)return'No invoice number';
+    if(values.length<=2)return`Invoice ${values.join(' · ')}`;
+    return`Invoice ${values.slice(0,2).join(' · ')} +${values.length-2}`;
+  }
+
+  function renderTracking(options={}){
+    if(options.reset)renderLimit=pageSize;
+    const shipments=collectShipments(!!options.force);
     updateTrackingBadge(shipments);
     renderCourierOptions(shipments);
     visibleShipments=filteredShipments(shipments);
+    const rendered=visibleShipments.slice(0,renderLimit);
 
     const currentCount=shipments.filter(item=>item.current).length;
     const historyCount=shipments.filter(item=>item.batches.size).length;
@@ -150,32 +184,40 @@
     ].map(([label,value,tone,note])=>`<article class="metric ${tone}"><span>${label}</span><strong>${value}</strong><small>${note}</small></article>`).join('');
 
     const count=$('trackingCount');
-    if(count)count.textContent=`${visibleShipments.length} of ${shipments.length} shipment${shipments.length===1?'':'s'}`;
+    if(count){
+      const showing=Math.min(rendered.length,visibleShipments.length);
+      count.textContent=visibleShipments.length>rendered.length?`Showing ${showing} of ${visibleShipments.length} matches · ${shipments.length} total`:`${visibleShipments.length} of ${shipments.length} shipment${shipments.length===1?'':'s'}`;
+    }
     const refreshed=$('trackingRefreshedAt');
     if(refreshed)refreshed.textContent=refreshedAt?refreshedAt.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'On opening Tracking tab';
 
     const list=$('trackingList');
     if(!list)return;
-    list.innerHTML=visibleShipments.length?visibleShipments.map((shipment,index)=>{
+    if(!visibleShipments.length){
+      list.innerHTML='<div class="tracking-empty"><span>⌕</span><h3>No shipments found</h3><p>Search by Penerima, invoice number, or AWB number.</p></div>';
+      return;
+    }
+    const rows=rendered.map((shipment,index)=>{
       const row=shipment.row;
       const recipient=full(row)||'Unnamed recipient';
       const latest=shipment.current?'Unsaved current data':dateLabel(shipment.latestTimestamp);
       const location=row.address||row.attn||'No address saved';
       const source=sourceLabel(shipment);
-      const invoice=row.invoice?`Invoice ${row.invoice}`:'No invoice number';
       const batchAction=shipment.latestBatch?`<button type="button" class="tracking-action secondary" data-open-tracking-batch="${esc(shipment.latestBatch)}">Open batch</button>`:'';
       const editAction=shipment.current&&Number.isInteger(shipment.currentIndex)?`<button type="button" class="tracking-action secondary" data-edit-tracking-index="${shipment.currentIndex}">Edit label</button>`:'';
       return `<article class="tracking-row" data-tracking-index="${index}">
         <div class="tracking-courier-mark">${esc((row.courier||'JNE').slice(0,4))}</div>
         <div class="tracking-recipient"><b>${esc(recipient)}</b><span>${esc(location)}</span><small>${esc(source)} · ${esc(latest)}</small></div>
-        <div class="tracking-awb"><span>AWB / resi</span><strong>${esc(row.awb)}</strong><small>${esc(invoice)} · ${esc(row.courier||'JNE')}</small></div>
+        <div class="tracking-awb"><span>AWB / resi</span><strong>${esc(row.awb)}</strong><small>${esc(invoiceLabel(shipment))} · ${esc(row.courier||'JNE')}</small></div>
         <div class="tracking-row-actions">
           <button type="button" class="tracking-action secondary" data-copy-tracking-awb="${esc(row.awb)}">Copy</button>
           ${editAction}${batchAction}
           <button type="button" class="tracking-action primary" data-track-shipment="${index}">Track</button>
         </div>
       </article>`;
-    }).join(''):`<div class="tracking-empty"><span>⌕</span><h3>No shipments found</h3><p>Search by Penerima, invoice number, or AWB number.</p></div>`;
+    }).join('');
+    const more=rendered.length<visibleShipments.length?`<button type="button" class="tracking-show-more" data-show-more-tracking>Show ${Math.min(pageSize,visibleShipments.length-rendered.length)} more</button>`:'';
+    list.innerHTML=rows+more;
   }
 
   async function copyText(value){
@@ -195,10 +237,10 @@
 
   const trackingView=$('trackingView');
   document.querySelector('[data-view="tracking"]')?.addEventListener('click',()=>switchView('tracking'));
-  $('trackingSearch')?.addEventListener('input',debounce(renderTracking,90));
-  $('trackingScope')?.addEventListener('change',renderTracking);
-  $('trackingCourier')?.addEventListener('change',renderTracking);
-  $('refreshTracking')?.addEventListener('click',()=>{refreshedAt=new Date();renderTracking();toast('Tracking list refreshed')});
+  $('trackingSearch')?.addEventListener('input',debounce(()=>renderTracking({reset:true}),lowSpec?180:90));
+  $('trackingScope')?.addEventListener('change',()=>renderTracking({reset:true}));
+  $('trackingCourier')?.addEventListener('change',()=>renderTracking({reset:true}));
+  $('refreshTracking')?.addEventListener('click',()=>{refreshedAt=new Date();invalidateTracking();renderTracking({reset:true,force:true});toast('Tracking list refreshed')});
   $('copyVisibleAwbs')?.addEventListener('click',async()=>{
     const text=visibleShipments.map(item=>item.row.awb).join('\n');
     if(!text)return toast('No visible AWBs to copy');
@@ -206,6 +248,8 @@
     toast(copied?`${visibleShipments.length} AWB${visibleShipments.length===1?'':'s'} copied`:'Unable to copy AWBs');
   });
   $('trackingList')?.addEventListener('click',async event=>{
+    const moreButton=event.target.closest('[data-show-more-tracking]');
+    if(moreButton){renderLimit+=pageSize;renderTracking();return}
     const trackButton=event.target.closest('[data-track-shipment]');
     if(trackButton){
       const shipment=visibleShipments[Number(trackButton.dataset.trackShipment)];
@@ -243,7 +287,7 @@
       document.querySelectorAll('.nav button').forEach(button=>button.classList.toggle('active',button.dataset.view==='tracking'));
       const subtitle=$('subtitle');
       if(subtitle)subtitle.textContent='Filter shipments by Penerima, invoice, or AWB.';
-      renderTracking();
+      renderTracking({reset:true});
       return;
     }
     trackingView?.classList.add('hidden');
@@ -269,5 +313,5 @@
   $('awb')?.addEventListener('input',()=>updateTrackingBadge());
   $('courier')?.addEventListener('change',()=>updateTrackingBadge());
   updateTrackingBadge();
-  window.LabelPrintTracking={render:renderTracking,collect:collectShipments};
+  window.LabelPrintTracking={render:renderTracking,collect:collectShipments,invalidate:invalidateTracking};
 })();
