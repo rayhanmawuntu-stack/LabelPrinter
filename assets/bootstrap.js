@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260713-stability-low-spec-69';
+    const version='20260713-bulk-template-rule-70';
     let initialTheme='light';
     let initialPalette='ksb';
     try{
