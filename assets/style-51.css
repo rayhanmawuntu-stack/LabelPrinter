@@ -15,6 +15,9 @@ html:not(.low-spec).theme-switching svg{transition:fill 320ms ease,stroke 320ms 
 html.low-spec{
   --motion-fast:.001ms!important;
   --motion-med:.001ms!important;
+  scroll-behavior:auto!important;
+  scrollbar-gutter:stable;
+  overscroll-behavior-y:none;
 }
 html.low-spec *,html.low-spec *::before,html.low-spec *::after{
   animation-duration:.001ms!important;
@@ -22,8 +25,14 @@ html.low-spec *,html.low-spec *::before,html.low-spec *::after{
   animation-iteration-count:1!important;
   transition-duration:.001ms!important;
   scroll-behavior:auto!important;
+  will-change:auto!important;
 }
-html.low-spec body{background-image:none!important}
+html.low-spec body{
+  background-image:none!important;
+  background-attachment:scroll!important;
+  overscroll-behavior-y:none;
+  text-rendering:optimizeSpeed;
+}
 html.low-spec :where(
   .sidebar,.main,.hero,.panel,.metric,.recipient,.history-row,.tracking-row,.tracking-api-panel,
   .tracking-settings-card,.modal-card,.entry-card,.stage,.search,.status,.avatar,.user,.sheet
@@ -37,12 +46,40 @@ html.low-spec :where(.btn:hover,.panel:hover,.recipient:hover,.history-row:hover
   transform:none!important;
   box-shadow:none!important;
 }
+
+/* A large sticky print preview forces continuous repainting on slower GPUs. */
+html.low-spec .preview{
+  position:relative!important;
+  top:auto!important;
+}
+
+/* Skip layout and paint work for content that is outside the viewport. */
 html.low-spec :where(.dashboard-lower,.analytics-overview,.recent-history,.tracking-list-panel,.history-grid,.charts){
   content-visibility:auto;
+  contain:layout style paint;
   contain-intrinsic-size:auto 620px;
 }
+html.low-spec :where(.recipient,.history-row,.tracking-row){
+  content-visibility:auto;
+  contain:layout style paint;
+  contain-intrinsic-size:auto 76px;
+}
+html.low-spec .metric{
+  content-visibility:auto;
+  contain:layout style paint;
+  contain-intrinsic-size:auto 132px;
+}
+html.low-spec :where(.rank,.bar){
+  content-visibility:auto;
+  contain:layout style paint;
+  contain-intrinsic-size:auto 42px;
+}
+html.low-spec :where(.cards,.tracking-list,.history-list,.rankings,.mini-rankings){contain:layout style}
+html.low-spec :where(.analytics-overview,.recent-history,.charts,.dashboard-line,.tracking-list){overflow-anchor:none}
+
 html.low-spec .bar i{animation:none!important}
 html.low-spec .tracking-row:hover{border-color:var(--theme-line,var(--line,#e4e7ed))!important}
+html.low-spec.is-scrolling :where(.dashboard-line svg,.charts svg){shape-rendering:optimizeSpeed}
 html.app-paused *,html.app-paused *::before,html.app-paused *::after{animation-play-state:paused!important}
 
 @media(prefers-reduced-motion:reduce){
