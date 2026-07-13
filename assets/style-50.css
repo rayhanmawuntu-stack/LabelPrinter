@@ -1,1 +1,48 @@
-placeholder
+/* Mobile navigation is icon-only and remains a single compact row. */
+@media(max-width:760px){
+  .sidebar{height:62px!important;padding:6px!important;overflow:hidden!important}
+  .sidebar .nav{height:100%!important;display:flex!important;align-items:center!important;gap:6px!important;overflow:hidden!important}
+  .sidebar .nav button{
+    flex:1 1 0!important;
+    width:auto!important;
+    min-width:0!important;
+    height:50px!important;
+    padding:0!important;
+    margin:0!important;
+    border-radius:16px!important;
+    display:grid!important;
+    place-items:center!important;
+    gap:0!important;
+    font-size:0!important;
+    line-height:0!important;
+    overflow:hidden!important;
+  }
+  .sidebar .nav button:after,
+  .sidebar .nav button>span:not(.badge){display:none!important;content:none!important}
+  .sidebar .nav button svg,
+  .sidebar .nav button .nav-icon{
+    display:block!important;
+    width:25px!important;
+    height:25px!important;
+    margin:0!important;
+    flex:0 0 25px!important;
+  }
+  .sidebar .nav button.active{transform:none!important}
+  .sidebar .badge{
+    display:grid!important;
+    right:5px!important;
+    top:4px!important;
+    min-width:18px!important;
+    height:18px!important;
+    padding:0 4px!important;
+    font-size:8px!important;
+    line-height:1!important;
+  }
+}
+
+@media(max-width:360px){
+  .sidebar .nav{gap:4px!important}
+  .sidebar .nav button{height:48px!important;border-radius:14px!important}
+  .sidebar .nav button svg,
+  .sidebar .nav button .nav-icon{width:23px!important;height:23px!important;flex-basis:23px!important}
+}
