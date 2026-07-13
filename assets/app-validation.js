@@ -59,13 +59,27 @@
     }
   }
 
-  function importRowsWithCompanyDefaults(){
+  function importRowsSafely(){
     const paste=document.getElementById('paste');
     if(!paste)return;
     const parsed=paste.value.split(/\r?\n/).filter(Boolean).map(line=>{
-      const columns=line.split('\t'),raw=(columns[1]||'').trim(),match=raw.match(/^(PT|CV|YAYASAN)\.?\s+(.+)$/i),addressPhone=(columns[5]||'').trim(),phoneMatch=addressPhone.match(/\(([^()]*)\)\s*$/);
-      return{prefix:match?match[1].toUpperCase():'',company:match?match[2]:raw,attn:(columns[6]||'').trim(),phone:phoneMatch?phoneMatch[1].trim():'',address:phoneMatch?addressPhone.slice(0,phoneMatch.index).trim():addressPhone,sender:''};
-    }).map(normalizeLabel).map(row=>applyRememberedCompanyDefaults(row,true)).filter(row=>row.company&&!/^(penerima|recipient|company)$/i.test(row.company));
+      const columns=line.split('\t');
+      const raw=(columns[1]||'').trim();
+      const match=raw.match(/^(PT|CV|YAYASAN)\.?\s+(.+)$/i);
+      const addressPhone=(columns[5]||'').trim();
+      const phoneMatch=addressPhone.match(/\(([^()]*)\)\s*$/);
+      return{
+        prefix:match?match[1].toUpperCase():'',
+        company:match?match[2]:raw,
+        invoice:(columns[2]||'').trim(),
+        courier:(columns[3]||'').trim()||'JNE',
+        awb:(columns[4]||'').trim(),
+        attn:(columns[6]||'').trim(),
+        phone:phoneMatch?phoneMatch[1].trim():'',
+        address:phoneMatch?addressPhone.slice(0,phoneMatch.index).trim():addressPhone,
+        sender:''
+      };
+    }).map(normalizeLabel).map(row=>applyRememberedCompanyDefaults(row,false)).filter(row=>row.company&&!/^(penerima|recipient|company)$/i.test(row.company));
     if(!parsed.length)return toast('No valid rows detected');
     const seen=new Set();
     const unique=parsed.filter(row=>{const key=bulkDuplicateKey(row);if(seen.has(key))return false;seen.add(key);return true});
@@ -79,7 +93,11 @@
     closeModals();
     renderAll();
     const limited=unique.length>MAX_LABELS;
+    const tracked=rows.filter(row=>clean(row.awb)).length;
+    const invoiced=rows.filter(row=>clean(row.invoice)).length;
     let message=limited?`Imported first ${MAX_LABELS} of ${unique.length} unique labels`:`${rows.length} labels imported`;
+    if(tracked)message+=` · ${tracked} AWB${tracked===1?'':'s'}`;
+    if(invoiced)message+=` · ${invoiced} invoice${invoiced===1?'':'s'}`;
     if(duplicateCount)message+=` · ${duplicateCount} duplicate${duplicateCount===1?'':'s'} removed`;
     toast(message);
   }
@@ -89,11 +107,16 @@
   const importButton=document.getElementById('importRows');
   if(testButton)testButton.onclick=testEndpointSafely;
   if(saveButton)saveButton.onclick=saveEndpointSafely;
-  if(importButton)importButton.onclick=importRowsWithCompanyDefaults;
+  if(importButton)importButton.onclick=importRowsSafely;
 
+  let lastErrorToast=0;
   window.addEventListener('unhandledrejection',event=>{
     const message=String(event.reason?.message||event.reason||'Unexpected error');
     console.error('Unhandled LabelPrint error:',event.reason);
-    if(!/AbortError/i.test(message))toast('Something went wrong. Your local data is still safe.');
+    if(/AbortError/i.test(message))return;
+    const now=Date.now();
+    if(now-lastErrorToast<3000)return;
+    lastErrorToast=now;
+    toast('Something went wrong. Your local data is still safe.');
   });
 })();
