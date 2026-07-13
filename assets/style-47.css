@@ -1,0 +1,72 @@
+/* Dedicated shipment tracking workspace. */
+.tracking-page-head{align-items:flex-end}
+.tracking-head-actions{flex-wrap:wrap;justify-content:flex-end}
+.tracking-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 14px}
+.tracking-api-panel{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,.6fr);gap:22px;padding:23px 25px;margin-bottom:14px;background:linear-gradient(135deg,color-mix(in srgb,var(--theme-primary-soft,var(--lime,#edf5ba)) 74%,#fff),var(--theme-card,var(--card,#fff)))}
+.tracking-api-copy h2{margin:9px 0 8px;font-size:23px;letter-spacing:-.7px}
+.tracking-api-copy p{max-width:760px;margin:0;color:var(--theme-muted,var(--muted,#747b87));font-size:10px;line-height:1.65}
+.tracking-mode{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:999px;background:var(--theme-card,var(--card,#fff));border:1px solid var(--theme-line,var(--line,#e4e7ed));font-size:8px;font-weight:850;text-transform:uppercase;letter-spacing:.08em}
+.tracking-mode i{width:8px;height:8px;border-radius:50%;background:#e5ae42;box-shadow:0 0 0 4px rgba(229,174,66,.14)}
+.tracking-api-meta{display:grid;grid-template-columns:1fr auto;gap:9px 14px;align-content:center;padding:16px;border-radius:19px;background:color-mix(in srgb,var(--theme-card,var(--card,#fff)) 82%,transparent);border:1px solid var(--theme-line,var(--line,#e4e7ed))}
+.tracking-api-meta span{font-size:8px;color:var(--theme-muted,var(--muted,#747b87))}
+.tracking-api-meta strong{text-align:right;font-size:9px}
+.tracking-list-panel{min-height:420px}
+.tracking-list-head{align-items:flex-end}
+.tracking-filters{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.tracking-filters .control{min-height:39px;width:auto;min-width:132px;padding:7px 31px 7px 11px}
+.tracking-search{height:39px;min-width:245px;padding:0 12px;border-radius:14px;background:var(--theme-card,var(--card,#fff));border:1px solid var(--theme-line,var(--line,#e4e7ed));display:flex;align-items:center;gap:7px}
+.tracking-search input{width:100%;border:0;outline:0;background:transparent;font-size:10px}
+.tracking-list{display:grid;gap:8px;padding:0 18px 20px}
+.tracking-row{display:grid;grid-template-columns:52px minmax(220px,1fr) minmax(150px,.55fr) auto;gap:13px;align-items:center;padding:13px;border:1px solid var(--theme-line,var(--line,#e4e7ed));border-radius:20px;background:var(--theme-card,var(--card,#fff));transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+.tracking-row:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--theme-primary,var(--lime,#dfff3f)) 48%,var(--theme-line,var(--line,#e4e7ed)));box-shadow:0 10px 24px rgba(23,30,45,.07)}
+.tracking-courier-mark{width:48px;height:48px;border-radius:16px;background:var(--theme-primary-soft,var(--lime,#edf5ba));display:grid;place-items:center;font-size:9px;font-weight:900;letter-spacing:.04em;overflow:hidden}
+.tracking-recipient,.tracking-awb{min-width:0}
+.tracking-recipient b,.tracking-recipient span,.tracking-recipient small,.tracking-awb span,.tracking-awb strong,.tracking-awb small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tracking-recipient b{font-size:11px;text-transform:uppercase}
+.tracking-recipient span{margin-top:5px;color:var(--theme-muted,var(--muted,#747b87));font-size:9px}
+.tracking-recipient small{margin-top:5px;color:var(--theme-muted,var(--muted,#747b87));font-size:8px}
+.tracking-awb span{color:var(--theme-muted,var(--muted,#747b87));font-size:7px;font-weight:850;text-transform:uppercase;letter-spacing:.08em}
+.tracking-awb strong{margin-top:5px;font-size:12px;letter-spacing:.03em}
+.tracking-awb small{margin-top:4px;color:var(--theme-muted,var(--muted,#747b87));font-size:8px}
+.tracking-row-actions{display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+.tracking-action{min-height:34px;padding:0 11px;border-radius:11px;font-size:8px;font-weight:850;white-space:nowrap;cursor:pointer}
+.tracking-action.secondary{border:1px solid var(--theme-line,var(--line,#e4e7ed));background:var(--theme-card,var(--card,#fff))}
+.tracking-action.primary{border:0;background:var(--theme-primary,var(--lime,#dfff3f));color:var(--theme-on-primary,#111315)}
+.tracking-action:hover{transform:translateY(-1px)}
+.tracking-empty{min-height:260px;display:grid;place-items:center;align-content:center;text-align:center;padding:30px;color:var(--theme-muted,var(--muted,#747b87))}
+.tracking-empty span{font-size:32px}
+.tracking-empty h3{margin:10px 0 4px;color:var(--theme-ink,var(--ink,#111216));font-size:18px}
+.tracking-empty p{margin:0;font-size:10px}
+html[data-theme="dark"] .tracking-api-panel{background:linear-gradient(135deg,#263029,#181d22)}
+html[data-theme="dark"] .tracking-mode,html[data-theme="dark"] .tracking-api-meta{background:#20262c}
+html.low-spec .tracking-row{transition:none!important}
+@media(max-width:1050px){
+  .tracking-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tracking-api-panel{grid-template-columns:1fr}
+  .tracking-row{grid-template-columns:52px minmax(0,1fr) minmax(150px,.55fr)}
+  .tracking-row-actions{grid-column:2/-1;justify-content:flex-start}
+}
+@media(max-width:720px){
+  .tracking-page-head{align-items:flex-start}
+  .tracking-head-actions{width:100%;justify-content:flex-start}
+  .tracking-head-actions .btn{flex:1}
+  .tracking-kpis{grid-template-columns:1fr 1fr}
+  .tracking-api-panel{padding:18px}
+  .tracking-list-head{align-items:flex-start;display:grid}
+  .tracking-filters{width:100%;justify-content:stretch}
+  .tracking-search{width:100%;min-width:0}
+  .tracking-filters .control{flex:1;min-width:0}
+  .tracking-row{grid-template-columns:44px minmax(0,1fr);gap:10px}
+  .tracking-courier-mark{width:42px;height:42px;border-radius:14px}
+  .tracking-awb{grid-column:2}
+  .tracking-row-actions{grid-column:1/-1;justify-content:flex-start}
+  .tracking-action{flex:1}
+}
+@media(max-width:480px){
+  .tracking-kpis{grid-template-columns:1fr}
+  .tracking-api-meta{grid-template-columns:1fr}
+  .tracking-api-meta strong{text-align:left;margin-bottom:4px}
+  .tracking-filters{display:grid;grid-template-columns:1fr 1fr}
+  .tracking-search{grid-column:1/-1}
+}
+@media print{#trackingView{display:none!important}}
