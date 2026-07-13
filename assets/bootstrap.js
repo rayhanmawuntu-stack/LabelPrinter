@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260713-readability-72';
+    const version='20260713-tracking-visibility-73';
     let initialTheme='light';
     let initialPalette='ksb';
     try{
@@ -25,7 +25,7 @@
     root.dataset.performance=hardwareLow?'low':'standard';
     root.dataset.network=constrainedNetwork?'constrained':'standard';
 
-    const styles=['style-03b.css','style-05b.css','style-06.css','style-07.css','style-08.css','style-09.css','style-10.css','style-11.css','style-12.css','style-13.css','style-14.css','style-15.css','style-16.css','style-17.css','style-18.css','style-19.css','style-20.css','style-21.css','style-22.css','style-23.css','style-24.css','style-25.css','style-26.css','style-27.css','style-28.css','style-29.css','style-30.css','style-31.css','style-32.css','style-33.css','style-34.css','style-35.css','style-36.css','style-37.css','style-38.css','style-39.css','style-40.css','style-41.css','style-42.css','style-43.css','style-44.css','style-45.css','style-46.css','style-47.css','style-48.css','style-49.css','style-50.css','style-51.css','style-52.css','style-53.css'];
+    const styles=['style-03b.css','style-05b.css','style-06.css','style-07.css','style-08.css','style-09.css','style-10.css','style-11.css','style-12.css','style-13.css','style-14.css','style-15.css','style-16.css','style-17.css','style-18.css','style-19.css','style-20.css','style-21.css','style-22.css','style-23.css','style-24.css','style-25.css','style-26.css','style-27.css','style-28.css','style-29.css','style-30.css','style-31.css','style-32.css','style-33.css','style-34.css','style-35.css','style-36.css','style-37.css','style-38.css','style-39.css','style-40.css','style-41.css','style-42.css','style-43.css','style-44.css','style-45.css','style-46.css','style-47.css','style-48.css','style-49.css','style-50.css','style-51.css','style-52.css','style-53.css','style-54.css'];
     styles.forEach(file=>{
       const link=document.createElement('link');
       link.rel='stylesheet';
