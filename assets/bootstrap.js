@@ -1,6 +1,6 @@
 (async()=>{
   try{
-    const version='20260713-print-logo-toggle-51';
+    const version='20260713-compact-print-logo-toggle-52';
     let initialTheme='light',initialPalette='ksb';
     try{
       const savedTheme=localStorage.getItem('ksb-theme');
