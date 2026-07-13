@@ -3,10 +3,10 @@ if(labels.length>MAX_LABELS){labels=labels.slice(0,MAX_LABELS);save('ksb-labels'
 function renderCards(){
   const searchInput=$('search');
   const q=clean(searchInput?.value).toLowerCase();
-  const shown=labels.map((r,i)=>({r,i})).filter(x=>!q||[full(x.r),x.r.attn,x.r.address,x.r.phone,x.r.sender].join(' ').toLowerCase().includes(q));
+  const shown=labels.map((r,i)=>({r,i})).filter(x=>!q||[full(x.r),x.r.attn,x.r.address,x.r.phone,x.r.sender,x.r.courier,x.r.awb].join(' ').toLowerCase().includes(q));
   const atLimit=labels.length>=MAX_LABELS;
   const cards=$('cards');
-  cards.innerHTML=shown.map(x=>`<button type="button" class="recipient ${x.i===selected?'active':''}" data-label="${x.i}"><span class="num">${String(x.i+1).padStart(2,'0')}</span><b>${esc(full(x.r)||'Blank recipient')}</b><span>${esc(x.r.attn||x.r.address||'Ready to edit')}</span></button>`).join('')+`<button type="button" class="recipient add" id="addCard" ${atLimit?'disabled':''}><b>${atLimit?`${MAX_LABELS} label limit reached`:'＋ Add recipient'}</b></button>`;
+  cards.innerHTML=shown.map(x=>`<button type="button" class="recipient ${x.i===selected?'active':''}" data-label="${x.i}"><span class="num">${String(x.i+1).padStart(2,'0')}</span><b>${esc(full(x.r)||'Blank recipient')}</b><span>${esc(x.r.awb?`${x.r.courier||'JNE'} · ${x.r.awb}`:(x.r.attn||x.r.address||'Ready to edit'))}</span></button>`).join('')+`<button type="button" class="recipient add" id="addCard" ${atLimit?'disabled':''}><b>${atLimit?`${MAX_LABELS} label limit reached`:'＋ Add recipient'}</b></button>`;
   if(!cards.dataset.delegated){
     cards.dataset.delegated='true';
     cards.addEventListener('click',event=>{
@@ -41,8 +41,10 @@ function renderForm(){
   if(hasLabel)labels[selected]=applyRememberedCompanyDefaults(labels[selected],false);
   const r=hasLabel?labels[selected]:blankLabel();
   $('editIndex').textContent=hasLabel?String(selected+1).padStart(2,'0'):'00';
-  ['prefix','company','attn','phone','address'].forEach(id=>$(id).value=r[id]||'');
+  ['prefix','company','attn','phone','address','awb'].forEach(id=>{const control=$(id);if(control)control.value=r[id]||''});
+  const courier=$('courier');if(courier)courier.value=r.courier==='JNE'?'JNE':'OTHER';
   syncSenderControls(r.sender);
+  window.LabelPrintAwb?.sync?.(r);
   const removeButton=$('remove'),duplicateButton=$('duplicate');
   if(removeButton)removeButton.disabled=!hasLabel;
   if(duplicateButton)duplicateButton.disabled=!hasLabel;
@@ -69,7 +71,7 @@ function update(id,val){
   if(id==='prefix'||id==='sender')rememberCompanyDefaults(labels[selected]);
   saveSoon('ksb-labels',labels);
   renderCards();
-  renderPreviewSoon();
+  if(id!=='awb'&&id!=='courier')renderPreviewSoon();
 }
 function addLabel(event){
   event?.preventDefault?.();
