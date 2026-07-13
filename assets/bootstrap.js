@@ -1,6 +1,6 @@
 (async()=>{
   try{
-    const version='20260713-compact-print-logo-toggle-52';
+    const version='20260713-theme-aware-favicon-53';
     let initialTheme='light',initialPalette='ksb';
     try{
       const savedTheme=localStorage.getItem('ksb-theme');
