@@ -1,0 +1,68 @@
+/* Print-only logo preference shown beside the layout controls. */
+.print-logo-toggle{
+  width:100%;
+  min-height:48px;
+  margin:0 0 10px;
+  padding:8px 11px;
+  border:1px solid var(--theme-line,var(--ui-line,#dfe5ea));
+  border-radius:14px;
+  background:var(--theme-surface,var(--ui-surface,#fff));
+  color:var(--theme-text,var(--ui-text,#15191f));
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  text-align:left;
+  transition:border-color .16s ease,background .16s ease,box-shadow .16s ease;
+}
+.print-logo-toggle:hover{
+  background:var(--theme-primary-soft,var(--ui-soft,#f3f5f6));
+  border-color:color-mix(in srgb,var(--theme-primary,var(--scheme-primary,#dfff3f)) 44%,var(--theme-line,#dfe5ea));
+}
+.print-logo-copy{min-width:0;display:grid;gap:2px}
+.print-logo-copy b{font-size:9px;line-height:1.2}
+.print-logo-copy small{font-size:7px;line-height:1.25;color:var(--theme-muted,var(--ui-muted,#6c747e))}
+.print-logo-switch{
+  width:34px;
+  height:20px;
+  flex:0 0 34px;
+  padding:2px;
+  border-radius:999px;
+  background:#c9ced5;
+  display:flex;
+  align-items:center;
+  transition:background .16s ease;
+}
+.print-logo-switch i{
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 2px 6px rgba(0,0,0,.18);
+  transform:translateX(0);
+  transition:transform .16s ease;
+}
+.print-logo-toggle.active .print-logo-switch{background:var(--theme-primary,var(--scheme-primary,#dfff3f))}
+.print-logo-toggle.active .print-logo-switch i{transform:translateX(14px)}
+.print-logo-toggle:focus-visible{
+  outline:3px solid color-mix(in srgb,var(--theme-primary,var(--scheme-primary,#dfff3f)) 40%,transparent);
+  outline-offset:2px;
+}
+.physical.no-logo .recipient-name{margin-right:0!important}
+.sheet.layout-2x3 .physical.no-logo .recipient-name{margin-right:0!important}
+
+html[data-theme="dark"] .print-logo-toggle{background:#1d232a;color:var(--theme-text,#eef2f5)}
+html[data-theme="dark"] .print-logo-toggle:hover{background:var(--theme-primary-soft,#252c34)}
+html[data-theme="dark"] .print-logo-switch{background:#4a525d}
+
+html.low-spec .print-logo-toggle,
+html.low-spec .print-logo-switch,
+html.low-spec .print-logo-switch i{transition-duration:.01ms!important}
+
+@media(max-width:560px){
+  .print-logo-toggle{min-height:46px;padding:8px 10px}
+}
+
+@media print{
+  .print-logo-toggle{display:none!important}
+}
