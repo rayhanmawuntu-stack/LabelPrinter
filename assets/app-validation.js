@@ -87,6 +87,7 @@
     const rows=unique.slice(0,MAX_LABELS);
     rows.forEach(row=>rememberCompanyDefaults(row,false));
     persistCompanyMemory();
+    window.LabelPrintInvoiceMemory?.rememberRows?.(rows,{backfill:true,queueSync:true});
     labels=rows;
     selected=0;
     save('ksb-labels',labels);
