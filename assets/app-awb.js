@@ -1,5 +1,5 @@
 (()=>{
-  const JNE_TRACKING_URL='https://cekresi.com/tracking/cek-resi-pos.php';
+  const JNE_TRACKING_URL='https://cekresi.com/tracking/cek-resi-jne.php';
   const UNIVERSAL_TRACKING_URL='https://www.17track.net/en';
 
   function selectedRow(){return labels[selected]||blankLabel()}
