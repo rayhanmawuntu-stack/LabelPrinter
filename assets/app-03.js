@@ -3,10 +3,13 @@ if(labels.length>MAX_LABELS){labels=labels.slice(0,MAX_LABELS);save('ksb-labels'
 function renderCards(){
   const searchInput=$('search');
   const q=clean(searchInput?.value).toLowerCase();
-  const shown=labels.map((r,i)=>({r,i})).filter(x=>!q||[full(x.r),x.r.attn,x.r.address,x.r.phone,x.r.sender,x.r.courier,x.r.awb].join(' ').toLowerCase().includes(q));
+  const shown=labels.map((r,i)=>({r,i})).filter(x=>!q||[full(x.r),x.r.invoice,x.r.attn,x.r.address,x.r.phone,x.r.sender,x.r.courier,x.r.awb].join(' ').toLowerCase().includes(q));
   const atLimit=labels.length>=MAX_LABELS;
   const cards=$('cards');
-  cards.innerHTML=shown.map(x=>`<button type="button" class="recipient ${x.i===selected?'active':''}" data-label="${x.i}"><span class="num">${String(x.i+1).padStart(2,'0')}</span><b>${esc(full(x.r)||'Blank recipient')}</b><span>${esc(x.r.awb?`${x.r.courier||'JNE'} · ${x.r.awb}`:(x.r.attn||x.r.address||'Ready to edit'))}</span></button>`).join('')+`<button type="button" class="recipient add" id="addCard" ${atLimit?'disabled':''}><b>${atLimit?`${MAX_LABELS} label limit reached`:'＋ Add recipient'}</b></button>`;
+  cards.innerHTML=shown.map(x=>{
+    const secondary=x.r.awb?`${x.r.courier||'JNE'} · ${x.r.awb}`:(x.r.invoice?`Invoice ${x.r.invoice}`:(x.r.attn||x.r.address||'Ready to edit'));
+    return `<button type="button" class="recipient ${x.i===selected?'active':''}" data-label="${x.i}"><span class="num">${String(x.i+1).padStart(2,'0')}</span><b>${esc(full(x.r)||'Blank recipient')}</b><span>${esc(secondary)}</span></button>`;
+  }).join('')+`<button type="button" class="recipient add" id="addCard" ${atLimit?'disabled':''}><b>${atLimit?`${MAX_LABELS} label limit reached`:'＋ Add recipient'}</b></button>`;
   if(!cards.dataset.delegated){
     cards.dataset.delegated='true';
     cards.addEventListener('click',event=>{
