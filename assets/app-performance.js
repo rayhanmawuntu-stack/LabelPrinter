@@ -3,19 +3,20 @@
   const nav=navigator||{};
   const connection=nav.connection||nav.mozConnection||nav.webkitConnection||{};
   const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||false;
-  const slowConnection=['slow-2g','2g','3g'].includes(connection.effectiveType);
+  const constrainedNetwork=!!connection.saveData||['slow-2g','2g','3g'].includes(connection.effectiveType);
   const lowSpec=root.classList.contains('low-spec')||
     (Number.isFinite(nav.hardwareConcurrency)&&nav.hardwareConcurrency<=4)||
     (Number.isFinite(nav.deviceMemory)&&nav.deviceMemory<=4)||
-    !!connection.saveData||slowConnection||reducedMotion;
+    reducedMotion;
 
   root.classList.toggle('low-spec',lowSpec);
   root.dataset.performance=lowSpec?'low':'standard';
+  root.dataset.network=constrainedNetwork?'constrained':'standard';
 
   const schedule=(callback,timeout=500)=>{
     if(typeof callback!=='function')return 0;
     if('requestIdleCallback'in window)return requestIdleCallback(callback,{timeout});
-    return setTimeout(callback,lowSpec?120:24);
+    return setTimeout(callback,lowSpec?140:24);
   };
   const cancel=id=>{
     if('cancelIdleCallback'in window)cancelIdleCallback(id);else clearTimeout(id);
@@ -38,10 +39,15 @@
       scrolling=true;
       root.classList.add('is-scrolling');
       clearTimeout(scrollEndTimer);
-      scrollEndTimer=setTimeout(finishScrolling,160);
+      scrollEndTimer=setTimeout(finishScrolling,180);
     });
   };
-  if(lowSpec)window.addEventListener('scroll',onScroll,{passive:true});
+  if(lowSpec){
+    window.addEventListener('scroll',onScroll,{passive:true});
+    document.addEventListener('scroll',onScroll,{passive:true,capture:true});
+    window.addEventListener('wheel',onScroll,{passive:true});
+    window.addEventListener('touchmove',onScroll,{passive:true});
+  }
 
   const whenScrollIdle=callback=>{
     if(typeof callback!=='function')return()=>{};
@@ -50,12 +56,12 @@
     let idleId=0;
     const check=()=>{
       if(cancelled)return;
-      if(scrolling){retryTimer=setTimeout(check,180);return}
+      if(scrolling){retryTimer=setTimeout(check,200);return}
       idleId=schedule(()=>{
         if(cancelled)return;
         if(scrolling){check();return}
         callback();
-      },1400);
+      },1500);
     };
     check();
     return()=>{
@@ -70,7 +76,7 @@
       try{img.decoding='async'}catch{}
       if(!img.closest('.physical,.sheet,.print-root,#reviewWrap')){
         try{img.loading='lazy'}catch{}
-        if(lowSpec)try{img.fetchPriority='low'}catch{}
+        if(lowSpec||constrainedNetwork)try{img.fetchPriority='low'}catch{}
       }
     });
   },900);
@@ -81,5 +87,5 @@
     });
   }
 
-  window.LabelPrintPerformance={lowSpec,reducedMotion,slowConnection,schedule,cancel,whenScrollIdle,isScrolling:()=>scrolling};
+  window.LabelPrintPerformance={lowSpec,reducedMotion,constrainedNetwork,schedule,cancel,whenScrollIdle,isScrolling:()=>scrolling};
 })();
