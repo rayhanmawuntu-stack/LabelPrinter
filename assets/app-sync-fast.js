@@ -85,7 +85,9 @@
 
       const pingPromise=apiGet('ping');
       const usersPromise=fetchUsersFast(force).catch(error=>({ok:false,error}));
-      const earlyHistoryPromise=!recentNoWork&&!startingQueue.length?fetchRemoteHistory(force):null;
+      const earlyHistoryPromise=!recentNoWork&&!startingQueue.length
+        ?fetchRemoteHistory(force).then(response=>({response}),error=>({error}))
+        :null;
 
       try{
         const ping=await pingPromise;
@@ -103,7 +105,12 @@
         if(!recentNoWork){
           if(totals.queued)await wait(VERIFY_DELAY);
           setStatus('syncing','Refreshing batch history…');
-          const response=earlyHistoryPromise?await earlyHistoryPromise:await fetchRemoteHistory(force);
+          let response;
+          if(earlyHistoryPromise){
+            const early=await earlyHistoryPromise;
+            if(early.error)throw early.error;
+            response=early.response;
+          }else response=await fetchRemoteHistory(force);
           window.LabelPrintSync?.reconcile?.(response,history);
           rememberFullSync();
         }
@@ -115,7 +122,7 @@
           addSummary(totals,await uploadQueue(discoveredQueue));
         }
 
-        if(totals.queued){
+        if(totals.queued&&unsynced(history).length){
           await wait(VERIFY_DELAY);
           setStatus('syncing','Confirming Google Sheets updates…');
           const verification=await fetchRemoteHistory(force);
