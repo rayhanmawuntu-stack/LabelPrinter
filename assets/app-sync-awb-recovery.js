@@ -7,7 +7,8 @@
   function normalizedBatch(raw,state){
     const batch=raw&&typeof raw==='object'?raw:{};
     const id=clean(batch.id);
-    const rows=usableLabels(batch.labels||[]);
+    const enrich=window.LabelPrintInvoiceMemory?.enrichRow;
+    const rows=usableLabels(batch.labels||[]).map(row=>enrich?enrich(row):normalizeLabel(row));
     if(!id||!rows.length)return null;
     return{
       ...batch,
@@ -25,9 +26,6 @@
     if(!batch)return'';
     return JSON.stringify({
       id:batch.id,
-      timestamp:batch.timestamp,
-      user:batch.user,
-      nickname:batch.nickname,
       layout:batch.layout,
       labels:batch.labels.map(row=>{const r=normalizeLabel(row);return[r.prefix,r.company,r.invoice,r.attn,r.phone,r.address,r.sender,r.courier,r.awb]})
     });
@@ -89,6 +87,7 @@
       stored.syncState='pending';
       stored.labels.forEach(row=>rememberCompanyDefaults(row,false));
       persistCompanyMemory();
+      window.LabelPrintInvoiceMemory?.rememberRows?.(stored.labels,{backfill:false,queueSync:false});
       const result=await post('saveBatch',stored);
       stored.syncState=result?.queued?'pending':'synced';
       save('ksb-history',history);
@@ -216,6 +215,7 @@
     const rows=unique.slice(0,MAX_LABELS);
     rows.forEach(row=>rememberCompanyDefaults(row,false));
     persistCompanyMemory();
+    window.LabelPrintInvoiceMemory?.rememberRows?.(rows,{backfill:false,queueSync:false});
     labels=rows;
     selected=0;
     historySelected=null;
