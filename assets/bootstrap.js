@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260713-sync-awb-recovery-75';
+    const version='20260715-fast-sheets-sync-76';
     let initialTheme='light';
     let initialPalette='ksb';
     try{
@@ -81,7 +81,7 @@
     await loadFiles(critical);
     load('assets/app-favicon.js').catch(console.warn);
 
-    const essential=['app-03.js','app-03b.js','app-awb.js','app-print-logo.js','app-04.js','app-04b.js','app-analytics-fast.js','app-05.js','app-invoice-memory.js','app-validation.js','app-fixed-backend.js','app-tracking-tab-v2.js','app-tracking-settings.js','app-import.js','app-sync-awb-recovery.js'];
+    const essential=['app-03.js','app-03b.js','app-awb.js','app-print-logo.js','app-04.js','app-04b.js','app-analytics-fast.js','app-05.js','app-invoice-memory.js','app-validation.js','app-fixed-backend.js','app-tracking-tab-v2.js','app-tracking-settings.js','app-import.js','app-sync-awb-recovery.js','app-sync-fast.js'];
     await loadFiles(essential);
 
     const analyticsNav=document.querySelector('[data-view="analytics"]');
