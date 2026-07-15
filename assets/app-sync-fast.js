@@ -24,8 +24,8 @@
     return[...map.values()];
   }
   function remoteLimit(force){
-    if(force)return FULL_HISTORY_LIMIT;
-    return Math.min(NORMAL_HISTORY_LIMIT,Math.max(250,(Array.isArray(history)?history.length:0)+100));
+    if(force||!lastFullSync()||!(Array.isArray(history)&&history.length))return FULL_HISTORY_LIMIT;
+    return Math.min(NORMAL_HISTORY_LIMIT,Math.max(250,history.length+100));
   }
   async function fetchRemoteHistory(force){
     return apiGet('getHistory',{limit:remoteLimit(force)});
