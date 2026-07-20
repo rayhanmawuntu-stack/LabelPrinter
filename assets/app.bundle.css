@@ -2920,8 +2920,11 @@ html.low-spec .awb-track-button,html.low-spec .awb-track-link{transition:none!im
 
 /* Source: style-47.css */
 /* Dedicated shipment tracking workspace. */
-.tracking-page-head{align-items:flex-end}
-.tracking-head-actions{flex-wrap:wrap;justify-content:flex-end}
+.tracking-page-head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:24px;padding:16px 6px 20px}
+.tracking-page-head>div:first-child{min-width:0}
+.tracking-page-head>div:first-child>p:last-child{margin:10px 0 0}
+.tracking-head-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin:0!important;white-space:nowrap}
+.tracking-head-actions .btn{flex:none;min-width:148px;margin:0}
 .tracking-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0 0 14px}
 .tracking-api-panel{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,.6fr);gap:22px;padding:23px 25px;margin-bottom:14px;background:linear-gradient(135deg,color-mix(in srgb,var(--theme-primary-soft,var(--lime,#edf5ba)) 74%,#fff),var(--theme-card,var(--card,#fff)))}
 .tracking-api-copy h2{margin:9px 0 8px;font-size:23px;letter-spacing:-.7px}
@@ -2968,9 +2971,9 @@ html.low-spec .tracking-row{transition:none!important}
   .tracking-row-actions{grid-column:2/-1;justify-content:flex-start}
 }
 @media(max-width:720px){
-  .tracking-page-head{align-items:flex-start}
-  .tracking-head-actions{width:100%;justify-content:flex-start}
-  .tracking-head-actions .btn{flex:1}
+  .tracking-page-head{grid-template-columns:minmax(0,1fr);align-items:flex-start;gap:14px;padding:14px 4px 18px}
+  .tracking-head-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;justify-content:stretch}
+  .tracking-head-actions .btn{width:100%;min-width:0}
   .tracking-kpis{grid-template-columns:1fr 1fr}
   .tracking-api-panel{padding:18px}
   .tracking-list-head{align-items:flex-start;display:grid}

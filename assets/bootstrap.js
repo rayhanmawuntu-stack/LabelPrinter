@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260720-nav-print-78';
+    const version='20260720-tracking-head-79';
     let initialTheme='light';
     let initialPalette='ksb';
     try{
