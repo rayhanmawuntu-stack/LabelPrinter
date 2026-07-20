@@ -1,6 +1,10 @@
 <p align="center">
   <a href="https://rayhanmawuntu-stack.github.io/LabelPrinter/">
-    <img src="docs/ksb-logo.png" alt="KSB" width="120">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="docs/ksb-logo-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="docs/ksb-logo.png">
+      <img src="docs/ksb-logo.png" alt="KSB" width="120">
+    </picture>
   </a>
 </p>
 
@@ -124,6 +128,7 @@ LabelPrinter/
 │   └── style-01.css ... style-54.css
 ├── docs/
 │   ├── ksb-logo.png
+│   ├── ksb-logo-dark.png
 │   └── screenshots/
 │       └── tracking-workspace-live.png
 ├── partials/
