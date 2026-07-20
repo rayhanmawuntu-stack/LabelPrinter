@@ -1,14 +1,12 @@
 <p align="center">
   <a href="https://rayhanmawuntu-stack.github.io/LabelPrinter/">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/ksb-logo-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="docs/ksb-logo.png">
-      <img src="docs/ksb-logo.png" alt="KSB" width="120">
+      <source media="(prefers-color-scheme: dark)" srcset="docs/labelprint-lockup-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="docs/labelprint-lockup.png">
+      <img src="docs/labelprint-lockup.png" alt="KSB LabelPrint" width="220">
     </picture>
   </a>
 </p>
-
-<h1 align="center">LabelPrint</h1>
 
 <p align="center">
   A responsive workspace for creating, previewing, printing, saving, and tracking KSB delivery labels.
@@ -127,8 +125,8 @@ LabelPrinter/
 │   ├── app-01.js ... app-05.js
 │   └── style-01.css ... style-54.css
 ├── docs/
-│   ├── ksb-logo.png
-│   ├── ksb-logo-dark.png
+│   ├── labelprint-lockup.png
+│   ├── labelprint-lockup-dark.png
 │   └── screenshots/
 │       └── tracking-workspace-live.png
 ├── partials/
