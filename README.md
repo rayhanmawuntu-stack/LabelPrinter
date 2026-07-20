@@ -88,7 +88,7 @@ Download the reusable template from [`templates/bulk-input-template.tsv`](templa
    - **Execute as:** Me
    - **Who has access:** Anyone
 9. Deploy and copy the URL ending in `/exec`.
-10. Open the LabelPrint app, select the status dot or Settings, paste the Apps Script URL, and save the connection.
+10. Put the deployment URL in `FIXED_BACKEND_URL` inside `assets/app-fixed-backend.js`, then run `npm run build`.
 
 The backend creates and uses these sheets:
 
@@ -106,8 +106,9 @@ To deploy under another GitHub account:
 1. Fork or clone this repository.
 2. Open **Settings → Pages** in the GitHub repository.
 3. Select **GitHub Actions** as the source.
-4. Update the default Apps Script endpoint in `assets/app-01.js` when required.
-5. Push the changes to `main`.
+4. Update the deployment endpoint in `assets/app-fixed-backend.js` when required.
+5. Run `npm run build` so the generated browser bundles include the latest source changes.
+6. Push the changes to `main`.
 
 ## Project structure
 
@@ -118,14 +119,18 @@ LabelPrinter/
 ├── README.md
 ├── assets/
 │   ├── bootstrap.js
+│   ├── app-core.bundle.js
+│   ├── app-analytics.bundle.js
+│   ├── app.bundle.css
 │   ├── app-01.js ... app-05.js
-│   └── style-01.css ... style-52.css
+│   └── style-01.css ... style-54.css
 ├── docs/
 │   ├── ksb-labelprint-logo.svg
 │   └── screenshots/
 │       ├── dashboard.svg
 │       └── history.svg
 ├── partials/
+│   ├── app-shell.html
 │   ├── body-01.html
 │   ├── body-02.html
 │   ├── body-03.html
@@ -142,6 +147,15 @@ LabelPrinter/
     ├── Storage.gs
     └── Users.gs
 ```
+
+The numbered JavaScript, stylesheet, and body-part files remain the editable source. After changing them, run:
+
+```bash
+npm run build
+npm run check
+```
+
+The generated bundles reduce the initial application shell from dozens of browser requests to a small set of cached assets. Do not edit generated bundle files directly.
 
 ## Data flow
 

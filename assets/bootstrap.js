@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260715-fast-sheets-sync-76';
+    const version='20260720-performance-77';
     let initialTheme='light';
     let initialPalette='ksb';
     try{
@@ -25,21 +25,9 @@
     root.dataset.performance=hardwareLow?'low':'standard';
     root.dataset.network=constrainedNetwork?'constrained':'standard';
 
-    const styles=['style-03b.css','style-05b.css','style-06.css','style-07.css','style-08.css','style-09.css','style-10.css','style-11.css','style-12.css','style-13.css','style-14.css','style-15.css','style-16.css','style-17.css','style-18.css','style-19.css','style-20.css','style-21.css','style-22.css','style-23.css','style-24.css','style-25.css','style-26.css','style-27.css','style-28.css','style-29.css','style-30.css','style-31.css','style-32.css','style-33.css','style-34.css','style-35.css','style-36.css','style-37.css','style-38.css','style-39.css','style-40.css','style-41.css','style-42.css','style-43.css','style-44.css','style-45.css','style-46.css','style-47.css','style-48.css','style-49.css','style-50.css','style-51.css','style-52.css','style-53.css','style-54.css'];
-    styles.forEach(file=>{
-      const link=document.createElement('link');
-      link.rel='stylesheet';
-      link.href='assets/'+file+'?v='+version;
-      document.head.appendChild(link);
-    });
-
-    const partials=['body-01.html','body-02.html','body-03.html','body-04.html'];
-    const chunks=await Promise.all(partials.map(async file=>{
-      const response=await fetch('partials/'+file+'?v='+version,{cache:'force-cache'});
-      if(!response.ok)throw new Error('Failed to load '+file);
-      return response.text();
-    }));
-    document.body.innerHTML=chunks.join('');
+    const shellResponse=await fetch('partials/app-shell.html?v='+version,{cache:'force-cache'});
+    if(!shellResponse.ok)throw new Error('Failed to load application shell');
+    document.body.innerHTML=await shellResponse.text();
 
     const nav=document.querySelector('.nav');
     const analyticsButton=nav?.querySelector('[data-view="analytics"]');
@@ -67,7 +55,7 @@
       return promise;
     };
     const loadFiles=async files=>{for(const file of files)await load(file.startsWith('assets/')?file:'assets/'+file)};
-    const analyticsExtras=[...(!hardwareLow?['app-analytics-hover.js']:[]),'app-monthly-report-graphs.js','app-report-export.js','app-report-tracking-columns.js','app-report-pdf-v2.js'];
+    const analyticsExtras=[...(!hardwareLow?['app-analytics-hover.js']:[]),'app-analytics.bundle.js'];
     let analyticsPromise=null;
     let pdfPromise=null;
     const ensureAnalytics=()=>analyticsPromise||(analyticsPromise=loadFiles(analyticsExtras).then(()=>{
@@ -77,12 +65,8 @@
     const ensurePdf=()=>pdfPromise||(pdfPromise=loadFiles(['app-pdf.js']).then(()=>true).catch(error=>{pdfPromise=null;throw error}));
     window.LabelPrintModules={load:loadFiles,ensureAnalytics,ensurePdf,isLoaded:file=>modulePromises.has(file.startsWith('assets/')?file:'assets/'+file)};
 
-    const critical=['no-mock.js','app-01.js','app-sanitize.js','app-theme.js','app-palette.js','app-performance.js','app-02.js'];
-    await loadFiles(critical);
+    await loadFiles(['app-core.bundle.js']);
     load('assets/app-favicon.js').catch(console.warn);
-
-    const essential=['app-03.js','app-03b.js','app-awb.js','app-print-logo.js','app-04.js','app-04b.js','app-analytics-fast.js','app-05.js','app-invoice-memory.js','app-validation.js','app-fixed-backend.js','app-tracking-tab-v2.js','app-tracking-settings.js','app-import.js','app-sync-awb-recovery.js','app-sync-fast.js'];
-    await loadFiles(essential);
 
     const analyticsNav=document.querySelector('[data-view="analytics"]');
     const prepareAnalytics=()=>ensureAnalytics().catch(error=>{console.warn('Analytics modules failed to load:',error);toast?.('Some analytics tools could not be loaded')});

@@ -1,0 +1,8 @@
+{
+  "name": "ksb-labelprint",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-assets.mjs",
+    "check": "node scripts/build-assets.mjs --check"
+  }
+}
