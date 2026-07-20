@@ -1,10 +1,12 @@
 function openModal(id){$(id).classList.add('show')}
 function closeModals(){document.querySelectorAll('.modal').forEach(x=>x.classList.remove('show'))}
-function review(){
+function review(savedBatch=null){
   const rows=usableLabels(labels).slice(0,MAX_LABELS);
   if(!rows.length)return toast('Add at least one recipient before review');
   const wrap=$('reviewWrap');
   wrap.innerHTML=pagesHTML(rows);
+  const modal=$('reviewModal');
+  if(modal)modal.dataset.savedBatchId=clean(savedBatch?.id);
   requestAnimationFrame(()=>fitText(wrap));
   openModal('reviewModal');
 }
@@ -21,6 +23,12 @@ async function waitForPrintAssets(root){
 }
 function printLabelSignature(rows){
   return JSON.stringify((rows||[]).map(r=>{const n=normalizeLabel(r);return[n.prefix,n.company,n.invoice,n.attn,n.phone,n.address,n.sender,n.courier,n.awb]}));
+}
+function savedReviewBatch(rows){
+  const id=clean($('reviewModal')?.dataset.savedBatchId);
+  if(!id)return null;
+  const batch=history.find(item=>clean(item?.id)===id);
+  return batch&&printLabelSignature(batch.labels)===printLabelSignature(rows)?batch:null;
 }
 function resolvePrintBatchId(rows){
   const selectedBatch=history.find(b=>b?.id===historySelected);
@@ -104,9 +112,14 @@ async function browserPrintFallback(rows,title){
   setTimeout(restoreTitle,30000);
   window.print();
 }
-async function printNow(){
+async function printNow(event){
   const rows=usableLabels(labels).slice(0,MAX_LABELS).map(applyRememberedPrefix);
   if(!rows.length)return toast('Add at least one recipient before printing');
+  let batch=event?.currentTarget?.id==='print'?savedReviewBatch(rows):null;
+  if(!batch)batch=saveBatch();
+  if(!batch)return;
+  const reviewModal=$('reviewModal');
+  if(reviewModal)reviewModal.dataset.savedBatchId=batch.id;
   const title=buildPrintTitle(rows);
   const controls=[$('print'),$('printDirect')].filter(Boolean);
   controls.forEach(button=>{button.disabled=true;button.dataset.originalText=button.textContent;button.textContent='Preparing print…'});
@@ -182,8 +195,8 @@ $('addRecipient').onclick=addLabel;
 $('clearAll').onclick=clearAllLabels;
 $('fastInput').onclick=()=>openModal('inputModal');
 $('importRows').onclick=importRows;
-$('review').onclick=review;
-$('generate').onclick=()=>{const b=saveBatch();if(!b)return;review();toast(`${b.id} generated`)};
+$('review').onclick=()=>review();
+$('generate').onclick=()=>{const b=saveBatch();if(!b)return;review(b);toast(`${b.id} generated`)};
 $('print').onclick=printNow;
 $('printDirect').onclick=printNow;
 if(!window.LabelPrintPerformance?.lowSpec){

@@ -3013,7 +3013,7 @@ html[data-theme="dark"] .tracking-settings-section .tracking-api-meta{background
 
 /* Source: style-49.css */
 /* Keep every mobile navigation tab on one row, including dynamically added tabs. */
-@media(max-width:760px){
+@media(max-width:900px){
   .sidebar .nav{
     display:flex!important;
     grid-template-columns:none!important;
