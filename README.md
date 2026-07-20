@@ -36,7 +36,7 @@ The frontend runs on GitHub Pages and synchronizes users, batches, tracking data
 - Google Sheets synchronization
 - Local cache for offline resilience
 - Batch history with reload and delete actions
-- Shipment tracking by recipient, invoice number, AWB, source, and courier
+- Shipment tracking by recipient, invoice number, AWB, source, courier, and delivery status
 - Direct printing and Generate & Save both create recoverable batch history
 - Dashboard and analytics views
 - Top users and top recipients rankings
@@ -80,7 +80,7 @@ Download the reusable template from [`templates/bulk-input-template.tsv`](templa
 1. Create a new Google Sheet.
 2. Open **Extensions → Apps Script**.
 3. Add the backend code from the `apps-script` directory, or use the complete `Code.gs` backend prepared for this project.
-4. Run `setupLabelPrintSheets()` once to create the required sheets.
+4. Run `setupLabelPrintSheets()` to create or update the required sheets.
 5. Approve the requested Google permissions.
 6. Select **Deploy → New deployment**.
 7. Choose **Web app**.
@@ -96,6 +96,7 @@ The backend creates and uses these sheets:
 - `Login History`
 - `Label History`
 - `Generation Log`
+- `Shipment Status`
 
 ## Frontend deployment
 
@@ -145,6 +146,7 @@ LabelPrinter/
     ├── Login.gs
     ├── Setup.gs
     ├── Storage.gs
+    ├── Tracking.gs
     └── Users.gs
 ```
 
@@ -163,7 +165,8 @@ The generated bundles reduce the initial application shell from dozens of browse
 2. Printed or generated batches are saved to local history immediately.
 3. When the Google Sheets backend is available, pending batches are synchronized automatically.
 4. Remote users and history are loaded and merged with the local cache.
-5. Analytics are calculated from synchronized batch history.
+5. Shipment status changes are stored locally first and synchronized when backend version 1.1 or newer is available.
+6. Analytics are calculated from synchronized batch history.
 
 ## Sync indicators
 

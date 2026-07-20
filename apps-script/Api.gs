@@ -5,12 +5,13 @@
  */
 const KSB_API_CONFIG = Object.freeze({
   SPREADSHEET_ID: '1lRyEvOa7MKMdOLoXIcAErVVgBU9MUP-g-x7aGaB--MY',
-  API_VERSION: '1.0.0',
+  API_VERSION: '1.1.0',
   SHEETS: {
     USERS: 'Users',
     LOGIN: 'Login History',
     HISTORY: 'Label History',
-    GENERATION: 'Generation Log'
+    GENERATION: 'Generation Log',
+    SHIPMENTS: 'Shipment Status'
   }
 });
 
@@ -32,6 +33,7 @@ function doGet(e) {
       case 'ping': result = apiPing_(); break;
       case 'getUsers': result = apiGetUsers_(); break;
       case 'getHistory': result = apiGetHistory_(Number(params.limit) || 500); break;
+      case 'getShipmentStatuses': result = apiGetShipmentStatuses_(); break;
       default: throw new Error('Unknown GET action: ' + action);
     }
     return jsonOutput_(Object.assign({ success: true }, result || {}), params.callback);
@@ -59,6 +61,7 @@ function doPost(e) {
       case 'logLogin': result = withScriptLock_(function () { return apiLogLogin_(payload); }); break;
       case 'saveBatch': result = withScriptLock_(function () { return apiSaveBatch_(payload); }); break;
       case 'deleteBatch': result = withScriptLock_(function () { return apiDeleteBatch_(payload.id); }); break;
+      case 'saveShipmentStatus': result = withScriptLock_(function () { return apiSaveShipmentStatus_(payload); }); break;
       default: throw new Error('Unknown POST action: ' + action);
     }
     return jsonOutput_(Object.assign({ success: true }, result || {}));

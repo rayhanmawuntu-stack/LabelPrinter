@@ -38,6 +38,26 @@ html[data-theme="dark"] .tracking-action.secondary:focus-visible{
 html[data-theme="dark"] .tracking-action.primary{
   color:var(--scheme-ui-on-accent,var(--theme-on-primary,#fff))!important;
 }
+html[data-theme="dark"] .tracking-status-badge.pending{
+  background:#29313a;
+  border-color:#52606e;
+  color:#c1c9d1;
+}
+html[data-theme="dark"] .tracking-status-badge.processing{
+  background:#44371d;
+  border-color:#80652c;
+  color:#f3d58f;
+}
+html[data-theme="dark"] .tracking-status-badge.delivered{
+  background:#203c2b;
+  border-color:#3f7955;
+  color:#a9dfb9;
+}
+html[data-theme="dark"] .tracking-status-action:not(.active){
+  background:#252c34;
+  border-color:#596675;
+  color:#f3f6f9;
+}
 
 @supports not (color:color-mix(in srgb,#000 50%,#fff)){
   html[data-theme="dark"] .tracking-courier-mark{background:#2b333c!important}
