@@ -178,8 +178,19 @@
     return rows;
   }
   function isHeaderRow(columns){
-    const values=columns.map(value=>clean(value).toLowerCase());
-    return /penerima|recipient|company/.test(values[1]||'')||/awb|resi|tracking/.test(values[4]||'');
+    const values=columns.map(value=>clean(value).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim());
+    const expected=[
+      new Set(['date','tanggal','timestamp']),
+      new Set(['penerima','recipient','recipient name','company','company name']),
+      new Set(['invoice','invoice number','invoice no']),
+      new Set(['courier','kurir','expedition']),
+      new Set(['awb','resi','awb resi','awb number','tracking','tracking number']),
+      new Set(['address','alamat','address phone number']),
+      new Set(['attn','attention','contact'])
+    ];
+    const matches=values.map((value,index)=>expected[index]?.has(value)||false);
+    const matchCount=matches.filter(Boolean).length;
+    return matchCount>=2&&(matches[1]||matches[4]);
   }
   function rowFromColumns(columns){
     const raw=clean(columns[1]);
