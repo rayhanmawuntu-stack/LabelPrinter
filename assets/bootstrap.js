@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260720-tracking-head-79';
+    const version='20260720-tracking-card-80';
     let initialTheme='light';
     let initialPalette='ksb';
     try{
