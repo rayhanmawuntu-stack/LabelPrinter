@@ -65,7 +65,9 @@ Example:
 13-Jul-26	INTI EVERSPRING INDONESIA	882020343	JNE	CSS6301187540988	Plaza Sentral Lantai 5B, Jl. Jend. Sudirman No.47 RT 05/RW 04 Kel. Karet Semanggi, Kec. Setiabudi Jakarta Selatan 12930 (02157905245)	BAG KEUANGAN
 ```
 
-Download the reusable template from [`templates/bulk-input-template.tsv`](templates/bulk-input-template.tsv). Do not reorder the columns. Keep empty optional values as blank cells so the remaining fields stay in their assigned columns.
+Download the official workbook: [`templates/LabelPrint-official-shipment-template.xlsx`](templates/LabelPrint-official-shipment-template.xlsx). It includes a formatted `Shipment Data` sheet for 20 shipments, a courier dropdown, preserved text formatting for invoice and AWB values, an example row, and an instructions sheet.
+
+The lightweight [`templates/bulk-input-template.tsv`](templates/bulk-input-template.tsv) remains available as an alternative. Do not reorder the columns. Keep empty optional values as blank cells so the remaining fields stay in their assigned columns.
 
 ## Technology
 
@@ -137,6 +139,7 @@ LabelPrinter/
 │   ├── body-03.html
 │   └── body-04.html
 ├── templates/
+│   ├── LabelPrint-official-shipment-template.xlsx
 │   └── bulk-input-template.tsv
 └── apps-script/
     ├── Api.gs
