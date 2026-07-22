@@ -21,9 +21,11 @@ const coreScripts=[
   'app-performance.js','app-02.js','app-03.js','app-03b.js','app-awb.js',
   'app-print-logo.js','app-04.js','app-04b.js','app-analytics-fast.js','app-05.js',
   'app-invoice-memory.js','app-validation.js','app-fixed-backend.js',
-  'app-tracking-tab-v2.js','app-tracking-settings.js','app-import.js',
   'app-sync-awb-recovery.js','app-sync-fast.js'
 ];
+
+const trackingScripts=['app-tracking-tab-v2.js','app-tracking-settings.js'];
+const importScripts=['app-import.js'];
 
 const analyticsScripts=[
   'app-monthly-report-graphs.js','app-report-export.js',
@@ -49,6 +51,12 @@ const outputs=new Map([
     directory:'assets',separator:'\n;\n',header:file=>`/* Source: ${file} */`
   })],
   ['../assets/app-analytics.bundle.js',await combine(analyticsScripts,{
+    directory:'assets',separator:'\n;\n',header:file=>`/* Source: ${file} */`
+  })],
+  ['../assets/app-tracking.bundle.js',await combine(trackingScripts,{
+    directory:'assets',separator:'\n;\n',header:file=>`/* Source: ${file} */`
+  })],
+  ['../assets/app-import.bundle.js',await combine(importScripts,{
     directory:'assets',separator:'\n;\n',header:file=>`/* Source: ${file} */`
   })],
   ['../partials/app-shell.html',await combine(partials,{

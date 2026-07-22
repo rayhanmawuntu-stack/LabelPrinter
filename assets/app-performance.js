@@ -45,8 +45,6 @@
   if(lowSpec){
     window.addEventListener('scroll',onScroll,{passive:true});
     document.addEventListener('scroll',onScroll,{passive:true,capture:true});
-    window.addEventListener('wheel',onScroll,{passive:true});
-    window.addEventListener('touchmove',onScroll,{passive:true});
   }
 
   const whenScrollIdle=callback=>{

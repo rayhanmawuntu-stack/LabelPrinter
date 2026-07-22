@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260722-blocking-refresh-85';
+    const version='20260722-low-spec-performance-86';
     const deploymentKey='labelprint-deployment-version';
     let deploymentCheckTimer=0;
     const readDeploymentVersion=async()=>{
@@ -117,13 +117,18 @@
     const loadFiles=async files=>{for(const file of files)await load(file.startsWith('assets/')?file:'assets/'+file)};
     const analyticsExtras=[...(!hardwareLow?['app-analytics-hover.js']:[]),'app-analytics.bundle.js'];
     let analyticsPromise=null;
+    let trackingPromise=null;
+    let trackingReady=false;
+    let importPromise=null;
     let pdfPromise=null;
     const ensureAnalytics=()=>analyticsPromise||(analyticsPromise=loadFiles(analyticsExtras).then(()=>{
       document.documentElement.dataset.analyticsReady='true';
       return true;
     }).catch(error=>{analyticsPromise=null;throw error}));
     const ensurePdf=()=>pdfPromise||(pdfPromise=loadFiles(['app-pdf.js']).then(()=>true).catch(error=>{pdfPromise=null;throw error}));
-    window.LabelPrintModules={load:loadFiles,ensureAnalytics,ensurePdf,isLoaded:file=>modulePromises.has(file.startsWith('assets/')?file:'assets/'+file)};
+    const ensureTracking=()=>trackingPromise||(trackingPromise=loadFiles(['app-tracking.bundle.js']).then(()=>{trackingReady=true;return true}).catch(error=>{trackingPromise=null;throw error}));
+    const ensureImport=()=>importPromise||(importPromise=loadFiles(['app-import.bundle.js']).then(()=>true).catch(error=>{importPromise=null;throw error}));
+    window.LabelPrintModules={load:loadFiles,ensureAnalytics,ensurePdf,ensureTracking,ensureImport,isLoaded:file=>modulePromises.has(file.startsWith('assets/')?file:'assets/'+file)};
 
     await loadFiles(['app-core.bundle.js']);
     load('assets/app-favicon.js').catch(console.warn);
@@ -131,6 +136,13 @@
     const analyticsNav=document.querySelector('[data-view="analytics"]');
     const prepareAnalytics=()=>ensureAnalytics().catch(error=>{console.warn('Analytics modules failed to load:',error);toast?.('Some analytics tools could not be loaded')});
     analyticsNav?.addEventListener('click',prepareAnalytics,{passive:true});
+    const trackingNav=document.querySelector('[data-view="tracking"]');
+    trackingNav?.addEventListener('click',async event=>{
+      if(trackingReady)return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      try{await ensureTracking();switchView('tracking')}catch(error){console.warn('Tracking module failed to load:',error);toast?.('Tracking could not be loaded')}
+    },true);
     if(!deferHeavy){
       analyticsNav?.addEventListener('pointerenter',prepareAnalytics,{once:true,passive:true});
       analyticsNav?.addEventListener('focus',prepareAnalytics,{once:true,passive:true});
@@ -164,6 +176,12 @@
     };
     installLazyAction('downloadMonthlyReport',ensureAnalytics);
     installLazyAction('downloadMonthlyReportPdf',ensureAnalytics);
+    installLazyAction('importHistory',ensureImport);
+
+    if(!deferHeavy){
+      const preloadSecondary=()=>Promise.allSettled([ensureTracking(),ensureImport()]);
+      if('requestIdleCallback'in window)requestIdleCallback(preloadSecondary,{timeout:7000});else setTimeout(preloadSecondary,5000);
+    }
 
     await checkDeployment();
     deploymentCheckTimer=setInterval(checkDeployment,120000);

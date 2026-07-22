@@ -18,7 +18,7 @@ assert.doesNotMatch(source,/renderLimit|currentLabelSignature/,'Legacy eager-lis
 assert.match(source,/shipmentCache=\{revision:-1,shipments:\[\]\}/,'Shipment aggregation must be revision-cached');
 assert.match(source,/if\(lowSpec\|\|active==='tracking'\|\|badgeRefreshId\)return/,'Low-spec startup must defer the tracking scan');
 assert.match(source,/trackingPage-1\)\*pageSize/,'Row actions must account for the active page');
-assert.ok(bundle.includes(source.trim()),'Core bundle does not contain the current tracking source');
+assert.ok(!bundle.includes(source.trim()),'Tracking source must stay out of the startup bundle');
 
 for(const label of ['Shipment','Invoice','Courier','AWB / resi','Source','Status']){
   assert.ok(source.includes(`<th>${label}</th>`),`Missing tracking table column: ${label}`);
@@ -41,6 +41,16 @@ assert.match(bootstrap,/aria-modal','true'/,'Deployment refresh overlay must be 
 assert.match(bootstrap,/document\.documentElement\.style\.overflow='hidden'/,'Deployment refresh overlay must lock page scrolling');
 assert.match(bootstrap,/element\.inert=true/,'Deployment refresh overlay must disable the app behind it');
 assert.match(bootstrap,/setInterval\(checkDeployment,120000\)/,'Deployment polling must remain lightweight');
+assert.match(bootstrap,/ensureTracking/,'Tracking must have a lazy module loader');
+assert.match(bootstrap,/ensureImport/,'History import must have a lazy module loader');
+
+const coreBundle=await readFile(new URL('../assets/app-core.bundle.js',import.meta.url),'utf8');
+const trackingBundle=await readFile(new URL('../assets/app-tracking.bundle.js',import.meta.url),'utf8');
+const importBundle=await readFile(new URL('../assets/app-import.bundle.js',import.meta.url),'utf8');
+assert.doesNotMatch(coreBundle,/Source: app-tracking-tab-v2\.js/,'Tracking code must not block core startup');
+assert.doesNotMatch(coreBundle,/Source: app-import\.js/,'Excel history import must not block core startup');
+assert.match(trackingBundle,/Source: app-tracking-tab-v2\.js/,'Tracking lazy bundle is incomplete');
+assert.match(importBundle,/Source: app-import\.js/,'Import lazy bundle is incomplete');
 
 const accentContract=await readFile(new URL('../assets/style-55.css',import.meta.url),'utf8');
 for(const view of ['#createView','#historyView','#trackingView','#analyticsView']){
