@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260720-shipment-template-82';
+    const version='20260722-tracking-performance-83';
     let initialTheme='light';
     let initialPalette='ksb';
     try{

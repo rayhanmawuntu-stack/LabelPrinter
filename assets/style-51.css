@@ -59,7 +59,7 @@ html.low-spec :where(.dashboard-lower,.analytics-overview,.recent-history,.track
   contain:layout style paint;
   contain-intrinsic-size:auto 620px;
 }
-html.low-spec :where(.recipient,.history-row,.tracking-row){
+html.low-spec :where(.recipient,.history-row){
   content-visibility:auto;
   contain:layout style paint;
   contain-intrinsic-size:auto 76px;
@@ -74,8 +74,8 @@ html.low-spec :where(.rank,.bar){
   contain:layout style paint;
   contain-intrinsic-size:auto 42px;
 }
-html.low-spec :where(.cards,.tracking-list,.history-list,.rankings,.mini-rankings){contain:layout style}
-html.low-spec :where(.analytics-overview,.recent-history,.charts,.dashboard-line,.tracking-list){overflow-anchor:none}
+html.low-spec :where(.cards,.tracking-table-shell,.history-list,.rankings,.mini-rankings){contain:layout style}
+html.low-spec :where(.analytics-overview,.recent-history,.charts,.dashboard-line,.tracking-table-shell){overflow-anchor:none}
 
 html.low-spec .bar i{animation:none!important}
 html.low-spec .tracking-row:hover{border-color:var(--theme-line,var(--line,#e4e7ed))!important}

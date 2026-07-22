@@ -1,20 +1,6 @@
 /* Stability and low-spec rendering refinements. */
-.tracking-show-more{
-  width:100%;
-  min-height:42px;
-  border:1px solid var(--theme-line,var(--line,#e4e7ed));
-  border-radius:14px;
-  background:var(--theme-surface,var(--card,#fff));
-  color:var(--theme-text,var(--ink,#111216));
-  font-size:10px;
-  font-weight:800;
-  cursor:pointer;
-}
-.tracking-show-more:hover{background:var(--theme-primary-soft,var(--lime,#edf5ba))}
-.tracking-show-more:focus-visible{outline:3px solid color-mix(in srgb,var(--theme-primary,var(--lime,#dfff3f)) 40%,transparent);outline-offset:2px}
-
 html.low-spec .main{contain:layout style}
-html.low-spec :where(.tracking-list,.history-list,.cards,.rankings,.monthly-table-wrap){contain:layout style paint}
+html.low-spec :where(.tracking-table-shell,.history-list,.cards,.rankings,.monthly-table-wrap){contain:layout style paint}
 html.low-spec :where(.monthly-report-panel,.monthly-report-visuals,.monthly-table-wrap,.tracking-kpis){
   content-visibility:auto;
   contain-intrinsic-size:auto 520px;
@@ -27,11 +13,6 @@ html.low-spec.is-scrolling :where(.stage,.dashboard-line,.charts,.monthly-report
 html.low-spec.is-scrolling :where(.tracking-row,.history-row,.recipient,.metric){outline:none!important}
 html[data-network="constrained"] img:not(.hero-title-logo):not(.brand img){content-visibility:auto}
 
-@media(max-width:760px){
-  .tracking-show-more{min-height:46px;border-radius:16px}
-}
-
 @media print{
-  .tracking-show-more{display:none!important}
   html.low-spec .main{contain:none!important}
 }

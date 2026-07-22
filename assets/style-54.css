@@ -1,70 +1,22 @@
-/* Keep tracking shipment cards readable across every palette and theme. */
-html[data-theme="light"] .tracking-row{
-  background:#fff!important;
-  border-color:#cfd6de!important;
-  color:#15191f!important;
-}
-html[data-theme="light"] .tracking-row :is(.tracking-recipient b,.tracking-awb strong){color:#15191f!important}
-html[data-theme="light"] .tracking-row :is(.tracking-recipient span,.tracking-recipient small,.tracking-awb span,.tracking-awb small){color:#5d6874!important}
-html[data-theme="light"] .tracking-action.secondary{
-  background:#fff!important;
-  border-color:#aeb8c3!important;
-  color:#15191f!important;
-}
+/* Final contrast layer for the shipment register. */
+html[data-theme="light"] .tracking-table,
+html[data-theme="light"] .tracking-row,
+html[data-theme="light"] .tracking-pagination{background:#fff;color:#15191f}
+html[data-theme="light"] .tracking-row :is(.tracking-recipient b,.tracking-awb strong,.tracking-source b,.tracking-cell-main){color:#15191f}
+html[data-theme="light"] .tracking-row :is(.tracking-recipient span,.tracking-awb small,.tracking-source small){color:#5d6874}
+html[data-theme="light"] .tracking-icon-action{background:#fff;border-color:#cfd6de;color:#15191f}
 
-html[data-theme="dark"] .tracking-row{
-  background:#1d232a!important;
-  border-color:#46515d!important;
-  color:#f3f6f9!important;
-  box-shadow:none!important;
-}
-html[data-theme="dark"] .tracking-row :is(.tracking-recipient b,.tracking-awb strong){color:#f3f6f9!important}
-html[data-theme="dark"] .tracking-row :is(.tracking-recipient span,.tracking-recipient small,.tracking-awb span,.tracking-awb small){color:#b5bec8!important}
-html[data-theme="dark"] .tracking-courier-mark{
-  background:color-mix(in srgb,var(--scheme-ui-accent,var(--theme-primary,#dfff3f)) 18%,#252c34)!important;
-  color:#f3f6f9!important;
-  border:1px solid #4c5865;
-}
-html[data-theme="dark"] .tracking-action.secondary{
-  background:#252c34!important;
-  border-color:#596675!important;
-  color:#f3f6f9!important;
-}
-html[data-theme="dark"] .tracking-action.secondary:hover,
-html[data-theme="dark"] .tracking-action.secondary:focus-visible{
-  background:#303841!important;
-  border-color:#758291!important;
-}
-html[data-theme="dark"] .tracking-action.primary{
-  color:var(--scheme-ui-on-accent,var(--theme-on-primary,#fff))!important;
-}
-html[data-theme="dark"] .tracking-status-badge.pending{
-  background:#29313a;
-  border-color:#52606e;
-  color:#c1c9d1;
-}
-html[data-theme="dark"] .tracking-status-badge.processing{
-  background:#44371d;
-  border-color:#80652c;
-  color:#f3d58f;
-}
-html[data-theme="dark"] .tracking-status-badge.delivered{
-  background:#203c2b;
-  border-color:#3f7955;
-  color:#a9dfb9;
-}
-html[data-theme="dark"] .tracking-status-action:not(.active){
-  background:#252c34;
-  border-color:#596675;
-  color:#f3f6f9;
-}
+html[data-theme="dark"] .tracking-table,
+html[data-theme="dark"] .tracking-row,
+html[data-theme="dark"] .tracking-pagination{background:#1d232a;color:#f3f6f9}
+html[data-theme="dark"] .tracking-row :is(.tracking-recipient b,.tracking-awb strong,.tracking-source b,.tracking-cell-main){color:#f3f6f9}
+html[data-theme="dark"] .tracking-row :is(.tracking-recipient span,.tracking-awb small,.tracking-source small){color:#b5bec8}
+html[data-theme="dark"] .tracking-courier-mark{background:#2b333c;color:#f3f6f9;border-color:#4c5865}
+html[data-theme="dark"] .tracking-icon-action{background:#252c34;border-color:#596675;color:#f3f6f9}
+html[data-theme="dark"] .tracking-icon-action:hover,
+html[data-theme="dark"] .tracking-icon-action:focus-visible{background:#303841;border-color:#758291}
+html[data-theme="dark"] .tracking-icon-action.primary{background:var(--scheme-ui-accent,var(--theme-primary,#dfff3f));border-color:var(--scheme-ui-accent,var(--theme-primary,#dfff3f));color:var(--scheme-ui-on-accent,var(--theme-on-primary,#111315))}
 
-@supports not (color:color-mix(in srgb,#000 50%,#fff)){
-  html[data-theme="dark"] .tracking-courier-mark{background:#2b333c!important}
-}
-
-@media(max-width:480px){
-  .tracking-row{padding:14px!important}
-  .tracking-row-actions{gap:8px!important}
-  .tracking-action{min-height:42px!important}
+@media(max-width:760px){
+  html[data-theme="dark"] .tracking-row{border-color:#46515d}
 }

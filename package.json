@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "build": "node scripts/build-assets.mjs",
-    "check": "node scripts/build-assets.mjs --check"
+    "check": "node scripts/build-assets.mjs --check && node scripts/check-tracking.mjs",
+    "check:tracking": "node scripts/check-tracking.mjs"
   }
 }
