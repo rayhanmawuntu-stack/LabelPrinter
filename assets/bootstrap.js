@@ -1,6 +1,33 @@
 (async function(){
   try{
     const version='20260722-tracking-performance-83';
+    const deploymentKey='labelprint-deployment-version';
+    let deploymentCheckTimer=0;
+    const readDeploymentVersion=async()=>{
+      const response=await fetch('deployment-version.json?_='+Date.now(),{
+        cache:'no-store',
+        headers:{'Cache-Control':'no-cache'}
+      });
+      if(!response.ok)throw new Error('Version check failed');
+      const data=await response.json();
+      return typeof data.version==='string'?data.version.trim():'';
+    };
+    const checkDeployment=async()=>{
+      try{
+        const latest=await readDeploymentVersion();
+        if(!latest)return;
+        const current=sessionStorage.getItem(deploymentKey);
+        sessionStorage.setItem(deploymentKey,latest);
+        if(current&&current!==latest){
+          clearInterval(deploymentCheckTimer);
+          const target=new URL(location.href);
+          target.searchParams.set('_lpv',latest.slice(0,12));
+          location.replace(target.href);
+        }
+      }catch(error){
+        console.warn('Deployment version check skipped:',error);
+      }
+    };
     let initialTheme='light';
     let initialPalette='ksb';
     try{
@@ -104,6 +131,13 @@
     };
     installLazyAction('downloadMonthlyReport',ensureAnalytics);
     installLazyAction('downloadMonthlyReportPdf',ensureAnalytics);
+
+    await checkDeployment();
+    deploymentCheckTimer=setInterval(checkDeployment,120000);
+    document.addEventListener('visibilitychange',()=>{
+      if(!document.hidden)checkDeployment();
+    },{passive:true});
+    window.addEventListener('focus',checkDeployment,{passive:true});
   }catch(error){
     document.body.innerHTML='<div class="boot">Unable to load KSB LabelPrint: '+String(error&&error.message||error)+'</div>';
   }

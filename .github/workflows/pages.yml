@@ -30,6 +30,11 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
+      - name: Stamp deployment version
+        run: |
+          printf '{"version":"%s","deployedAt":"%s"}\n' \
+            "$GITHUB_SHA" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > deployment-version.json
+
       - name: Upload website artifact
         uses: actions/upload-pages-artifact@v4
         with:

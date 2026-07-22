@@ -33,5 +33,8 @@ const bootstrapVersion=bootstrap.match(/const version='([^']+)'/)?.[1];
 assert.ok(indexVersion&&bootstrapVersion,'Asset version marker is missing');
 assert.equal(indexVersion,bootstrapVersion,'Index and bootstrap cache versions differ');
 assert.ok(index.includes(`bootstrap.js?v=${bootstrapVersion}`),'Bootstrap script cache version differs from CSS');
+assert.match(bootstrap,/deployment-version\.json\?_=/,'Automatic deployment version check is missing');
+assert.match(bootstrap,/location\.replace\(target\.href\)/,'New deployments must force the open app to reload');
+assert.match(bootstrap,/setInterval\(checkDeployment,120000\)/,'Deployment polling must remain lightweight');
 
 console.log('Tracking performance and responsive contracts passed.');
