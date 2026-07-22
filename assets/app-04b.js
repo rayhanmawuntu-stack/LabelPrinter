@@ -13,8 +13,8 @@ function analyticsBuckets(data,days){
     }
     return buckets;
   }
-  const groups=days===30?10:7,span=days===30?3:1,start=new Date(today);start.setDate(start.getDate()-(groups*span-1));
-  for(let i=0;i<groups;i++){const from=new Date(start);from.setDate(from.getDate()+i*span);const to=new Date(from);to.setDate(to.getDate()+span);buckets.push({label:span===1?from.toLocaleDateString('en-GB',{weekday:'short'}):from.toLocaleDateString('en-GB',{day:'numeric',month:'short'}),value:parsed.filter(b=>b._time>=from.getTime()&&b._time<to.getTime()).reduce((s,b)=>s+(b.labels?.length||0),0)})}
+  const groups=days===30?30:7,start=new Date(today);start.setDate(start.getDate()-(groups-1));
+  for(let i=0;i<groups;i++){const from=new Date(start);from.setDate(from.getDate()+i);const to=new Date(from);to.setDate(to.getDate()+1);buckets.push({label:days===30?from.toLocaleDateString('en-GB',{day:'numeric',month:'short'}):from.toLocaleDateString('en-GB',{weekday:'short'}),value:parsed.filter(b=>b._time>=from.getTime()&&b._time<to.getTime()).reduce((s,b)=>s+(b.labels?.length||0),0)})}
   return buckets;
 }
 function lineChartHTML(buckets,key='chart'){

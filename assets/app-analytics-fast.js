@@ -26,18 +26,18 @@ analyticsBuckets=function(data,days){
     return values.map((value,index)=>({label:String(firstYear+index),value}));
   }
 
-  const groups=days===30?10:7,span=days===30?3:1,start=new Date(today);
-  start.setDate(start.getDate()-(groups*span-1));
+  const groups=days===30?30:7,start=new Date(today);
+  start.setDate(start.getDate()-(groups-1));
   const values=new Array(groups).fill(0);
   const dayNumber=date=>Math.floor(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate())/86400000);
   const startDay=dayNumber(start);
   parsed.forEach(item=>{
     const delta=dayNumber(item.date)-startDay;
-    const index=Math.floor(delta/span);
+    const index=delta;
     if(index>=0&&index<values.length)values[index]+=item.value;
   });
   return values.map((value,index)=>{
-    const from=new Date(start);from.setDate(from.getDate()+index*span);
-    return{label:span===1?from.toLocaleDateString('en-GB',{weekday:'short'}):from.toLocaleDateString('en-GB',{day:'numeric',month:'short'}),value};
+    const from=new Date(start);from.setDate(from.getDate()+index);
+    return{label:days===30?from.toLocaleDateString('en-GB',{day:'numeric',month:'short'}):from.toLocaleDateString('en-GB',{weekday:'short'}),value};
   });
 };

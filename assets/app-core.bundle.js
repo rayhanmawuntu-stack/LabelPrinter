@@ -965,8 +965,8 @@ function analyticsBuckets(data,days){
     }
     return buckets;
   }
-  const groups=days===30?10:7,span=days===30?3:1,start=new Date(today);start.setDate(start.getDate()-(groups*span-1));
-  for(let i=0;i<groups;i++){const from=new Date(start);from.setDate(from.getDate()+i*span);const to=new Date(from);to.setDate(to.getDate()+span);buckets.push({label:span===1?from.toLocaleDateString('en-GB',{weekday:'short'}):from.toLocaleDateString('en-GB',{day:'numeric',month:'short'}),value:parsed.filter(b=>b._time>=from.getTime()&&b._time<to.getTime()).reduce((s,b)=>s+(b.labels?.length||0),0)})}
+  const groups=days===30?30:7,start=new Date(today);start.setDate(start.getDate()-(groups-1));
+  for(let i=0;i<groups;i++){const from=new Date(start);from.setDate(from.getDate()+i);const to=new Date(from);to.setDate(to.getDate()+1);buckets.push({label:days===30?from.toLocaleDateString('en-GB',{day:'numeric',month:'short'}):from.toLocaleDateString('en-GB',{weekday:'short'}),value:parsed.filter(b=>b._time>=from.getTime()&&b._time<to.getTime()).reduce((s,b)=>s+(b.labels?.length||0),0)})}
   return buckets;
 }
 function lineChartHTML(buckets,key='chart'){
@@ -1061,19 +1061,19 @@ analyticsBuckets=function(data,days){
     return values.map((value,index)=>({label:String(firstYear+index),value}));
   }
 
-  const groups=days===30?10:7,span=days===30?3:1,start=new Date(today);
-  start.setDate(start.getDate()-(groups*span-1));
+  const groups=days===30?30:7,start=new Date(today);
+  start.setDate(start.getDate()-(groups-1));
   const values=new Array(groups).fill(0);
   const dayNumber=date=>Math.floor(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate())/86400000);
   const startDay=dayNumber(start);
   parsed.forEach(item=>{
     const delta=dayNumber(item.date)-startDay;
-    const index=Math.floor(delta/span);
+    const index=delta;
     if(index>=0&&index<values.length)values[index]+=item.value;
   });
   return values.map((value,index)=>{
-    const from=new Date(start);from.setDate(from.getDate()+index*span);
-    return{label:span===1?from.toLocaleDateString('en-GB',{weekday:'short'}):from.toLocaleDateString('en-GB',{day:'numeric',month:'short'}),value};
+    const from=new Date(start);from.setDate(from.getDate()+index);
+    return{label:days===30?from.toLocaleDateString('en-GB',{day:'numeric',month:'short'}):from.toLocaleDateString('en-GB',{weekday:'short'}),value};
   });
 };
 
