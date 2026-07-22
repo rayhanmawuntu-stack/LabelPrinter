@@ -35,6 +35,11 @@ assert.equal(indexVersion,bootstrapVersion,'Index and bootstrap cache versions d
 assert.ok(index.includes(`bootstrap.js?v=${bootstrapVersion}`),'Bootstrap script cache version differs from CSS');
 assert.match(bootstrap,/deployment-version\.json\?_=/,'Automatic deployment version check is missing');
 assert.match(bootstrap,/location\.replace\(target\.href\)/,'New deployments must force the open app to reload');
+assert.match(bootstrap,/id='deploymentRefreshOverlay'/,'Deployment refresh must create a blocking overlay');
+assert.match(bootstrap,/z-index:2147483647/,'Deployment refresh overlay must sit above the entire app');
+assert.match(bootstrap,/aria-modal','true'/,'Deployment refresh overlay must be modal for assistive technology');
+assert.match(bootstrap,/document\.documentElement\.style\.overflow='hidden'/,'Deployment refresh overlay must lock page scrolling');
+assert.match(bootstrap,/element\.inert=true/,'Deployment refresh overlay must disable the app behind it');
 assert.match(bootstrap,/setInterval\(checkDeployment,120000\)/,'Deployment polling must remain lightweight');
 
 const accentContract=await readFile(new URL('../assets/style-55.css',import.meta.url),'utf8');
