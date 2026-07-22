@@ -41,6 +41,9 @@ assert.match(bootstrap,/aria-modal','true'/,'Deployment refresh overlay must be 
 assert.match(bootstrap,/document\.documentElement\.style\.overflow='hidden'/,'Deployment refresh overlay must lock page scrolling');
 assert.match(bootstrap,/element\.inert=true/,'Deployment refresh overlay must disable the app behind it');
 assert.match(bootstrap,/setInterval\(checkDeployment,120000\)/,'Deployment polling must remain lightweight');
+assert.match(bootstrap,/localStorage\.getItem\(deploymentKey\)/,'Deployment baseline must survive browser restarts');
+assert.match(bootstrap,/legacyInstallationKeys/,'Pre-version-check installations must be detected');
+assert.match(bootstrap,/\(!current&&legacyInstallation\)/,'Legacy installations must receive the mandatory refresh once');
 assert.match(bootstrap,/ensureTracking/,'Tracking must have a lazy module loader');
 assert.match(bootstrap,/ensureImport/,'History import must have a lazy module loader');
 

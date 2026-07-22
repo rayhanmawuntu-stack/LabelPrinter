@@ -1,7 +1,12 @@
 (async function(){
   try{
-    const version='20260722-low-spec-performance-86';
+    const version='20260722-legacy-refresh-87';
     const deploymentKey='labelprint-deployment-version';
+    const legacyInstallationKeys=['ksb-no-mock-startup','ksb-labels','ksb-history','ksb-users','ksb-layout','ksb-theme','ksb-color-scheme'];
+    let legacyInstallation=false;
+    try{
+      legacyInstallation=!localStorage.getItem(deploymentKey)&&legacyInstallationKeys.some(key=>localStorage.getItem(key)!==null);
+    }catch{}
     let deploymentCheckTimer=0;
     const readDeploymentVersion=async()=>{
       const response=await fetch('deployment-version.json?_='+Date.now(),{
@@ -52,9 +57,17 @@
       try{
         const latest=await readDeploymentVersion();
         if(!latest)return;
-        const current=sessionStorage.getItem(deploymentKey);
-        sessionStorage.setItem(deploymentKey,latest);
-        if(current&&current!==latest){
+        let current='';
+        try{
+          current=localStorage.getItem(deploymentKey)||sessionStorage.getItem(deploymentKey)||'';
+          localStorage.setItem(deploymentKey,latest);
+          sessionStorage.setItem(deploymentKey,latest);
+        }catch{
+          current=sessionStorage.getItem(deploymentKey)||'';
+          sessionStorage.setItem(deploymentKey,latest);
+        }
+        if((current&&current!==latest)||(!current&&legacyInstallation)){
+          legacyInstallation=false;
           requireDeploymentRefresh(latest);
         }
       }catch(error){
