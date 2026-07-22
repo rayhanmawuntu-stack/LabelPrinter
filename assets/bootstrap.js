@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260722-cross-tab-accents-84';
+    const version='20260722-blocking-refresh-85';
     const deploymentKey='labelprint-deployment-version';
     let deploymentCheckTimer=0;
     const readDeploymentVersion=async()=>{
@@ -12,6 +12,42 @@
       const data=await response.json();
       return typeof data.version==='string'?data.version.trim():'';
     };
+    const requireDeploymentRefresh=latest=>{
+      if(document.getElementById('deploymentRefreshOverlay'))return;
+      clearInterval(deploymentCheckTimer);
+      document.documentElement.style.overflow='hidden';
+      document.body.style.overflow='hidden';
+      const app=Array.from(document.body.children);
+      app.forEach(element=>{
+        element.setAttribute('aria-hidden','true');
+        if('inert'in element)element.inert=true;
+      });
+      const overlay=document.createElement('div');
+      overlay.id='deploymentRefreshOverlay';
+      overlay.setAttribute('role','alertdialog');
+      overlay.setAttribute('aria-modal','true');
+      overlay.setAttribute('aria-labelledby','deploymentRefreshTitle');
+      overlay.setAttribute('aria-describedby','deploymentRefreshCopy');
+      overlay.innerHTML='<div class="deployment-refresh-card"><span class="deployment-refresh-icon" aria-hidden="true">↻</span><p class="deployment-refresh-kicker">Update available</p><h2 id="deploymentRefreshTitle">Refresh required</h2><p id="deploymentRefreshCopy">A new version of LabelPrint is ready. Refresh now to continue using the app.</p><button type="button" id="deploymentRefreshButton">Refresh now</button></div>';
+      const style=document.createElement('style');
+      style.id='deploymentRefreshStyle';
+      style.textContent='#deploymentRefreshOverlay{position:fixed;inset:0;width:100vw;height:100dvh;min-height:100vh;z-index:2147483647;display:grid;place-items:center;box-sizing:border-box;padding:max(24px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));overflow:auto;overscroll-behavior:contain;background:rgba(12,15,18,.94);backdrop-filter:blur(12px);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#15191f}.deployment-refresh-card{width:min(100%,420px);box-sizing:border-box;padding:32px;border:1px solid rgba(255,255,255,.2);border-radius:28px;background:#fff;box-shadow:0 30px 90px rgba(0,0,0,.48);text-align:center}.deployment-refresh-icon{display:grid;place-items:center;width:58px;height:58px;margin:0 auto 20px;border-radius:18px;background:var(--theme-primary,#dfff3f);color:var(--theme-on-primary,#111315);font-size:34px;font-weight:800;line-height:1}.deployment-refresh-kicker{margin:0 0 8px;color:#626b75;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.deployment-refresh-card h2{margin:0;font-size:clamp(26px,7vw,36px);line-height:1.05}.deployment-refresh-card p:not(.deployment-refresh-kicker){margin:14px auto 24px;color:#626b75;font-size:15px;line-height:1.55}.deployment-refresh-card button{width:100%;min-height:52px;border:0;border-radius:15px;background:var(--theme-primary,#dfff3f);color:var(--theme-on-primary,#111315);font:800 15px inherit;cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.18)}.deployment-refresh-card button:focus-visible{outline:4px solid rgba(120,148,255,.65);outline-offset:3px}@media(max-width:480px){.deployment-refresh-card{padding:28px 22px;border-radius:23px}}@media(prefers-reduced-motion:no-preference){.deployment-refresh-card{animation:deploymentRefreshIn .18s ease-out}@keyframes deploymentRefreshIn{from{opacity:0;transform:translateY(10px) scale(.98)}}}';
+      document.head.appendChild(style);
+      document.body.appendChild(overlay);
+      const button=overlay.querySelector('#deploymentRefreshButton');
+      const blockExit=event=>{
+        if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();}
+      };
+      document.addEventListener('keydown',blockExit,true);
+      button.addEventListener('click',()=>{
+        button.disabled=true;
+        button.textContent='Refreshing…';
+        const target=new URL(location.href);
+        target.searchParams.set('_lpv',latest.slice(0,12));
+        location.replace(target.href);
+      },{once:true});
+      requestAnimationFrame(()=>button.focus());
+    };
     const checkDeployment=async()=>{
       try{
         const latest=await readDeploymentVersion();
@@ -19,10 +55,7 @@
         const current=sessionStorage.getItem(deploymentKey);
         sessionStorage.setItem(deploymentKey,latest);
         if(current&&current!==latest){
-          clearInterval(deploymentCheckTimer);
-          const target=new URL(location.href);
-          target.searchParams.set('_lpv',latest.slice(0,12));
-          location.replace(target.href);
+          requireDeploymentRefresh(latest);
         }
       }catch(error){
         console.warn('Deployment version check skipped:',error);
