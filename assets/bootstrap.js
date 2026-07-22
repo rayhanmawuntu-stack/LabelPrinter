@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260722-tracking-performance-83';
+    const version='20260722-cross-tab-accents-84';
     const deploymentKey='labelprint-deployment-version';
     let deploymentCheckTimer=0;
     const readDeploymentVersion=async()=>{

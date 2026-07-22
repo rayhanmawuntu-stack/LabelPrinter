@@ -37,4 +37,14 @@ assert.match(bootstrap,/deployment-version\.json\?_=/,'Automatic deployment vers
 assert.match(bootstrap,/location\.replace\(target\.href\)/,'New deployments must force the open app to reload');
 assert.match(bootstrap,/setInterval\(checkDeployment,120000\)/,'Deployment polling must remain lightweight');
 
+const accentContract=await readFile(new URL('../assets/style-55.css',import.meta.url),'utf8');
+for(const view of ['#createView','#historyView','#trackingView','#analyticsView']){
+  assert.ok(accentContract.includes(view),`${view} is missing from the cross-tab accent contract`);
+}
+for(const token of ['--theme-primary','--theme-accent','--theme-primary-soft','--theme-accent-soft']){
+  assert.ok(accentContract.includes(token),`${token} is missing from the cross-tab accent contract`);
+}
+assert.match(accentContract,/#trackingView \.tracking-status-control\.processing/,'Processing status is not palette-aware');
+assert.match(accentContract,/#trackingView \.tracking-status-control\.delivered/,'Delivered status is not palette-aware');
+
 console.log('Tracking performance and responsive contracts passed.');

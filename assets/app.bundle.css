@@ -3417,3 +3417,106 @@ html[data-theme="dark"] .tracking-icon-action.primary{background:var(--scheme-ui
 @media(max-width:760px){
   html[data-theme="dark"] .tracking-row{border-color:#46515d}
 }
+
+/* Source: style-55.css */
+/* Cross-tab accent contract. Keep this last so newer tabs cannot fall back to legacy colors. */
+html[data-palette]{
+  --theme-primary:var(--ui-primary,var(--scheme-primary,#dfff3f));
+  --theme-on-primary:var(--ui-on-primary,var(--scheme-on-primary,#111315));
+  --theme-primary-soft:var(--ui-soft,color-mix(in srgb,var(--theme-primary) 11%,var(--ui-surface,#fff)));
+  --theme-accent:var(--ui-accent,var(--scheme-accent,#b9d0ff));
+  --theme-accent-soft:var(--ui-accent-soft,color-mix(in srgb,var(--theme-accent) 34%,var(--ui-surface,#fff)));
+  --theme-card:var(--ui-surface,#fff);
+  --theme-ink:var(--ui-text,#15191f);
+  --theme-muted:var(--ui-muted,#6c747e);
+  --theme-line:var(--ui-line,#dfe5ea);
+}
+
+/* The same active-accent language is used in every main tab. */
+html[data-palette] :is(#createView,#historyView,#trackingView,#analyticsView) :is(
+  .btn.dark,.btn.lime,.panel-chip,.detail-count,.index,.layout.active,
+  .tracking-icon-action.primary,.tracking-pagination button.active
+){
+  background:var(--theme-primary)!important;
+  border-color:var(--theme-primary)!important;
+  color:var(--theme-on-primary)!important;
+}
+html[data-palette] :is(#createView,#historyView,#trackingView,#analyticsView) :is(
+  .kicker,.detail-kicker,.entry-kicker,.text-link,.clear-batch
+){color:var(--theme-primary)!important}
+html[data-palette] :is(#createView,#historyView,#trackingView,#analyticsView) :is(
+  .control,.recipient,.history-row,.tracking-search,.tracking-icon-action,.tracking-status-control
+):focus-visible,
+html[data-palette] #trackingView .tracking-status-control:focus-within{
+  outline:3px solid color-mix(in srgb,var(--theme-primary) 42%,transparent)!important;
+  outline-offset:2px!important;
+}
+
+/* Create and History selected content. */
+html[data-palette] #createView .recipient.active,
+html[data-palette] #historyView .history-row.active{
+  background:var(--theme-primary-soft)!important;
+  border-color:color-mix(in srgb,var(--theme-primary) 58%,var(--theme-line))!important;
+}
+html[data-palette] #historyView .history-row.active .batch-icon{
+  background:var(--theme-primary)!important;
+  color:var(--theme-on-primary)!important;
+}
+
+/* Tracking table now consumes the same palette tokens as the other tabs. */
+html[data-palette] #trackingView :is(.tracking-table th,.tracking-pagination button:hover:not(:disabled),.tracking-row:hover){
+  background:var(--theme-primary-soft)!important;
+}
+html[data-palette] #trackingView .tracking-courier-mark{
+  background:var(--theme-accent-soft)!important;
+  border-color:color-mix(in srgb,var(--theme-accent) 45%,var(--theme-line))!important;
+  color:var(--theme-ink)!important;
+}
+html[data-palette] #trackingView .tracking-page-head,
+html[data-palette] #trackingView .tracking-list-panel{
+  border-color:var(--theme-line)!important;
+}
+
+/* Status colors are semantic, but derived from the chosen palette instead of fixed swatches. */
+html[data-palette] #trackingView .tracking-status-control.processing{
+  background:color-mix(in srgb,var(--theme-accent) 24%,var(--theme-card))!important;
+  border-color:color-mix(in srgb,var(--theme-accent) 58%,var(--theme-line))!important;
+  color:color-mix(in srgb,var(--theme-accent) 58%,var(--theme-ink))!important;
+}
+html[data-palette] #trackingView .tracking-status-control.delivered{
+  background:color-mix(in srgb,var(--theme-primary) 18%,var(--theme-card))!important;
+  border-color:color-mix(in srgb,var(--theme-primary) 52%,var(--theme-line))!important;
+  color:color-mix(in srgb,var(--theme-primary) 62%,var(--theme-ink))!important;
+}
+
+/* Analytics highlights and every graph share the same active accent. */
+html[data-palette] #analyticsView :is(.metric.blue,.metric.lime,.dash-metric,.monthly-summary-card){
+  background:var(--theme-accent-soft)!important;
+  border-color:color-mix(in srgb,var(--theme-accent) 42%,var(--theme-line))!important;
+}
+html[data-palette] :is(#createView,#analyticsView) :is(.line-path,.line-point){stroke:var(--theme-primary)!important}
+html[data-palette] :is(#createView,#analyticsView) .line-area{fill:color-mix(in srgb,var(--theme-primary) 22%,transparent)!important}
+html[data-palette] :is(#createView,#analyticsView) .interactive-line-chart stop:first-child{stop-color:var(--theme-primary)!important}
+html[data-palette] :is(#createView,#analyticsView) .line-tooltip-value{fill:var(--theme-primary)!important}
+
+/* Navigation must not retain a previous tab or palette color at any breakpoint. */
+html[data-palette] .nav button.active,
+html[data-palette] .nav button.active:hover{
+  background:var(--theme-primary)!important;
+  border-color:var(--theme-primary)!important;
+  color:var(--theme-on-primary)!important;
+  box-shadow:0 10px 24px color-mix(in srgb,var(--theme-primary) 24%,transparent)!important;
+}
+
+@media(prefers-contrast:more){
+  html[data-palette] :is(#createView,#historyView,#trackingView,#analyticsView) :is(.recipient.active,.history-row.active,.tracking-pagination button.active){
+    outline:2px solid var(--theme-primary)!important;
+    outline-offset:1px!important;
+  }
+}
+
+@media print{
+  html[data-palette] :is(.sheet,.physical,.print-page,.print-root,#reviewWrap .sheet,#page .sheet){
+    background:#fff!important;color:#000!important;color-scheme:light!important;
+  }
+}
