@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260723-sidebar-rail-89';
+    const version='20260723-sidebar-rail-90';
     const deploymentKey='labelprint-deployment-version';
     const legacyInstallationKeys=['ksb-no-mock-startup','ksb-labels','ksb-history','ksb-users','ksb-layout','ksb-theme','ksb-color-scheme'];
     let legacyInstallation=false;
@@ -101,6 +101,34 @@
     const shellResponse=await fetch('partials/app-shell.html?v='+version,{cache:'force-cache'});
     if(!shellResponse.ok)throw new Error('Failed to load application shell');
     document.body.innerHTML=await shellResponse.text();
+
+    const sidebar=document.querySelector('.sidebar');
+    const sidebarBrand=sidebar?.querySelector('.brand');
+    if(sidebar&&sidebarBrand){
+      const sidebarHead=document.createElement('div');
+      sidebarHead.className='sidebar-head';
+      sidebarBrand.before(sidebarHead);
+      sidebarHead.appendChild(sidebarBrand);
+      const sidebarToggle=document.createElement('button');
+      sidebarToggle.className='sidebar-toggle';
+      sidebarToggle.type='button';
+      sidebarToggle.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+      sidebarHead.appendChild(sidebarToggle);
+      let sidebarExpanded=false;
+      try{sidebarExpanded=localStorage.getItem('labelprint-sidebar-expanded')==='true'}catch{}
+      const setSidebarExpanded=expanded=>{
+        sidebarExpanded=Boolean(expanded);
+        sidebar.dataset.expanded=String(sidebarExpanded);
+        sidebarToggle.setAttribute('aria-expanded',String(sidebarExpanded));
+        sidebarToggle.setAttribute('aria-label',sidebarExpanded?'Collapse navigation':'Pin navigation open');
+        sidebarToggle.title=sidebarExpanded?'Collapse navigation':'Pin navigation open';
+      };
+      setSidebarExpanded(sidebarExpanded);
+      sidebarToggle.addEventListener('click',()=>{
+        setSidebarExpanded(!sidebarExpanded);
+        try{localStorage.setItem('labelprint-sidebar-expanded',String(sidebarExpanded))}catch{}
+      });
+    }
 
     const nav=document.querySelector('.nav');
     const analyticsButton=nav?.querySelector('[data-view="analytics"]');
