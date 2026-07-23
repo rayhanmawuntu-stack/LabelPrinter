@@ -47,6 +47,12 @@ assert.match(bootstrap,/\(!current&&legacyInstallation\)/,'Legacy installations 
 assert.match(bootstrap,/ensureTracking/,'Tracking must have a lazy module loader');
 assert.match(bootstrap,/ensureImport/,'History import must have a lazy module loader');
 
+assert.match(css,/grid-template-columns:78px minmax\(0,1fr\)!important/,'Desktop sidebar rail must remain compact');
+assert.match(css,/min-height:0!important/,'Collapsed brand must override the legacy 86px minimum height');
+assert.match(css,/max-height:52px!important/,'Collapsed brand height must stay bounded');
+assert.match(css,/html\[data-theme="dark"\]\[data-palette\]:not\(\[data-palette="ksb"\]\) \.sidebar\{\s*border-color:var\(--theme-line/,'Dark sidebar border must follow the primary theme contract');
+assert.match(css,/\.sidebar \.badge\{[\s\S]*right:4px!important;[\s\S]*background:var\(--theme-primary/,'Desktop sidebar badges must stay attached to their tab and use the primary theme color');
+
 const coreBundle=await readFile(new URL('../assets/app-core.bundle.js',import.meta.url),'utf8');
 const trackingBundle=await readFile(new URL('../assets/app-tracking.bundle.js',import.meta.url),'utf8');
 const importBundle=await readFile(new URL('../assets/app-import.bundle.js',import.meta.url),'utf8');
