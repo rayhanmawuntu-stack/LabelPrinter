@@ -1,6 +1,6 @@
 (async function(){
   try{
-    const version='20260722-header-accent-88';
+    const version='20260723-sidebar-rail-89';
     const deploymentKey='labelprint-deployment-version';
     const legacyInstallationKeys=['ksb-no-mock-startup','ksb-labels','ksb-history','ksb-users','ksb-layout','ksb-theme','ksb-color-scheme'];
     let legacyInstallation=false;
