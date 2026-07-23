@@ -13,7 +13,7 @@ const styles=[
   'style-39.css','style-40.css','style-41.css','style-42.css','style-43.css',
   'style-44.css','style-45.css','style-46.css','style-47.css','style-48.css',
   'style-49.css','style-50.css','style-51.css','style-52.css','style-53.css',
-  'style-54.css','style-55.css'
+  'style-54.css','style-55.css','style-56.css','style-57.css'
 ];
 
 const coreScripts=[
